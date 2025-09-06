@@ -1,0 +1,28 @@
+﻿<Window x:Class="Project12.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Project12"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <DockPanel>
+        <!-- Thông báo trạng thái -->
+        <TextBlock x:Name="StatusText"
+                   DockPanel.Dock="Top"
+                   Foreground="Red"
+                   Margin="5"
+                   Text="Connecting to server..." />
+
+        <!-- Nút reconnect -->
+        <Button Content="Reconnect"
+                DockPanel.Dock="Top"
+                Margin="5"
+                Click="Reconnect_Click" />
+
+        <!-- Bảng dữ liệu sách -->
+        <DataGrid x:Name="BooksGrid"
+                  AutoGenerateColumns="True"
+                  Margin="5" />
+    </DockPanel>
+</Window>

@@ -1,0 +1,2 @@
+wwwroot\lib\microsoft-signalr\signalr.js
+wwwroot\lib\microsoft-signalr\signalr.min.js
