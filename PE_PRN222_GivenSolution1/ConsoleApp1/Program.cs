@@ -1,15 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 
-// ===== MODEL =====
 public class Book
 {
     public int BookId { get; set; }
-    public string Title { get; set; } = string.Empty;
+    public string Title { get; set; } = "";
     public int? PublicationYear { get; set; }
 }
 
@@ -23,14 +22,14 @@ class Program
 
         while (running)
         {
-            Console.Clear();
-            Console.WriteLine("====== Library Client ======");
+            Console.WriteLine("\n====== Library Client ======");
             Console.WriteLine("1. List Books");
             Console.WriteLine("2. Create Book");
             Console.WriteLine("3. Update Book");
             Console.WriteLine("4. Delete Book");
             Console.WriteLine("5. Quit");
             Console.Write("Choose an option: ");
+
             var choice = Console.ReadLine();
 
             switch (choice)
@@ -42,7 +41,7 @@ class Program
                     await CreateBookAsync();
                     break;
                 case "3":
-                    await UpdateBookAsync();
+                    await UpdateBookMenuAsync();
                     break;
                 case "4":
                     await DeleteBookAsync();
@@ -52,175 +51,219 @@ class Program
                     Console.WriteLine("Goodbye!");
                     break;
                 default:
-                    Console.WriteLine("Invalid choice. Press Enter to try again...");
-                    Console.ReadLine();
+                    Console.WriteLine("Invalid choice. Try again.");
                     break;
             }
         }
     }
 
-    // ==========================
-    // Hàm hiển thị sách không dừng chương trình
-    // ==========================
-    private static async Task<List<Book>> DisplayBooksAsync()
-    {
-        var response = await client.GetAsync("http://localhost:8080/books");
-
-        if (!response.IsSuccessStatusCode)
-        {
-            Console.WriteLine($"Error: {response.StatusCode}");
-            return new List<Book>();
-        }
-
-        var json = await response.Content.ReadAsStringAsync();
-
-        var books = JsonSerializer.Deserialize<List<Book>>(json, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
-
-        Console.WriteLine("====== Book List ======");
-        if (books != null && books.Count > 0)
-        {
-            foreach (var book in books)
-            {
-                Console.WriteLine($"ID: {book.BookId} | Title: {book.Title} | Year: {book.PublicationYear}");
-            }
-        }
-        else
-        {
-            Console.WriteLine("No books found.");
-        }
-
-        return books ?? new List<Book>();
-    }
-
-    // ==========================
+    // ===========================
     // 1. List Books
-    // ==========================
+    // ===========================
     private static async Task ListBooksAsync()
     {
-        Console.Clear();
-        await DisplayBooksAsync();
-        Console.WriteLine("\nPress Enter to return to menu...");
-        Console.ReadLine();
+        try
+        {
+            var response = await client.GetAsync("http://localhost:8080/books");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var books = JsonSerializer.Deserialize<List<Book>>(json, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                Console.WriteLine("\n====== Book List ======");
+                if (books != null && books.Count > 0)
+                {
+                    foreach (var book in books)
+                    {
+                        Console.WriteLine($"ID: {book.BookId} | Title: {book.Title} | Year: {book.PublicationYear}");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("No books found.");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"Error: {response.StatusCode}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Exception: {ex.Message}");
+        }
     }
 
-    // ==========================
+    // ===========================
     // 2. Create Book
-    // ==========================
+    // ===========================
     private static async Task CreateBookAsync()
     {
-        Console.Clear();
-        Console.WriteLine("====== Create Book ======");
-        Console.Write("Enter Title: ");
-        var title = Console.ReadLine();
+        Console.Write("Enter title: ");
+        string title = Console.ReadLine() ?? "";
 
-        Console.Write("Enter Publication Year: ");
-        int year = int.Parse(Console.ReadLine() ?? "0");
+        Console.Write("Enter publication year: ");
+        int.TryParse(Console.ReadLine(), out int year);
 
-        var newBook = new Book { Title = title, PublicationYear = year };
-        var json = JsonSerializer.Serialize(newBook);
-        var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-        var response = await client.PostAsync("http://localhost:8080/books", content);
-
-        if (response.IsSuccessStatusCode || response.StatusCode == System.Net.HttpStatusCode.Created)
+        var newBook = new Book
         {
-            Console.WriteLine("Book created successfully!");
-        }
-        else
-        {
-            Console.WriteLine("Failed to create book.");
-        }
+            Title = title,
+            PublicationYear = year
+        };
 
-        Console.WriteLine("Press Enter to return to menu...");
-        Console.ReadLine();
+        try
+        {
+            var json = JsonSerializer.Serialize(newBook);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await client.PostAsync("http://localhost:8080/books", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("Book created successfully!");
+            }
+            else
+            {
+                Console.WriteLine($"Failed to create book. Status: {response.StatusCode}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Exception: {ex.Message}");
+        }
     }
 
-    // ==========================
-    // 3. Update Book
-    // ==========================
-    private static async Task UpdateBookAsync()
+    // ===========================
+    // 3. Update Book Menu
+    // ===========================
+    private static async Task UpdateBookMenuAsync()
     {
-        Console.Clear();
-        Console.WriteLine("====== Update Book ======");
+        await ListBooksAsync();
 
-        // Hiển thị danh sách, không dừng lại
-        await DisplayBooksAsync();
-
-        Console.Write("\nEnter ID of the book to update: ");
-        int id = int.Parse(Console.ReadLine() ?? "0");
-
-        Console.WriteLine("Choose field to update:");
-        Console.WriteLine("1. Title");
-        Console.WriteLine("2. Publication Year");
-        var fieldChoice = Console.ReadLine();
-
-        var updatedBook = new Book();
-
-        if (fieldChoice == "1")
+        Console.Write("\nEnter the ID of the book to update: ");
+        if (!int.TryParse(Console.ReadLine(), out int id))
         {
-            Console.Write("Enter new Title: ");
-            updatedBook.Title = Console.ReadLine() ?? "";
-        }
-        else if (fieldChoice == "2")
-        {
-            Console.Write("Enter new Publication Year: ");
-            updatedBook.PublicationYear = int.Parse(Console.ReadLine() ?? "0");
-        }
-        else
-        {
-            Console.WriteLine("Invalid choice.");
-            Console.WriteLine("Press Enter to return to menu...");
-            Console.ReadLine();
+            Console.WriteLine("Invalid ID.");
             return;
         }
 
-        var json = JsonSerializer.Serialize(updatedBook);
-        var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-        var response = await client.PutAsync($"http://localhost:8080/books/{id}", content);
-
-        if (response.IsSuccessStatusCode)
+        bool updating = true;
+        while (updating)
         {
-            Console.WriteLine("Book updated successfully!");
-        }
-        else
-        {
-            Console.WriteLine($"Failed to update book. Status: {response.StatusCode}");
-        }
+            Console.WriteLine("\n--- Update Menu ---");
+            Console.WriteLine("1. Update Title");
+            Console.WriteLine("2. Update Publication Year");
+            Console.WriteLine("3. Quit");
+            Console.Write("Choose an option: ");
+            var choice = Console.ReadLine();
 
-        Console.WriteLine("Press Enter to return to menu...");
-        Console.ReadLine();
+            switch (choice)
+            {
+                case "1":
+                    await UpdateBookAsync(id, "title");
+                    break;
+                case "2":
+                    await UpdateBookAsync(id, "year");
+                    break;
+                case "3":
+                    updating = false;
+                    Console.WriteLine("Returning to main menu...");
+                    break;
+                default:
+                    Console.WriteLine("Invalid choice. Try again.");
+                    break;
+            }
+        }
     }
 
-    // ==========================
+    // Thực hiện cập nhật từng phần
+    private static async Task UpdateBookAsync(int id, string field)
+    {
+        var updatedBook = new Book();
+
+        if (field == "title")
+        {
+            Console.Write("Enter new title: ");
+            updatedBook.Title = Console.ReadLine() ?? "";
+        }
+        else if (field == "year")
+        {
+            Console.Write("Enter new publication year: ");
+            if (int.TryParse(Console.ReadLine(), out int newYear))
+            {
+                updatedBook.PublicationYear = newYear;
+            }
+            else
+            {
+                Console.WriteLine("Invalid year.");
+                return;
+            }
+        }
+
+        try
+        {
+            var json = JsonSerializer.Serialize(updatedBook);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await client.PutAsync($"http://localhost:8080/books/{id}", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("Book updated successfully!");
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                Console.WriteLine("Book not found.");
+            }
+            else
+            {
+                Console.WriteLine($"Failed to update book. Status: {response.StatusCode}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Exception: {ex.Message}");
+        }
+    }
+
+    // ===========================
     // 4. Delete Book
-    // ==========================
+    // ===========================
     private static async Task DeleteBookAsync()
     {
-        Console.Clear();
-        Console.WriteLine("====== Delete Book ======");
+        await ListBooksAsync();
 
-        // Hiển thị danh sách, không dừng lại
-        await DisplayBooksAsync();
-
-        Console.Write("\nEnter ID of the book to delete: ");
-        int id = int.Parse(Console.ReadLine() ?? "0");
-
-        var response = await client.DeleteAsync($"http://localhost:8080/books/{id}");
-
-        if (response.IsSuccessStatusCode)
+        Console.Write("\nEnter the ID of the book to delete: ");
+        if (!int.TryParse(Console.ReadLine(), out int id))
         {
-            Console.WriteLine("Book deleted successfully!");
-        }
-        else
-        {
-            Console.WriteLine($"Failed to delete book. Status: {response.StatusCode}");
+            Console.WriteLine("Invalid ID.");
+            return;
         }
 
-        Console.WriteLine("Press Enter to return to menu...");
-        Console.ReadLine();
+        try
+        {
+            var response = await client.DeleteAsync($"http://localhost:8080/books/{id}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("Book deleted successfully!");
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                Console.WriteLine("Book not found.");
+            }
+            else
+            {
+                Console.WriteLine($"Failed to delete book. Status: {response.StatusCode}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Exception: {ex.Message}");
+        }
     }
 }
