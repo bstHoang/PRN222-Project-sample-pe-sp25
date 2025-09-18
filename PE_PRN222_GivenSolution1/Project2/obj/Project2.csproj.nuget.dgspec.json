@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Capstone Project\\PE_PRN222_GivenSolution1\\Project2\\Project2.csproj": {}
+    "D:\\Capstone Project\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\Project2\\Project2.csproj": {}
   },
   "projects": {
-    "D:\\Capstone Project\\PE_PRN222_GivenSolution1\\Project2\\Project2.csproj": {
+    "D:\\Capstone Project\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\Project2\\Project2.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Capstone Project\\PE_PRN222_GivenSolution1\\Project2\\Project2.csproj",
+        "projectUniqueName": "D:\\Capstone Project\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\Project2\\Project2.csproj",
         "projectName": "Project2",
-        "projectPath": "D:\\Capstone Project\\PE_PRN222_GivenSolution1\\Project2\\Project2.csproj",
+        "projectPath": "D:\\Capstone Project\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\Project2\\Project2.csproj",
         "packagesPath": "C:\\Users\\10t1q\\.nuget\\packages\\",
-        "outputPath": "D:\\Capstone Project\\PE_PRN222_GivenSolution1\\Project2\\obj\\",
+        "outputPath": "D:\\Capstone Project\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\Project2\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -81,7 +81,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.302/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.305/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

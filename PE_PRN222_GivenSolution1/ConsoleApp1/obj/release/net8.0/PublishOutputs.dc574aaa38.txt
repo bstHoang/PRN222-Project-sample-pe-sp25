@@ -1,0 +1,5 @@
+D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\Q1_hoangbst_client\ConsoleApp1.exe
+D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\Q1_hoangbst_client\ConsoleApp1.dll
+D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\Q1_hoangbst_client\ConsoleApp1.deps.json
+D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\Q1_hoangbst_client\ConsoleApp1.runtimeconfig.json
+D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\Q1_hoangbst_client\ConsoleApp1.pdb
