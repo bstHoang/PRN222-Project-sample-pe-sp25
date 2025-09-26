@@ -1,0 +1,52 @@
+﻿<Window x:Class="MiddlewareTool.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MiddlewareTool"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Vertical" Margin="0,0,0,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" Content="Server Executable:" VerticalAlignment="Center"/>
+                <TextBox Grid.Column="1" x:Name="ServerExePath" Margin="5,0" IsReadOnly="True"/>
+                <Button Grid.Column="2" Content="Browse..." Click="BrowseServer_Click"/>
+            </Grid>
+            <Grid Margin="0,5,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" Content="Client Executable:" VerticalAlignment="Center"/>
+                <TextBox Grid.Column="1" x:Name="ClientExePath" Margin="5,0" IsReadOnly="True"/>
+                <Button Grid.Column="2" Content="Browse..." Click="BrowseClient_Click"/>
+            </Grid>
+        </StackPanel>
+
+        <Button Grid.Row="1" x:Name="StartStopButton" Content="Start Grading Session" 
+                FontSize="16" FontWeight="Bold" Padding="10" Click="StartStop_Click"/>
+
+        <DataGrid Grid.Row="2" x:Name="RequestsGrid" AutoGenerateColumns="False" 
+                  IsReadOnly="True" Margin="0,10,0,0">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Time" Binding="{Binding Timestamp}" Width="150"/>
+                <DataGridTextColumn Header="Method" Binding="{Binding Method}" Width="80"/>
+                <DataGridTextColumn Header="URL" Binding="{Binding Url}" Width="*"/>
+                <DataGridTextColumn Header="Status" Binding="{Binding StatusCode}" Width="80"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>

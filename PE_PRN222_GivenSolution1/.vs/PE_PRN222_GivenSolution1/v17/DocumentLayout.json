@@ -7,12 +7,16 @@
       "RelativeMoniker": "D:0:0:{41E0B0CF-6C18-49AE-B0B5-E38E9C8F4ACF}|ConsoleApp1\\ConsoleApp1.csproj|solutionrelative:consoleapp1\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{2E341618-8663-4203-80E4-2D5CDD8858ED}|ConsoleApp2\\ConsoleApp2.csproj|d:\\capstone project\\prn222-project-sample-pe-sp25\\pe_prn222_givensolution1\\consoleapp2\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2E341618-8663-4203-80E4-2D5CDD8858ED}|ConsoleApp2\\ConsoleApp2.csproj|solutionrelative:consoleapp2\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{3EFBF2E0-8F60-4FAE-B978-E93FEFD5F870}|Project11\\Project11.csproj|d:\\capstone project\\prn222-project-sample-pe-sp25\\pe_prn222_givensolution1\\project11\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{3EFBF2E0-8F60-4FAE-B978-E93FEFD5F870}|Project11\\Project11.csproj|solutionrelative:project11\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{3EFBF2E0-8F60-4FAE-B978-E93FEFD5F870}|Project11\\Project11.csproj|d:\\capstone project\\prn222-project-sample-pe-sp25\\pe_prn222_givensolution1\\project11\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{3EFBF2E0-8F60-4FAE-B978-E93FEFD5F870}|Project11\\Project11.csproj|solutionrelative:project11\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+      "AbsoluteMoniker": "D:0:0:{2E341618-8663-4203-80E4-2D5CDD8858ED}|ConsoleApp2\\ConsoleApp2.csproj|d:\\capstone project\\prn222-project-sample-pe-sp25\\pe_prn222_givensolution1\\consoleapp2\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2E341618-8663-4203-80E4-2D5CDD8858ED}|ConsoleApp2\\ConsoleApp2.csproj|solutionrelative:consoleapp2\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,19 +26,45 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Document",
               "DocumentIndex": 2,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\Capstone Project\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\Project11\\Program.cs",
+              "RelativeDocumentMoniker": "Project11\\Program.cs",
+              "ToolTip": "D:\\Capstone Project\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\Project11\\Program.cs",
+              "RelativeToolTip": "Project11\\Program.cs",
+              "ViewState": "AgIAAJwAAAAAAAAAAAAUwLYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-26T05:08:25.444Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "appsettings.json",
-              "DocumentMoniker": "D:\\Capstone Project\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\Project11\\appsettings.json",
-              "RelativeDocumentMoniker": "Project11\\appsettings.json",
-              "ToolTip": "D:\\Capstone Project\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\Project11\\appsettings.json",
-              "RelativeToolTip": "Project11\\appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "DocumentMoniker": "D:\\Capstone Project\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\ConsoleApp2\\appsettings.json",
+              "RelativeDocumentMoniker": "ConsoleApp2\\appsettings.json",
+              "ToolTip": "D:\\Capstone Project\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\ConsoleApp2\\appsettings.json",
+              "RelativeToolTip": "ConsoleApp2\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-09-18T02:58:31.025Z",
+              "WhenOpened": "2025-09-26T05:03:35.531Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\Capstone Project\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\ConsoleApp2\\Program.cs",
+              "RelativeDocumentMoniker": "ConsoleApp2\\Program.cs",
+              "ToolTip": "D:\\Capstone Project\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\ConsoleApp2\\Program.cs",
+              "RelativeToolTip": "ConsoleApp2\\Program.cs",
+              "ViewState": "AgIAABsAAAAAAAAAAAAowLYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-26T04:28:13.178Z",
               "EditorCaption": ""
             },
             {
@@ -45,22 +75,9 @@
               "RelativeDocumentMoniker": "ConsoleApp1\\Program.cs",
               "ToolTip": "D:\\Capstone Project\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\ConsoleApp1\\Program.cs",
               "RelativeToolTip": "ConsoleApp1\\Program.cs",
-              "ViewState": "AgIAAEEAAAAAAAAAAAAswEYAAABGAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACwAAAAaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-09-17T13:34:43.007Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Program.cs",
-              "DocumentMoniker": "D:\\Capstone Project\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\Project11\\Program.cs",
-              "RelativeDocumentMoniker": "Project11\\Program.cs",
-              "ToolTip": "D:\\Capstone Project\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\Project11\\Program.cs",
-              "RelativeToolTip": "Project11\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAADcAAAAsAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-06T06:25:50.082Z",
               "EditorCaption": ""
             }
           ]

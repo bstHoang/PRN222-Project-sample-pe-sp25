@@ -1,0 +1,5 @@
+D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp2\[QuestionNumber_NameStudentCode]\ConsoleApp2.exe
+D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp2\[QuestionNumber_NameStudentCode]\ConsoleApp2.dll
+D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp2\[QuestionNumber_NameStudentCode]\ConsoleApp2.deps.json
+D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp2\[QuestionNumber_NameStudentCode]\ConsoleApp2.runtimeconfig.json
+D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp2\[QuestionNumber_NameStudentCode]\ConsoleApp2.pdb
