@@ -13,3 +13,14 @@ D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\Conso
 D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\obj\release\net8.0\ConsoleApp1.pdb
 D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\obj\release\net8.0\ConsoleApp1.genruntimeconfig.cache
 D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\obj\release\net8.0\ref\ConsoleApp1.dll
+D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\bin\release\net8.0\appsettings.json
+D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\bin\release\net8.0\Microsoft.Extensions.Configuration.dll
+D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\bin\release\net8.0\Microsoft.Extensions.Configuration.Abstractions.dll
+D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\bin\release\net8.0\Microsoft.Extensions.Configuration.FileExtensions.dll
+D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\bin\release\net8.0\Microsoft.Extensions.Configuration.Json.dll
+D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\bin\release\net8.0\Microsoft.Extensions.FileProviders.Abstractions.dll
+D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\bin\release\net8.0\Microsoft.Extensions.FileProviders.Physical.dll
+D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\bin\release\net8.0\Microsoft.Extensions.FileSystemGlobbing.dll
+D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\bin\release\net8.0\Microsoft.Extensions.Primitives.dll
+D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\obj\release\net8.0\ConsoleApp1.csproj.AssemblyReference.cache
+D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\obj\release\net8.0\ConsoleA.CB28C8CC.Up2Date

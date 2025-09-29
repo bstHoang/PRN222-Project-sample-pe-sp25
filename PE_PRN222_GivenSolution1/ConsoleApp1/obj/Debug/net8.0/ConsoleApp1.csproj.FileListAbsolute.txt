@@ -23,3 +23,4 @@ D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\Conso
 D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\bin\Debug\net8.0\Microsoft.Extensions.Primitives.dll
 D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\obj\Debug\net8.0\ConsoleApp1.csproj.AssemblyReference.cache
 D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\obj\Debug\net8.0\ConsoleA.CB28C8CC.Up2Date
+D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\bin\Debug\net8.0\appsettings.json

@@ -1,6 +1,7 @@
 ﻿using System.Net;
-using System.Text.Json;
 using System.Text;
+using System.Text.Json;
+using Microsoft.Extensions.Configuration; 
 
 // ============================
 // MODEL
@@ -15,7 +16,6 @@ public class Book
 
 public static class FakeDatabase
 {
-    // Dữ liệu Books fix cứng dựa trên script SQL
     public static List<Book> Books = new List<Book>
     {
         new Book { BookId = 1, Title = "Harry Potter and the Philosopher's Stone", PublicationYear = 1997, GenreId = 1 },
@@ -30,7 +30,6 @@ public static class FakeDatabase
         new Book { BookId = 10, Title = "Foundation and Empire", PublicationYear = 1952, GenreId = 6 }
     };
 
-    // Sinh ID mới
     public static int GetNextBookId()
     {
         return Books.Count == 0 ? 1 : Books.Max(b => b.BookId) + 1;
@@ -41,10 +40,18 @@ class Program
 {
     static async Task Main(string[] args)
     {
+        // 1. Đọc cấu hình từ appsettings.json
+        var config = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .Build();
+
+        string serverUrl = config["ServerUrl"];
+
+        // 2. Khởi tạo HttpListener với URL từ config
         var listener = new HttpListener();
-        listener.Prefixes.Add("http://localhost:8080/");
+        listener.Prefixes.Add(serverUrl);
         listener.Start();
-        Console.WriteLine("Server started at http://localhost:8080/");
+        Console.WriteLine($"Server started at {serverUrl}");
 
         while (true)
         {
@@ -55,18 +62,14 @@ class Program
             var path = request.Url.AbsolutePath.ToLower();
             var method = request.HttpMethod;
 
-            Console.WriteLine($" {method} {path}");
+            Console.WriteLine($"{method} {path}");
 
             // =======================
             // 1. GET /books - List
             // =======================
             if (path == "/books" && method == "GET")
             {
-                var json = JsonSerializer.Serialize(FakeDatabase.Books);
-                var buffer = Encoding.UTF8.GetBytes(json);
-                response.ContentType = "application/json";
-                response.ContentLength64 = buffer.Length;
-                await response.OutputStream.WriteAsync(buffer, 0, buffer.Length);
+                await WriteJsonResponse(response, FakeDatabase.Books);
             }
             // =======================
             // 2. POST /books - Create

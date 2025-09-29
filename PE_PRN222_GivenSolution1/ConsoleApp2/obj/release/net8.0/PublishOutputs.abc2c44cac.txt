@@ -1,5 +1,14 @@
+D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp2\[QuestionNumber_NameStudentCode]\appsettings.json
 D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp2\[QuestionNumber_NameStudentCode]\ConsoleApp2.exe
 D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp2\[QuestionNumber_NameStudentCode]\ConsoleApp2.dll
 D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp2\[QuestionNumber_NameStudentCode]\ConsoleApp2.deps.json
 D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp2\[QuestionNumber_NameStudentCode]\ConsoleApp2.runtimeconfig.json
 D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp2\[QuestionNumber_NameStudentCode]\ConsoleApp2.pdb
+D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp2\[QuestionNumber_NameStudentCode]\Microsoft.Extensions.Configuration.dll
+D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp2\[QuestionNumber_NameStudentCode]\Microsoft.Extensions.Configuration.Abstractions.dll
+D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp2\[QuestionNumber_NameStudentCode]\Microsoft.Extensions.Configuration.FileExtensions.dll
+D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp2\[QuestionNumber_NameStudentCode]\Microsoft.Extensions.Configuration.Json.dll
+D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp2\[QuestionNumber_NameStudentCode]\Microsoft.Extensions.FileProviders.Abstractions.dll
+D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp2\[QuestionNumber_NameStudentCode]\Microsoft.Extensions.FileProviders.Physical.dll
+D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp2\[QuestionNumber_NameStudentCode]\Microsoft.Extensions.FileSystemGlobbing.dll
+D:\Capstone Project\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp2\[QuestionNumber_NameStudentCode]\Microsoft.Extensions.Primitives.dll

@@ -15,8 +15,8 @@ namespace MiddlewareTool
     /// </summary>
     public partial class MainWindow : Window
     {
-        private const string PROXY_PORT = "8080";
-        private const string REAL_SERVER_PORT = "8081";
+        private const string PROXY_PORT = "5000";
+        private const string REAL_SERVER_PORT = "5001";
 
         private HttpListener? _proxyListener;
         private Process? _serverProcess;

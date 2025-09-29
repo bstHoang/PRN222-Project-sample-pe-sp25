@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration; // Thêm namespace này
 
 public class Book
 {
@@ -15,9 +16,20 @@ public class Book
 class Program
 {
     private static readonly HttpClient client = new HttpClient();
+    private static string baseUrl = "";
 
     static async Task Main(string[] args)
     {
+        // ======================================
+        // 1. Load cấu hình từ appsettings.json
+        // ======================================
+        var config = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .Build();
+
+        baseUrl = config["BaseUrl"] ?? "http://127.0.0.1:8080/";
+        Console.WriteLine($"Base URL: {baseUrl}");
+
         bool running = true;
 
         while (running)
@@ -64,7 +76,7 @@ class Program
     {
         try
         {
-            var response = await client.GetAsync("http://localhost:8080/books");
+            var response = await client.GetAsync($"{baseUrl}books");
 
             if (response.IsSuccessStatusCode)
             {
@@ -120,7 +132,7 @@ class Program
             var json = JsonSerializer.Serialize(newBook);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var response = await client.PostAsync("http://localhost:8080/books", content);
+            var response = await client.PostAsync($"{baseUrl}books", content);
 
             if (response.IsSuccessStatusCode)
             {
@@ -209,7 +221,7 @@ class Program
             var json = JsonSerializer.Serialize(updatedBook);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var response = await client.PutAsync($"http://localhost:8080/books/{id}", content);
+            var response = await client.PutAsync($"{baseUrl}books/{id}", content);
 
             if (response.IsSuccessStatusCode)
             {
@@ -246,7 +258,7 @@ class Program
 
         try
         {
-            var response = await client.DeleteAsync($"http://localhost:8080/books/{id}");
+            var response = await client.DeleteAsync($"{baseUrl}books/{id}");
 
             if (response.IsSuccessStatusCode)
             {
