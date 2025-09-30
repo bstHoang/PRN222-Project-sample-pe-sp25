@@ -1,28 +1,32 @@
 ﻿using Microsoft.Win32;
+using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Sockets;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
-
 namespace MiddlewareTool
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         private static readonly string TARGET_FILE = "appsettings.json";
+        private const int PROXY_PORT = 5000;
+        private const int REAL_SERVER_PORT = 5001;
 
-        private const string PROXY_PORT = "5000";
-        private const string REAL_SERVER_PORT = "5001";
+        // HTTP specific
+        private HttpListener? _httpListener;
 
-        private HttpListener? _proxyListener;
+        // TCP specific (NEW)
+        private TcpListener? _tcpListener;
+
         private Process? _serverProcess;
         private Process? _clientProcess;
         private CancellationTokenSource? _cts;
@@ -37,6 +41,7 @@ namespace MiddlewareTool
             RequestsGrid.ItemsSource = LoggedRequests;
         }
 
+        #region UI Event Handlers (Browse, etc.) - NO CHANGE
         private void BrowseServer_Click(object sender, RoutedEventArgs e)
         {
             var openFileDialog = new OpenFileDialog { Filter = "Executable files (*.exe)|*.exe" };
@@ -57,13 +62,22 @@ namespace MiddlewareTool
 
         private void AppsettingTemplate_Click(object sender, RoutedEventArgs e)
         {
-            var openFileDialog = new OpenFileDialog
-                { Filter = "JSON files (*.json)|*.json|Text files (*.txt)|*.txt|All files (*.*)|*.*" };
+            var openFileDialog = new OpenFileDialog { Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*" };
             if (openFileDialog.ShowDialog() == true)
             {
                 AppSettingTemplate.Text = openFileDialog.FileName;
             }
         }
+
+        private void AppsettingClientTemplate_Click(object sender, RoutedEventArgs e)
+        {
+            var openFileDialog = new OpenFileDialog { Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*" };
+            if (openFileDialog.ShowDialog() == true)
+            {
+                AppSettingClientTemplate.Text = openFileDialog.FileName;
+            }
+        }
+        #endregion
 
         private async void StartStop_Click(object sender, RoutedEventArgs e)
         {
@@ -73,14 +87,11 @@ namespace MiddlewareTool
             }
             else
             {
-                if (string.IsNullOrEmpty(ServerExePath.Text) || string.IsNullOrEmpty(ClientExePath.Text) ||
-                    string.IsNullOrEmpty(AppSettingTemplate.Text))
+                if (string.IsNullOrEmpty(ServerExePath.Text) || string.IsNullOrEmpty(ClientExePath.Text) || string.IsNullOrEmpty(AppSettingTemplate.Text))
                 {
-                    MessageBox.Show("Please input all fields.", "Error",
-                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Please input all fields.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
-
                 await StartSessionAsync();
             }
         }
@@ -92,179 +103,198 @@ namespace MiddlewareTool
             _isSessionRunning = true;
             LoggedRequests.Clear();
 
-            // 1. Khởi chạy server của sinh viên trên cổng PHỤ
             _serverProcess = new Process
             {
-                StartInfo = new ProcessStartInfo(ServerExePath.Text, REAL_SERVER_PORT)
-                {
-                    UseShellExecute = true, // Mở trong cửa sổ console riêng
-                }
+                StartInfo = new ProcessStartInfo(ServerExePath.Text, REAL_SERVER_PORT.ToString()) { UseShellExecute = true }
             };
             _serverProcess.Start();
 
-            // 2. Khởi chạy Proxy Listener trên cổng CHÍNH
             _cts = new CancellationTokenSource();
-            _proxyListener = new HttpListener();
-            _proxyListener.Prefixes.Add($"http://localhost:{PROXY_PORT}/");
-            _proxyListener.Start();
 
-            // Chạy vòng lặp lắng nghe trên một thread riêng
-            _ = Task.Run(() => ListenForRequests(_cts.Token));
+            // MODIFIED: Check protocol type
+            string selectedProtocol = (ProtocolSelection.SelectedItem as ComboBoxItem)?.Content.ToString() ?? "HTTP";
 
-            // Chờ một chút để server và proxy sẵn sàng
-            await Task.Delay(1000);
+            if (selectedProtocol == "HTTP")
+            {
+                StartHttpProxy(_cts.Token);
+            }
+            else // TCP
+            {
+                StartTcpProxy(_cts.Token);
+            }
 
-            // 3. Khởi chạy client của sinh viên
+            await Task.Delay(1500); // Wait a bit for server and proxy to be ready
+
             _clientProcess = new Process
             {
-                StartInfo = new ProcessStartInfo(ClientExePath.Text)
-                {
-                    UseShellExecute = true,
-                }
+                StartInfo = new ProcessStartInfo(ClientExePath.Text) { UseShellExecute = true }
             };
             _clientProcess.Start();
         }
 
         private void StopSession()
         {
-            // Dừng Proxy
             _cts?.Cancel();
-            _proxyListener?.Stop();
+            _httpListener?.Stop();
+            _tcpListener?.Stop(); // NEW
 
-            // Đóng các process
-            try
-            {
-                if (_clientProcess != null && !_clientProcess.HasExited) _clientProcess.Kill();
-            }
-            catch
-            {
-            }
-
-            try
-            {
-                if (_serverProcess != null && !_serverProcess.HasExited) _serverProcess.Kill();
-            }
-            catch
-            {
-            }
+            try { if (_clientProcess != null && !_clientProcess.HasExited) _clientProcess.Kill(); } catch { }
+            try { if (_serverProcess != null && !_serverProcess.HasExited) _serverProcess.Kill(); } catch { }
 
             _isSessionRunning = false;
             StartStopButton.Content = "Start Grading Session";
         }
 
-        private async Task ListenForRequests(CancellationToken token)
+        #region HTTP PROXY LOGIC (Original code, slightly refactored)
+        private void StartHttpProxy(CancellationToken token)
+        {
+            _httpListener = new HttpListener();
+            _httpListener.Prefixes.Add($"http://localhost:{PROXY_PORT}/");
+            _httpListener.Start();
+            Task.Run(() => ListenForHttpRequests(token), token);
+        }
+
+        private async Task ListenForHttpRequests(CancellationToken token)
         {
             while (!token.IsCancellationRequested)
             {
                 try
                 {
-                    var context = await _proxyListener.GetContextAsync();
-                    // Xử lý request trong một task mới để không block listener
-                    _ = Task.Run(() => ProcessRequest(context));
+                    var context = await _httpListener.GetContextAsync();
+                    _ = Task.Run(() => ProcessHttpRequest(context), token);
                 }
-                catch (HttpListenerException)
-                {
-                    // Listener đã bị dừng, thoát khỏi vòng lặp
-                    break;
-                }
+                catch (HttpListenerException) { break; } // Listener stopped
             }
         }
 
-        private async Task ProcessRequest(HttpListenerContext context)
+        private async Task ProcessHttpRequest(HttpListenerContext context)
         {
             var request = context.Request;
-            var logEntry = new LoggedRequest
-            {
-                Method = request.HttpMethod,
-                Url = request.Url.ToString()
-            };
+            var logEntry = new LoggedRequest { Method = request.HttpMethod, Url = request.Url.ToString() };
 
-            // Đọc request body
             using (var reader = new StreamReader(request.InputStream, request.ContentEncoding))
             {
                 logEntry.RequestBody = await reader.ReadToEndAsync();
             }
 
-            // Chuyển tiếp request đến server thật
             try
             {
                 var realServerUrl = $"http://localhost:{REAL_SERVER_PORT}{request.Url.AbsolutePath}";
                 using (var client = new HttpClient())
                 {
                     var forwardRequest = new HttpRequestMessage(new HttpMethod(request.HttpMethod), realServerUrl);
-
                     MediaTypeHeaderValue? contentType = null;
+                    if (request.ContentType != null) { contentType = MediaTypeHeaderValue.Parse(request.ContentType); }
+                    forwardRequest.Content = new StringContent(logEntry.RequestBody, contentType);
 
-                    if (request.ContentType != null)
-                    {
-                        contentType = MediaTypeHeaderValue.Parse(request.ContentType);
-                    }
-
-                    // Copy body
-                    forwardRequest.Content =
-                        new StringContent(logEntry.RequestBody, contentType);
-
-                    // Gửi request và nhận response
                     var responseMessage = await client.SendAsync(forwardRequest);
                     var response = context.Response;
 
-                    // Ghi log status code
                     logEntry.StatusCode = (int)responseMessage.StatusCode;
-
-                    // Đọc response body
                     var responseContent = await responseMessage.Content.ReadAsByteArrayAsync();
                     logEntry.ResponseBody = Encoding.UTF8.GetString(responseContent);
 
-
-                    // Copy response từ server thật về cho client gốc
                     response.StatusCode = (int)responseMessage.StatusCode;
                     response.ContentLength64 = responseContent.Length;
                     response.ContentType = responseMessage.Content.Headers.ContentType?.ToString();
-
                     await response.OutputStream.WriteAsync(responseContent, 0, responseContent.Length);
                     response.Close();
                 }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
+            catch (Exception ex) { Console.WriteLine($"HTTP Forward Error: {ex.Message}"); }
 
-            // Cập nhật UI từ thread chính
-            Application.Current.Dispatcher.Invoke(() => { LoggedRequests.Add(logEntry); });
+            Application.Current.Dispatcher.Invoke(() => LoggedRequests.Add(logEntry));
+        }
+        #endregion
+
+        #region TCP PROXY LOGIC (NEW)
+        private void StartTcpProxy(CancellationToken token)
+        {
+            _tcpListener = new TcpListener(IPAddress.Loopback, PROXY_PORT);
+            _tcpListener.Start();
+            Task.Run(() => ListenForTcpConnections(token), token);
         }
 
+        private async Task ListenForTcpConnections(CancellationToken token)
+        {
+            while (!token.IsCancellationRequested)
+            {
+                try
+                {
+                    var clientConnection = await _tcpListener.AcceptTcpClientAsync(token);
+                    _ = Task.Run(() => ProcessTcpConnection(clientConnection, token), token);
+                }
+                catch (OperationCanceledException) { break; } // Listener stopped
+                catch (Exception ex) { Console.WriteLine($"TCP Accept Error: {ex.Message}"); }
+            }
+        }
+
+        private async Task ProcessTcpConnection(TcpClient clientConnection, CancellationToken token)
+        {
+            try
+            {
+                using (clientConnection)
+                using (var serverConnection = new TcpClient())
+                {
+                    await serverConnection.ConnectAsync(IPAddress.Loopback, REAL_SERVER_PORT, token);
+                    using (var clientStream = clientConnection.GetStream())
+                    using (var serverStream = serverConnection.GetStream())
+                    {
+                        var clientToServer = RelayDataAsync(clientStream, serverStream, "Client -> Server", token);
+                        var serverToClient = RelayDataAsync(serverStream, clientStream, "Server -> Client", token);
+
+                        await Task.WhenAny(clientToServer, serverToClient);
+                    }
+                }
+            }
+            catch (Exception ex) { Console.WriteLine($"TCP Connection Error: {ex.Message}"); }
+        }
+
+        private async Task RelayDataAsync(NetworkStream fromStream, NetworkStream toStream, string direction, CancellationToken token)
+        {
+            var buffer = new byte[8192];
+            int bytesRead;
+            while ((bytesRead = await fromStream.ReadAsync(buffer, 0, buffer.Length, token)) > 0)
+            {
+                await toStream.WriteAsync(buffer, 0, bytesRead, token);
+
+                // Log the data packet
+                string dataPreview = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+                var logEntry = new LoggedRequest
+                {
+                    Method = direction,
+                    Url = dataPreview.Length > 100 ? dataPreview.Substring(0, 100) + "..." : dataPreview,
+                    RequestBody = dataPreview, // Store full data here for view button
+                    StatusCode = bytesRead
+                };
+                Application.Current.Dispatcher.Invoke(() => LoggedRequests.Add(logEntry));
+            }
+        }
+        #endregion
+
+        #region Other methods (ViewButton, ReplaceAppSetting) - NO CHANGE
         private void ViewButton_Click(object sender, RoutedEventArgs e)
         {
-            var button = sender as Button;
-
-            if (button?.DataContext is LoggedRequest loggedRequest)
+            if (sender is Button button && button.DataContext is LoggedRequest loggedRequest)
             {
                 StringBuilder msg = new StringBuilder();
+                msg.AppendLine($"Timestamp: {loggedRequest.Timestamp}");
 
-                if (loggedRequest.Timestamp.Length > 0)
+                // Adapt message for both protocols
+                string selectedProtocol = (ProtocolSelection.SelectedItem as ComboBoxItem)?.Content.ToString() ?? "HTTP";
+                if (selectedProtocol == "HTTP")
                 {
-                    msg.Append($"Time stamp: {loggedRequest.Timestamp}\n");
+                    msg.AppendLine($"Method: {loggedRequest.Method}");
+                    msg.AppendLine($"Url: {loggedRequest.Url}");
+                    msg.AppendLine($"Status Code: {loggedRequest.StatusCode}");
+                    msg.AppendLine($"--- Request Body ---\n{loggedRequest.RequestBody}");
+                    msg.AppendLine($"--- Response Body ---\n{loggedRequest.ResponseBody}");
                 }
-
-                if (loggedRequest.Method.Length > 0)
+                else // TCP
                 {
-                    msg.Append($"Method: {loggedRequest.Method}\n");
-                }
-
-                if (loggedRequest.Url.Length > 0)
-                {
-                    msg.Append($"Url: {loggedRequest.Url}\n");
-                }
-
-                if (loggedRequest.StatusCode > 0)
-                {
-                    msg.Append($"Status code: {loggedRequest.StatusCode}\n");
-                }
-
-                if (loggedRequest.ResponseBody.Length > 0)
-                {
-                    msg.Append($"Response body: {loggedRequest.ResponseBody}\n");
+                    msg.AppendLine($"Direction: {loggedRequest.Method}");
+                    msg.AppendLine($"Bytes: {loggedRequest.StatusCode}");
+                    msg.AppendLine($"--- Data Content ---\n{loggedRequest.RequestBody}");
                 }
 
                 MessageBox.Show(msg.ToString(), "Captured Data", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -273,41 +303,25 @@ namespace MiddlewareTool
 
         private void ReplaceAppSetting()
         {
-            string templatePath = AppSettingTemplate.Text;
-            string destinationDir = Path.GetDirectoryName(ServerExePath.Text);
-        
-            if (!File.Exists(templatePath) || !Directory.Exists(destinationDir))
-            {
-                MessageBox.Show("Folder/File does not exist!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-        
-            string[] searchResults = Directory.GetFiles(destinationDir, TARGET_FILE, SearchOption.AllDirectories);
-            foreach (string item in searchResults)
-            {
-                try
-                {
-                    File.Copy(templatePath, item, true);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-            }
-        }
+            string serverTemplatePath = AppSettingTemplate.Text;
+            string clientTemplatePath = AppSettingClientTemplate.Text;
+            string serverDestDir = Path.GetDirectoryName(ServerExePath.Text);
+            string clientDestDir = Path.GetDirectoryName(ClientExePath.Text);
 
-        private void AppsettingClientTemplate_Click(object sender, RoutedEventArgs e)
-        {
-            var openFileDialog = new OpenFileDialog
+            Action<string, string> copyFile = (template, destDir) =>
             {
-                Filter = "JSON files (*.json)|*.json|Text files (*.txt)|*.txt|All files (*.*)|*.*"
+                if (!File.Exists(template) || !Directory.Exists(destDir)) return;
+                string[] searchResults = Directory.GetFiles(destDir, TARGET_FILE, SearchOption.AllDirectories);
+                foreach (string item in searchResults)
+                {
+                    try { File.Copy(template, item, true); }
+                    catch (Exception ex) { Console.WriteLine(ex.Message); }
+                }
             };
 
-            if (openFileDialog.ShowDialog() == true)
-            {
-                AppSettingClientTemplate.Text = openFileDialog.FileName;
-            }
+            copyFile(serverTemplatePath, serverDestDir);
+            copyFile(clientTemplatePath, clientDestDir);
         }
-
+        #endregion
     }
 }

@@ -10,15 +10,24 @@
 
     <Grid Margin="10">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />   <!-- Server/Client selection -->
-            <RowDefinition Height="Auto" />   <!-- Start/Stop button -->
-            <RowDefinition Height="Auto" />   <!-- AppSettings override -->
-            <RowDefinition Height="*" />      <!-- DataGrid -->
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- Server / Client Executable Selection -->
         <StackPanel Grid.Row="0" Orientation="Vertical" Margin="0,0,0,10">
-            <GroupBox Grid.Row="2" Header="Client / Server Selection" Margin="0,10,0,10">
+
+            <GroupBox Header="Protocol Selection" Margin="0,0,0,10">
+                <StackPanel Orientation="Horizontal" Margin="5">
+                    <Label Content="Protocol Type:" VerticalAlignment="Center"/>
+                    <ComboBox x:Name="ProtocolSelection" Width="120" VerticalAlignment="Center" Margin="5,0,0,0">
+                        <ComboBoxItem Content="HTTP" IsSelected="True"/>
+                        <ComboBoxItem Content="TCP"/>
+                    </ComboBox>
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox Header="Client / Server Selection" Margin="0,0,0,10">
                 <StackPanel Orientation="Vertical">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -42,72 +51,43 @@
                     </Grid>
                 </StackPanel>
             </GroupBox>
-            <!-- AppSettings Override Section -->
-            <GroupBox Grid.Row="2" Header="AppSettings Override" Margin="0,10,0,10">
+
+            <GroupBox Header="AppSettings Override" Margin="0,0,0,10">
                 <StackPanel Orientation="Vertical">
-
-                    <!-- AppSetting Server -->
                     <Grid Margin="0,5,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="150" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-
-                        <Label Grid.Column="0"
-                   Content="AppSetting Server:"
-                   VerticalAlignment="Center" />
-
-                        <TextBox Grid.Column="1"
-                     x:Name="AppSettingTemplate"
-                     Margin="5,0"
-                     IsReadOnly="True" />
-
-                        <Button Grid.Column="2"
-                    Content="Browse..."
-                    Padding="10,2"
-                    Click="AppsettingTemplate_Click" />
+                        <Label Grid.Column="0" Content="AppSetting Server:" VerticalAlignment="Center" />
+                        <TextBox Grid.Column="1" x:Name="AppSettingTemplate" Margin="5,0" IsReadOnly="True" />
+                        <Button Grid.Column="2" Content="Browse..." Padding="10,2" Click="AppsettingTemplate_Click" />
                     </Grid>
-
-                    <!-- AppSetting Client -->
                     <Grid Margin="0,5,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="150" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-
-                        <Label Grid.Column="0"
-                   Content="AppSetting Client:"
-                   VerticalAlignment="Center" />
-
-                        <TextBox Grid.Column="1"
-                     x:Name="AppSettingClientTemplate"
-                     Margin="5,0"
-                     IsReadOnly="True" />
-
-                        <Button Grid.Column="2"
-                    Content="Browse..."
-                    Padding="10,2"
-                    Click="AppsettingClientTemplate_Click" />
+                        <Label Grid.Column="0" Content="AppSetting Client:" VerticalAlignment="Center" />
+                        <TextBox Grid.Column="1" x:Name="AppSettingClientTemplate" Margin="5,0" IsReadOnly="True" />
+                        <Button Grid.Column="2" Content="Browse..." Padding="10,2" Click="AppsettingClientTemplate_Click" />
                     </Grid>
                 </StackPanel>
             </GroupBox>
-
         </StackPanel>
 
-        <!-- Start / Stop Button -->
         <Button Grid.Row="1" x:Name="StartStopButton" Content="Start Grading Session"
                 FontSize="16" FontWeight="Bold" Padding="10" Click="StartStop_Click" />
 
-        <!-- Requests DataGrid -->
-        <DataGrid Grid.Row="3" x:Name="RequestsGrid" AutoGenerateColumns="False"
+        <DataGrid Grid.Row="2" x:Name="RequestsGrid" AutoGenerateColumns="False"
                   IsReadOnly="True" Margin="0,10,0,0">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Time" Binding="{Binding Timestamp}" Width="150" />
-                <DataGridTextColumn Header="Method" Binding="{Binding Method}" Width="80" />
-                <DataGridTextColumn Header="URL" Binding="{Binding Url}" Width="*" />
-                <DataGridTextColumn Header="Status" Binding="{Binding StatusCode}" Width="80" />
+                <DataGridTextColumn Header="Method/Direction" Binding="{Binding Method}" Width="120" />
+                <DataGridTextColumn Header="URL/Data" Binding="{Binding Url}" Width="*" />
+                <DataGridTextColumn Header="Status/Bytes" Binding="{Binding StatusCode}" Width="100" />
                 <DataGridTemplateColumn Header="View Data">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
