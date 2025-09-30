@@ -5,47 +5,116 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MiddlewareTool"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Middleware Tool" Height="600" Width="900"
+        WindowStartupLocation="CenterScreen">
+
     <Grid Margin="10">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />   <!-- Server/Client selection -->
+            <RowDefinition Height="Auto" />   <!-- Start/Stop button -->
+            <RowDefinition Height="Auto" />   <!-- AppSettings override -->
+            <RowDefinition Height="*" />      <!-- DataGrid -->
         </Grid.RowDefinitions>
 
+        <!-- Server / Client Executable Selection -->
         <StackPanel Grid.Row="0" Orientation="Vertical" Margin="0,0,0,10">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <Label Grid.Column="0" Content="Server Executable:" VerticalAlignment="Center"/>
-                <TextBox Grid.Column="1" x:Name="ServerExePath" Margin="5,0" IsReadOnly="True"/>
-                <Button Grid.Column="2" Content="Browse..." Click="BrowseServer_Click"/>
-            </Grid>
-            <Grid Margin="0,5,0,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <Label Grid.Column="0" Content="Client Executable:" VerticalAlignment="Center"/>
-                <TextBox Grid.Column="1" x:Name="ClientExePath" Margin="5,0" IsReadOnly="True"/>
-                <Button Grid.Column="2" Content="Browse..." Click="BrowseClient_Click"/>
-            </Grid>
+            <GroupBox Grid.Row="2" Header="Client / Server Selection" Margin="0,10,0,10">
+                <StackPanel Orientation="Vertical">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Content="Server Executable:" VerticalAlignment="Center" />
+                        <TextBox Grid.Column="1" x:Name="ServerExePath" Margin="5,0" IsReadOnly="True" />
+                        <Button Grid.Column="2" Content="Browse..." Click="BrowseServer_Click" />
+                    </Grid>
+                    <Grid Margin="0,5,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Content="Client Executable:" VerticalAlignment="Center" />
+                        <TextBox Grid.Column="1" x:Name="ClientExePath" Margin="5,0" IsReadOnly="True" />
+                        <Button Grid.Column="2" Content="Browse..." Click="BrowseClient_Click" />
+                    </Grid>
+                </StackPanel>
+            </GroupBox>
+            <!-- AppSettings Override Section -->
+            <GroupBox Grid.Row="2" Header="AppSettings Override" Margin="0,10,0,10">
+                <StackPanel Orientation="Vertical">
+
+                    <!-- AppSetting Server -->
+                    <Grid Margin="0,5,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Column="0"
+                   Content="AppSetting Server:"
+                   VerticalAlignment="Center" />
+
+                        <TextBox Grid.Column="1"
+                     x:Name="AppSettingTemplate"
+                     Margin="5,0"
+                     IsReadOnly="True" />
+
+                        <Button Grid.Column="2"
+                    Content="Browse..."
+                    Padding="10,2"
+                    Click="AppsettingTemplate_Click" />
+                    </Grid>
+
+                    <!-- AppSetting Client -->
+                    <Grid Margin="0,5,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Column="0"
+                   Content="AppSetting Client:"
+                   VerticalAlignment="Center" />
+
+                        <TextBox Grid.Column="1"
+                     x:Name="AppSettingClientTemplate"
+                     Margin="5,0"
+                     IsReadOnly="True" />
+
+                        <Button Grid.Column="2"
+                    Content="Browse..."
+                    Padding="10,2"
+                    Click="AppsettingClientTemplate_Click" />
+                    </Grid>
+                </StackPanel>
+            </GroupBox>
+
         </StackPanel>
 
-        <Button Grid.Row="1" x:Name="StartStopButton" Content="Start Grading Session" 
-                FontSize="16" FontWeight="Bold" Padding="10" Click="StartStop_Click"/>
+        <!-- Start / Stop Button -->
+        <Button Grid.Row="1" x:Name="StartStopButton" Content="Start Grading Session"
+                FontSize="16" FontWeight="Bold" Padding="10" Click="StartStop_Click" />
 
-        <DataGrid Grid.Row="2" x:Name="RequestsGrid" AutoGenerateColumns="False" 
+        <!-- Requests DataGrid -->
+        <DataGrid Grid.Row="3" x:Name="RequestsGrid" AutoGenerateColumns="False"
                   IsReadOnly="True" Margin="0,10,0,0">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Time" Binding="{Binding Timestamp}" Width="150"/>
-                <DataGridTextColumn Header="Method" Binding="{Binding Method}" Width="80"/>
-                <DataGridTextColumn Header="URL" Binding="{Binding Url}" Width="*"/>
-                <DataGridTextColumn Header="Status" Binding="{Binding StatusCode}" Width="80"/>
+                <DataGridTextColumn Header="Time" Binding="{Binding Timestamp}" Width="150" />
+                <DataGridTextColumn Header="Method" Binding="{Binding Method}" Width="80" />
+                <DataGridTextColumn Header="URL" Binding="{Binding Url}" Width="*" />
+                <DataGridTextColumn Header="Status" Binding="{Binding StatusCode}" Width="80" />
+                <DataGridTemplateColumn Header="View Data">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="View" Click="ViewButton_Click" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

@@ -14,6 +14,7 @@ namespace MiddlewareTool
         public int StatusCode { get; set; }
         public string RequestBody { get; set; } = "";
         public string ResponseBody { get; set; } = "";
+        
         public Dictionary<string, string> RequestHeaders { get; set; } = new();
         public Dictionary<string, string> ResponseHeaders { get; set; } = new();
     }

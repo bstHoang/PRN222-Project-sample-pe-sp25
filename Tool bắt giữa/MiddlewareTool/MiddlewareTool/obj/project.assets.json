@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Capstone Project\\PRN222-Project-sample-pe-sp25\\Tool bắt giữa\\MiddlewareTool\\MiddlewareTool\\MiddlewareTool.csproj",
+      "projectUniqueName": "D:\\Capstone Project\\middleware-draft\\Tool bắt giữa\\MiddlewareTool\\MiddlewareTool\\MiddlewareTool.csproj",
       "projectName": "MiddlewareTool",
-      "projectPath": "D:\\Capstone Project\\PRN222-Project-sample-pe-sp25\\Tool bắt giữa\\MiddlewareTool\\MiddlewareTool\\MiddlewareTool.csproj",
+      "projectPath": "D:\\Capstone Project\\middleware-draft\\Tool bắt giữa\\MiddlewareTool\\MiddlewareTool\\MiddlewareTool.csproj",
       "packagesPath": "C:\\Users\\10t1q\\.nuget\\packages\\",
-      "outputPath": "D:\\Capstone Project\\PRN222-Project-sample-pe-sp25\\Tool bắt giữa\\MiddlewareTool\\MiddlewareTool\\obj\\",
+      "outputPath": "D:\\Capstone Project\\middleware-draft\\Tool bắt giữa\\MiddlewareTool\\MiddlewareTool\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

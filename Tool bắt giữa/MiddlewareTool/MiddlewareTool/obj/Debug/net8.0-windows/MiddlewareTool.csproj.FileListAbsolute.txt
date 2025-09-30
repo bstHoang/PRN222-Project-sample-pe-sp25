@@ -19,3 +19,45 @@ D:\Capstone Project\PRN222-Project-sample-pe-sp25\Tool bắt giữa\MiddlewareTo
 D:\Capstone Project\PRN222-Project-sample-pe-sp25\Tool bắt giữa\MiddlewareTool\MiddlewareTool\obj\Debug\net8.0-windows\MiddlewareTool.pdb
 D:\Capstone Project\PRN222-Project-sample-pe-sp25\Tool bắt giữa\MiddlewareTool\MiddlewareTool\obj\Debug\net8.0-windows\MiddlewareTool.genruntimeconfig.cache
 D:\Capstone Project\PRN222-Project-sample-pe-sp25\Tool bắt giữa\MiddlewareTool\MiddlewareTool\obj\Debug\net8.0-windows\ref\MiddlewareTool.dll
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\Tool bắt giữa\MiddlewareTool\MiddlewareTool\bin\Debug\net8.0-windows\MiddlewareTool.exe
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\Tool bắt giữa\MiddlewareTool\MiddlewareTool\bin\Debug\net8.0-windows\MiddlewareTool.deps.json
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\Tool bắt giữa\MiddlewareTool\MiddlewareTool\bin\Debug\net8.0-windows\MiddlewareTool.runtimeconfig.json
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\Tool bắt giữa\MiddlewareTool\MiddlewareTool\bin\Debug\net8.0-windows\MiddlewareTool.dll
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\Tool bắt giữa\MiddlewareTool\MiddlewareTool\bin\Debug\net8.0-windows\MiddlewareTool.pdb
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\Tool bắt giữa\MiddlewareTool\MiddlewareTool\obj\Debug\net8.0-windows\MainWindow.g.cs
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\Tool bắt giữa\MiddlewareTool\MiddlewareTool\obj\Debug\net8.0-windows\App.g.cs
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\Tool bắt giữa\MiddlewareTool\MiddlewareTool\obj\Debug\net8.0-windows\MiddlewareTool_MarkupCompile.cache
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\Tool bắt giữa\MiddlewareTool\MiddlewareTool\obj\Debug\net8.0-windows\MiddlewareTool_MarkupCompile.lref
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\Tool bắt giữa\MiddlewareTool\MiddlewareTool\obj\Debug\net8.0-windows\MainWindow.baml
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\Tool bắt giữa\MiddlewareTool\MiddlewareTool\obj\Debug\net8.0-windows\MiddlewareTool.g.resources
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\Tool bắt giữa\MiddlewareTool\MiddlewareTool\obj\Debug\net8.0-windows\MiddlewareTool.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\Tool bắt giữa\MiddlewareTool\MiddlewareTool\obj\Debug\net8.0-windows\MiddlewareTool.AssemblyInfoInputs.cache
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\Tool bắt giữa\MiddlewareTool\MiddlewareTool\obj\Debug\net8.0-windows\MiddlewareTool.AssemblyInfo.cs
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\Tool bắt giữa\MiddlewareTool\MiddlewareTool\obj\Debug\net8.0-windows\MiddlewareTool.csproj.CoreCompileInputs.cache
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\Tool bắt giữa\MiddlewareTool\MiddlewareTool\obj\Debug\net8.0-windows\MiddlewareTool.sourcelink.json
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\Tool bắt giữa\MiddlewareTool\MiddlewareTool\obj\Debug\net8.0-windows\MiddlewareTool.dll
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\Tool bắt giữa\MiddlewareTool\MiddlewareTool\obj\Debug\net8.0-windows\refint\MiddlewareTool.dll
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\Tool bắt giữa\MiddlewareTool\MiddlewareTool\obj\Debug\net8.0-windows\MiddlewareTool.pdb
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\Tool bắt giữa\MiddlewareTool\MiddlewareTool\obj\Debug\net8.0-windows\MiddlewareTool.genruntimeconfig.cache
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\Tool bắt giữa\MiddlewareTool\MiddlewareTool\obj\Debug\net8.0-windows\ref\MiddlewareTool.dll
+D:\Capstone Project\middleware-draft\Tool bắt giữa\MiddlewareTool\MiddlewareTool\bin\Debug\net8.0-windows\MiddlewareTool.exe
+D:\Capstone Project\middleware-draft\Tool bắt giữa\MiddlewareTool\MiddlewareTool\bin\Debug\net8.0-windows\MiddlewareTool.deps.json
+D:\Capstone Project\middleware-draft\Tool bắt giữa\MiddlewareTool\MiddlewareTool\bin\Debug\net8.0-windows\MiddlewareTool.runtimeconfig.json
+D:\Capstone Project\middleware-draft\Tool bắt giữa\MiddlewareTool\MiddlewareTool\bin\Debug\net8.0-windows\MiddlewareTool.dll
+D:\Capstone Project\middleware-draft\Tool bắt giữa\MiddlewareTool\MiddlewareTool\bin\Debug\net8.0-windows\MiddlewareTool.pdb
+D:\Capstone Project\middleware-draft\Tool bắt giữa\MiddlewareTool\MiddlewareTool\obj\Debug\net8.0-windows\MainWindow.g.cs
+D:\Capstone Project\middleware-draft\Tool bắt giữa\MiddlewareTool\MiddlewareTool\obj\Debug\net8.0-windows\App.g.cs
+D:\Capstone Project\middleware-draft\Tool bắt giữa\MiddlewareTool\MiddlewareTool\obj\Debug\net8.0-windows\MiddlewareTool_MarkupCompile.cache
+D:\Capstone Project\middleware-draft\Tool bắt giữa\MiddlewareTool\MiddlewareTool\obj\Debug\net8.0-windows\MiddlewareTool_MarkupCompile.lref
+D:\Capstone Project\middleware-draft\Tool bắt giữa\MiddlewareTool\MiddlewareTool\obj\Debug\net8.0-windows\MainWindow.baml
+D:\Capstone Project\middleware-draft\Tool bắt giữa\MiddlewareTool\MiddlewareTool\obj\Debug\net8.0-windows\MiddlewareTool.g.resources
+D:\Capstone Project\middleware-draft\Tool bắt giữa\MiddlewareTool\MiddlewareTool\obj\Debug\net8.0-windows\MiddlewareTool.GeneratedMSBuildEditorConfig.editorconfig
+D:\Capstone Project\middleware-draft\Tool bắt giữa\MiddlewareTool\MiddlewareTool\obj\Debug\net8.0-windows\MiddlewareTool.AssemblyInfoInputs.cache
+D:\Capstone Project\middleware-draft\Tool bắt giữa\MiddlewareTool\MiddlewareTool\obj\Debug\net8.0-windows\MiddlewareTool.AssemblyInfo.cs
+D:\Capstone Project\middleware-draft\Tool bắt giữa\MiddlewareTool\MiddlewareTool\obj\Debug\net8.0-windows\MiddlewareTool.csproj.CoreCompileInputs.cache
+D:\Capstone Project\middleware-draft\Tool bắt giữa\MiddlewareTool\MiddlewareTool\obj\Debug\net8.0-windows\MiddlewareTool.sourcelink.json
+D:\Capstone Project\middleware-draft\Tool bắt giữa\MiddlewareTool\MiddlewareTool\obj\Debug\net8.0-windows\MiddlewareTool.dll
+D:\Capstone Project\middleware-draft\Tool bắt giữa\MiddlewareTool\MiddlewareTool\obj\Debug\net8.0-windows\refint\MiddlewareTool.dll
+D:\Capstone Project\middleware-draft\Tool bắt giữa\MiddlewareTool\MiddlewareTool\obj\Debug\net8.0-windows\MiddlewareTool.pdb
+D:\Capstone Project\middleware-draft\Tool bắt giữa\MiddlewareTool\MiddlewareTool\obj\Debug\net8.0-windows\MiddlewareTool.genruntimeconfig.cache
+D:\Capstone Project\middleware-draft\Tool bắt giữa\MiddlewareTool\MiddlewareTool\obj\Debug\net8.0-windows\ref\MiddlewareTool.dll

@@ -1,17 +1,17 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\Capstone Project\\PRN222-Project-sample-pe-sp25\\Tool b\u1EAFt gi\u1EEFa\\MiddlewareTool\\",
+  "WorkspaceRootPath": "D:\\Capstone Project\\middleware-draft\\Tool b\u1EAFt gi\u1EEFa\\MiddlewareTool\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{435FD29D-19AF-4129-B7D5-5C36A8942CD0}|MiddlewareTool\\MiddlewareTool.csproj|d:\\capstone project\\prn222-project-sample-pe-sp25\\tool b\u1EAFt gi\u1EEFa\\middlewaretool\\middlewaretool\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{435FD29D-19AF-4129-B7D5-5C36A8942CD0}|MiddlewareTool\\MiddlewareTool.csproj|d:\\capstone project\\middleware-draft\\tool b\u1EAFt gi\u1EEFa\\middlewaretool\\middlewaretool\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{435FD29D-19AF-4129-B7D5-5C36A8942CD0}|MiddlewareTool\\MiddlewareTool.csproj|solutionrelative:middlewaretool\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{435FD29D-19AF-4129-B7D5-5C36A8942CD0}|MiddlewareTool\\MiddlewareTool.csproj|d:\\capstone project\\prn222-project-sample-pe-sp25\\tool b\u1EAFt gi\u1EEFa\\middlewaretool\\middlewaretool\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "AbsoluteMoniker": "D:0:0:{435FD29D-19AF-4129-B7D5-5C36A8942CD0}|MiddlewareTool\\MiddlewareTool.csproj|d:\\capstone project\\middleware-draft\\tool b\u1EAFt gi\u1EEFa\\middlewaretool\\middlewaretool\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{435FD29D-19AF-4129-B7D5-5C36A8942CD0}|MiddlewareTool\\MiddlewareTool.csproj|solutionrelative:middlewaretool\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{435FD29D-19AF-4129-B7D5-5C36A8942CD0}|MiddlewareTool\\MiddlewareTool.csproj|d:\\capstone project\\prn222-project-sample-pe-sp25\\tool b\u1EAFt gi\u1EEFa\\middlewaretool\\middlewaretool\\loggedrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{435FD29D-19AF-4129-B7D5-5C36A8942CD0}|MiddlewareTool\\MiddlewareTool.csproj|d:\\capstone project\\middleware-draft\\tool b\u1EAFt gi\u1EEFa\\middlewaretool\\middlewaretool\\loggedrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{435FD29D-19AF-4129-B7D5-5C36A8942CD0}|MiddlewareTool\\MiddlewareTool.csproj|solutionrelative:middlewaretool\\loggedrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -28,34 +28,36 @@
               "$type": "Document",
               "DocumentIndex": 2,
               "Title": "LoggedRequest.cs",
-              "DocumentMoniker": "D:\\Capstone Project\\PRN222-Project-sample-pe-sp25\\Tool b\u1EAFt gi\u1EEFa\\MiddlewareTool\\MiddlewareTool\\LoggedRequest.cs",
+              "DocumentMoniker": "D:\\Capstone Project\\middleware-draft\\Tool b\u1EAFt gi\u1EEFa\\MiddlewareTool\\MiddlewareTool\\LoggedRequest.cs",
               "RelativeDocumentMoniker": "MiddlewareTool\\LoggedRequest.cs",
-              "ToolTip": "D:\\Capstone Project\\PRN222-Project-sample-pe-sp25\\Tool b\u1EAFt gi\u1EEFa\\MiddlewareTool\\MiddlewareTool\\LoggedRequest.cs",
+              "ToolTip": "D:\\Capstone Project\\middleware-draft\\Tool b\u1EAFt gi\u1EEFa\\MiddlewareTool\\MiddlewareTool\\LoggedRequest.cs",
               "RelativeToolTip": "MiddlewareTool\\LoggedRequest.cs",
-              "ViewState": "AgIAAAEAAAAAAAAAAAAYwBQAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAEAAAAAAAAAAAAswBUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-26T03:00:23.694Z"
+              "WhenOpened": "2025-09-26T03:00:23.694Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
               "Title": "MainWindow.xaml",
-              "DocumentMoniker": "D:\\Capstone Project\\PRN222-Project-sample-pe-sp25\\Tool b\u1EAFt gi\u1EEFa\\MiddlewareTool\\MiddlewareTool\\MainWindow.xaml",
+              "DocumentMoniker": "D:\\Capstone Project\\middleware-draft\\Tool b\u1EAFt gi\u1EEFa\\MiddlewareTool\\MiddlewareTool\\MainWindow.xaml",
               "RelativeDocumentMoniker": "MiddlewareTool\\MainWindow.xaml",
-              "ToolTip": "D:\\Capstone Project\\PRN222-Project-sample-pe-sp25\\Tool b\u1EAFt gi\u1EEFa\\MiddlewareTool\\MiddlewareTool\\MainWindow.xaml",
+              "ToolTip": "D:\\Capstone Project\\middleware-draft\\Tool b\u1EAFt gi\u1EEFa\\MiddlewareTool\\MiddlewareTool\\MainWindow.xaml",
               "RelativeToolTip": "MiddlewareTool\\MainWindow.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-09-26T02:59:40.074Z"
+              "WhenOpened": "2025-09-26T02:59:40.074Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "MainWindow.xaml.cs",
-              "DocumentMoniker": "D:\\Capstone Project\\PRN222-Project-sample-pe-sp25\\Tool b\u1EAFt gi\u1EEFa\\MiddlewareTool\\MiddlewareTool\\MainWindow.xaml.cs",
+              "DocumentMoniker": "D:\\Capstone Project\\middleware-draft\\Tool b\u1EAFt gi\u1EEFa\\MiddlewareTool\\MiddlewareTool\\MainWindow.xaml.cs",
               "RelativeDocumentMoniker": "MiddlewareTool\\MainWindow.xaml.cs",
-              "ToolTip": "D:\\Capstone Project\\PRN222-Project-sample-pe-sp25\\Tool b\u1EAFt gi\u1EEFa\\MiddlewareTool\\MiddlewareTool\\MainWindow.xaml.cs",
+              "ToolTip": "D:\\Capstone Project\\middleware-draft\\Tool b\u1EAFt gi\u1EEFa\\MiddlewareTool\\MiddlewareTool\\MainWindow.xaml.cs",
               "RelativeToolTip": "MiddlewareTool\\MainWindow.xaml.cs",
-              "ViewState": "AgIAACIAAAAAjJmZmZkFwBoAAAA5AAAAAAAAAA==",
+              "ViewState": "AgIAADoAAAAAAAAAAAArwCkAAABiAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-09-26T02:59:37.943Z",
               "EditorCaption": ""

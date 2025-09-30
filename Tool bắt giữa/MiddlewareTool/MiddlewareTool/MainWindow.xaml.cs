@@ -4,8 +4,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Windows;
+using System.Windows.Controls;
 
 
 namespace MiddlewareTool
@@ -15,6 +17,8 @@ namespace MiddlewareTool
     /// </summary>
     public partial class MainWindow : Window
     {
+        private static readonly string TARGET_FILE = "appsettings.json";
+
         private const string PROXY_PORT = "5000";
         private const string REAL_SERVER_PORT = "5001";
 
@@ -25,12 +29,14 @@ namespace MiddlewareTool
         private bool _isSessionRunning = false;
 
         public ObservableCollection<LoggedRequest> LoggedRequests { get; set; }
+
         public MainWindow()
         {
             InitializeComponent();
             LoggedRequests = new ObservableCollection<LoggedRequest>();
             RequestsGrid.ItemsSource = LoggedRequests;
         }
+
         private void BrowseServer_Click(object sender, RoutedEventArgs e)
         {
             var openFileDialog = new OpenFileDialog { Filter = "Executable files (*.exe)|*.exe" };
@@ -49,6 +55,16 @@ namespace MiddlewareTool
             }
         }
 
+        private void AppsettingTemplate_Click(object sender, RoutedEventArgs e)
+        {
+            var openFileDialog = new OpenFileDialog
+                { Filter = "JSON files (*.json)|*.json|Text files (*.txt)|*.txt|All files (*.*)|*.*" };
+            if (openFileDialog.ShowDialog() == true)
+            {
+                AppSettingTemplate.Text = openFileDialog.FileName;
+            }
+        }
+
         private async void StartStop_Click(object sender, RoutedEventArgs e)
         {
             if (_isSessionRunning)
@@ -57,17 +73,21 @@ namespace MiddlewareTool
             }
             else
             {
-                if (string.IsNullOrEmpty(ServerExePath.Text) || string.IsNullOrEmpty(ClientExePath.Text))
+                if (string.IsNullOrEmpty(ServerExePath.Text) || string.IsNullOrEmpty(ClientExePath.Text) ||
+                    string.IsNullOrEmpty(AppSettingTemplate.Text))
                 {
-                    MessageBox.Show("Please select both server and client executable files.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Please input all fields.", "Error",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
+
                 await StartSessionAsync();
             }
         }
 
         private async Task StartSessionAsync()
         {
+            ReplaceAppSetting();
             StartStopButton.Content = "Stop Grading Session";
             _isSessionRunning = true;
             LoggedRequests.Clear();
@@ -112,8 +132,21 @@ namespace MiddlewareTool
             _proxyListener?.Stop();
 
             // Đóng các process
-            try { if (_clientProcess != null && !_clientProcess.HasExited) _clientProcess.Kill(); } catch { }
-            try { if (_serverProcess != null && !_serverProcess.HasExited) _serverProcess.Kill(); } catch { }
+            try
+            {
+                if (_clientProcess != null && !_clientProcess.HasExited) _clientProcess.Kill();
+            }
+            catch
+            {
+            }
+
+            try
+            {
+                if (_serverProcess != null && !_serverProcess.HasExited) _serverProcess.Kill();
+            }
+            catch
+            {
+            }
 
             _isSessionRunning = false;
             StartStopButton.Content = "Start Grading Session";
@@ -153,39 +186,128 @@ namespace MiddlewareTool
             }
 
             // Chuyển tiếp request đến server thật
-            var realServerUrl = $"http://localhost:{REAL_SERVER_PORT}{request.Url.AbsolutePath}";
-            using (var client = new HttpClient())
+            try
             {
-                var forwardRequest = new HttpRequestMessage(new HttpMethod(request.HttpMethod), realServerUrl);
+                var realServerUrl = $"http://localhost:{REAL_SERVER_PORT}{request.Url.AbsolutePath}";
+                using (var client = new HttpClient())
+                {
+                    var forwardRequest = new HttpRequestMessage(new HttpMethod(request.HttpMethod), realServerUrl);
 
-                // Copy body
-                forwardRequest.Content = new StringContent(logEntry.RequestBody, Encoding.UTF8, request.ContentType);
+                    MediaTypeHeaderValue? contentType = null;
 
-                // Gửi request và nhận response
-                var responseMessage = await client.SendAsync(forwardRequest);
-                var response = context.Response;
+                    if (request.ContentType != null)
+                    {
+                        contentType = MediaTypeHeaderValue.Parse(request.ContentType);
+                    }
 
-                // Ghi log status code
-                logEntry.StatusCode = (int)responseMessage.StatusCode;
+                    // Copy body
+                    forwardRequest.Content =
+                        new StringContent(logEntry.RequestBody, contentType);
 
-                // Đọc response body
-                var responseContent = await responseMessage.Content.ReadAsByteArrayAsync();
-                logEntry.ResponseBody = Encoding.UTF8.GetString(responseContent);
+                    // Gửi request và nhận response
+                    var responseMessage = await client.SendAsync(forwardRequest);
+                    var response = context.Response;
 
-                // Copy response từ server thật về cho client gốc
-                response.StatusCode = (int)responseMessage.StatusCode;
-                response.ContentLength64 = responseContent.Length;
-                response.ContentType = responseMessage.Content.Headers.ContentType?.ToString();
+                    // Ghi log status code
+                    logEntry.StatusCode = (int)responseMessage.StatusCode;
 
-                await response.OutputStream.WriteAsync(responseContent, 0, responseContent.Length);
-                response.Close();
+                    // Đọc response body
+                    var responseContent = await responseMessage.Content.ReadAsByteArrayAsync();
+                    logEntry.ResponseBody = Encoding.UTF8.GetString(responseContent);
+
+
+                    // Copy response từ server thật về cho client gốc
+                    response.StatusCode = (int)responseMessage.StatusCode;
+                    response.ContentLength64 = responseContent.Length;
+                    response.ContentType = responseMessage.Content.Headers.ContentType?.ToString();
+
+                    await response.OutputStream.WriteAsync(responseContent, 0, responseContent.Length);
+                    response.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
 
             // Cập nhật UI từ thread chính
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                LoggedRequests.Add(logEntry);
-            });
+            Application.Current.Dispatcher.Invoke(() => { LoggedRequests.Add(logEntry); });
         }
+
+        private void ViewButton_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+
+            if (button?.DataContext is LoggedRequest loggedRequest)
+            {
+                StringBuilder msg = new StringBuilder();
+
+                if (loggedRequest.Timestamp.Length > 0)
+                {
+                    msg.Append($"Time stamp: {loggedRequest.Timestamp}\n");
+                }
+
+                if (loggedRequest.Method.Length > 0)
+                {
+                    msg.Append($"Method: {loggedRequest.Method}\n");
+                }
+
+                if (loggedRequest.Url.Length > 0)
+                {
+                    msg.Append($"Url: {loggedRequest.Url}\n");
+                }
+
+                if (loggedRequest.StatusCode > 0)
+                {
+                    msg.Append($"Status code: {loggedRequest.StatusCode}\n");
+                }
+
+                if (loggedRequest.ResponseBody.Length > 0)
+                {
+                    msg.Append($"Response body: {loggedRequest.ResponseBody}\n");
+                }
+
+                MessageBox.Show(msg.ToString(), "Captured Data", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
+        private void ReplaceAppSetting()
+        {
+            string templatePath = AppSettingTemplate.Text;
+            string destinationDir = Path.GetDirectoryName(ServerExePath.Text);
+        
+            if (!File.Exists(templatePath) || !Directory.Exists(destinationDir))
+            {
+                MessageBox.Show("Folder/File does not exist!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+        
+            string[] searchResults = Directory.GetFiles(destinationDir, TARGET_FILE, SearchOption.AllDirectories);
+            foreach (string item in searchResults)
+            {
+                try
+                {
+                    File.Copy(templatePath, item, true);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+        }
+
+        private void AppsettingClientTemplate_Click(object sender, RoutedEventArgs e)
+        {
+            var openFileDialog = new OpenFileDialog
+            {
+                Filter = "JSON files (*.json)|*.json|Text files (*.txt)|*.txt|All files (*.*)|*.*"
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                AppSettingClientTemplate.Text = openFileDialog.FileName;
+            }
+        }
+
     }
 }
