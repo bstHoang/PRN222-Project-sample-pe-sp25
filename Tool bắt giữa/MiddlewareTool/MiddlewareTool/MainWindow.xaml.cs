@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using ClosedXML.Excel;
+using Microsoft.Win32;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
@@ -10,6 +11,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 
+
 namespace MiddlewareTool
 {
     public partial class MainWindow : Window
@@ -18,10 +20,10 @@ namespace MiddlewareTool
         private const int PROXY_PORT = 5000;
         private const int REAL_SERVER_PORT = 5001;
 
-        // HTTP specific
-        private HttpListener? _httpListener;
+        private string _excelLogPath = "";
+        private static readonly object _excelLock = new object();
 
-        // TCP specific (NEW)
+        private HttpListener? _httpListener;
         private TcpListener? _tcpListener;
 
         private Process? _serverProcess;
@@ -38,8 +40,7 @@ namespace MiddlewareTool
             RequestsGrid.ItemsSource = LoggedRequests;
         }
 
-        //======================= Lấy đường dẫn file Server
-        //================================================ 
+        #region File Dialog Handlers
         private void BrowseServer_Click(object sender, RoutedEventArgs e)
         {
             var openFileDialog = new OpenFileDialog { Filter = "Executable files (*.exe)|*.exe" };
@@ -49,8 +50,6 @@ namespace MiddlewareTool
             }
         }
 
-        //======================= Lấy đường dẫn file Client
-        //================================================
         private void BrowseClient_Click(object sender, RoutedEventArgs e)
         {
             var openFileDialog = new OpenFileDialog { Filter = "Executable files (*.exe)|*.exe" };
@@ -60,8 +59,6 @@ namespace MiddlewareTool
             }
         }
 
-        //======================= Lấy đường dẫn file appsettings.json Server
-        //================================================
         private void AppsettingTemplate_Click(object sender, RoutedEventArgs e)
         {
             var openFileDialog = new OpenFileDialog { Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*" };
@@ -71,8 +68,6 @@ namespace MiddlewareTool
             }
         }
 
-        //======================= Lấy đường dẫn file appsettings.json Client
-        //================================================
         private void AppsettingClientTemplate_Click(object sender, RoutedEventArgs e)
         {
             var openFileDialog = new OpenFileDialog { Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*" };
@@ -82,10 +77,25 @@ namespace MiddlewareTool
             }
         }
 
-        //======================= Bắt đầu hoặc dừng phiên
-        //================================================
+        private void SelectLogFile_Click(object sender, RoutedEventArgs e)
+        {
+            var saveFileDialog = new SaveFileDialog
+            {
+                Filter = "Excel Workbook (*.xlsx)|*.xlsx",
+                Title = "Select Excel file to save logs",
+                FileName = "LogData.xlsx"
+            };
 
-        private async void StartStop_Click(object sender, RoutedEventArgs e)//done
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                _excelLogPath = saveFileDialog.FileName;
+                ExcelLogPath.Text = _excelLogPath;
+            }
+        }
+        #endregion
+
+        #region Session Control
+        private async void StartStop_Click(object sender, RoutedEventArgs e)
         {
             if (_isSessionRunning)
             {
@@ -93,22 +103,25 @@ namespace MiddlewareTool
             }
             else
             {
-                if (string.IsNullOrEmpty(ServerExePath.Text) || string.IsNullOrEmpty(ClientExePath.Text) 
-                    || string.IsNullOrEmpty(AppSettingTemplate.Text) || string.IsNullOrEmpty(AppSettingClientTemplate.Text))
+                if (string.IsNullOrEmpty(ServerExePath.Text) || string.IsNullOrEmpty(ClientExePath.Text)
+                    || string.IsNullOrEmpty(AppSettingTemplate.Text) || string.IsNullOrEmpty(AppSettingClientTemplate.Text)
+                    || string.IsNullOrEmpty(_excelLogPath))
                 {
-                    MessageBox.Show("Please input all fields.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Please provide all required paths, including the log file location.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
                 await StartSessionAsync();
             }
         }
 
-        private async Task StartSessionAsync()//done
+        private async Task StartSessionAsync()
         {
             ReplaceAppSetting();
             StartStopButton.Content = "Stop Grading Session";
             _isSessionRunning = true;
             LoggedRequests.Clear();
+
+            SetupExcelLogFile(_excelLogPath);
 
             _serverProcess = new Process
             {
@@ -118,7 +131,6 @@ namespace MiddlewareTool
 
             _cts = new CancellationTokenSource();
 
-            // MODIFIED: Check protocol type
             string selectedProtocol = (ProtocolSelection.SelectedItem as ComboBoxItem)?.Content.ToString() ?? "HTTP";
 
             if (selectedProtocol == "HTTP")
@@ -130,7 +142,7 @@ namespace MiddlewareTool
                 StartTcpProxy(_cts.Token);
             }
 
-            await Task.Delay(1500); // Wait a bit for server and proxy to be ready
+            await Task.Delay(1500);
 
             _clientProcess = new Process
             {
@@ -139,25 +151,23 @@ namespace MiddlewareTool
             _clientProcess.Start();
         }
 
-        private void StopSession()//done
+        private void StopSession()
         {
             _cts?.Cancel();
             _httpListener?.Stop();
-            _tcpListener?.Stop(); // NEW
+            _tcpListener?.Stop();
 
             try { if (_clientProcess != null && !_clientProcess.HasExited) _clientProcess.Kill(); } catch { }
             try { if (_serverProcess != null && !_serverProcess.HasExited) _serverProcess.Kill(); } catch { }
 
             _isSessionRunning = false;
             StartStopButton.Content = "Start Grading Session";
+            MessageBox.Show($"Log session stopped. Data appended to:\n{_excelLogPath}", "Session Ended", MessageBoxButton.OK, MessageBoxImage.Information);
         }
-        //=============================== Kết thúc bắt đầu hoặc dừng phiên
-        //===============================================================
+        #endregion
 
-
-        //========================================== Xử lí Http Proxy
-        //===============================================================
-        private void StartHttpProxy(CancellationToken token)//done
+        #region Proxy Logic
+        private void StartHttpProxy(CancellationToken token)
         {
             _httpListener = new HttpListener();
             _httpListener.Prefixes.Add($"http://localhost:{PROXY_PORT}/");
@@ -165,7 +175,7 @@ namespace MiddlewareTool
             Task.Run(() => ListenForHttpRequests(token), token);
         }
 
-        private async Task ListenForHttpRequests(CancellationToken token)//done
+        private async Task ListenForHttpRequests(CancellationToken token)
         {
             while (!token.IsCancellationRequested)
             {
@@ -174,7 +184,7 @@ namespace MiddlewareTool
                     var context = await _httpListener.GetContextAsync();
                     _ = Task.Run(() => ProcessHttpRequest(context), token);
                 }
-                catch (HttpListenerException) { break; } // Listener stopped
+                catch (HttpListenerException) { break; }
             }
         }
 
@@ -215,14 +225,10 @@ namespace MiddlewareTool
             }
             catch (Exception ex) { Console.WriteLine($"HTTP Forward Error: {ex.Message}"); }
 
+            AppendToExcelLog(logEntry);
             Application.Current.Dispatcher.Invoke(() => LoggedRequests.Add(logEntry));
         }
-        //============================================= kết thúc xử lí HTTP Proxy
-        //===========================================================================
 
-
-        //============================================= Xử lí TCP Proxy 
-        //===========================================================================
         private void StartTcpProxy(CancellationToken token)
         {
             _tcpListener = new TcpListener(IPAddress.Loopback, PROXY_PORT);
@@ -239,7 +245,7 @@ namespace MiddlewareTool
                     var clientConnection = await _tcpListener.AcceptTcpClientAsync(token);
                     _ = Task.Run(() => ProcessTcpConnection(clientConnection, token), token);
                 }
-                catch (OperationCanceledException) { break; } // Listener stopped
+                catch (OperationCanceledException) { break; }
                 catch (Exception ex) { Console.WriteLine($"TCP Accept Error: {ex.Message}"); }
             }
         }
@@ -257,7 +263,6 @@ namespace MiddlewareTool
                     {
                         var clientToServer = RelayDataAsync(clientStream, serverStream, "Client -> Server", token);
                         var serverToClient = RelayDataAsync(serverStream, clientStream, "Server -> Client", token);
-
                         await Task.WhenAny(clientToServer, serverToClient);
                     }
                 }
@@ -273,31 +278,93 @@ namespace MiddlewareTool
             {
                 await toStream.WriteAsync(buffer, 0, bytesRead, token);
 
-                // Log the data packet
                 string dataPreview = Encoding.UTF8.GetString(buffer, 0, bytesRead);
                 var logEntry = new LoggedRequest
                 {
                     Method = direction,
                     Url = dataPreview.Length > 100 ? dataPreview.Substring(0, 100) + "..." : dataPreview,
-                    RequestBody = dataPreview, // Store full data here for view button
+                    RequestBody = dataPreview,
                     StatusCode = bytesRead
                 };
+
+                AppendToExcelLog(logEntry);
                 Application.Current.Dispatcher.Invoke(() => LoggedRequests.Add(logEntry));
             }
         }
-        //============================================= kết thúc xử lí TCP Proxy
-        //===========================================================================
+        #endregion
 
-        //====================== Xử lí nút View 
-        //===========================================================================
+        #region Excel Handling
+        private void SetupExcelLogFile(string path)
+        {
+            lock (_excelLock)
+            {
+                if (!File.Exists(path))
+                {
+                    string directory = Path.GetDirectoryName(path);
+                    if (directory != null && !Directory.Exists(directory))
+                    {
+                        Directory.CreateDirectory(directory);
+                    }
+
+                    using (var workbook = new XLWorkbook())
+                    {
+                        var worksheet = workbook.Worksheets.Add("Logs");
+
+                        worksheet.Cell(1, 1).Value = "Timestamp";
+                        worksheet.Cell(1, 2).Value = "Method/Direction";
+                        worksheet.Cell(1, 3).Value = "URL/Data Preview";
+                        worksheet.Cell(1, 4).Value = "Status/Bytes";
+                        worksheet.Cell(1, 5).Value = "Request Body / Data";
+                        worksheet.Cell(1, 6).Value = "Response Body";
+
+                        worksheet.Row(1).Style.Font.Bold = true;
+                        worksheet.Columns().AdjustToContents();
+
+                        workbook.SaveAs(path);
+                    }
+                }
+            }
+        }
+
+        private void AppendToExcelLog(LoggedRequest logEntry)
+        {
+            if (string.IsNullOrEmpty(_excelLogPath)) return;
+
+            lock (_excelLock)
+            {
+                try
+                {
+                    using (var workbook = new XLWorkbook(_excelLogPath))
+                    {
+                        var worksheet = workbook.Worksheet(1);
+                        int newRow = worksheet.LastRowUsed().RowNumber() + 1;
+
+                        worksheet.Cell(newRow, 1).Value = logEntry.Timestamp;
+                        worksheet.Cell(newRow, 2).Value = logEntry.Method;
+                        worksheet.Cell(newRow, 3).Value = logEntry.Url;
+                        worksheet.Cell(newRow, 4).Value = logEntry.StatusCode;
+                        worksheet.Cell(newRow, 5).Value = logEntry.RequestBody;
+                        worksheet.Cell(newRow, 6).Value = logEntry.ResponseBody;
+
+                        workbook.Save();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error writing to Excel log: {ex.Message}");
+                }
+            }
+        }
+        #endregion
+
+        #region UI Helpers
         private void ViewButton_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button button && button.DataContext is LoggedRequest loggedRequest)
             {
-                StringBuilder msg = new StringBuilder();
+                var msg = new StringBuilder();
                 msg.AppendLine($"Timestamp: {loggedRequest.Timestamp}");
 
-                // Adapt message for both protocols
                 string selectedProtocol = (ProtocolSelection.SelectedItem as ComboBoxItem)?.Content.ToString() ?? "HTTP";
                 if (selectedProtocol == "HTTP")
                 {
@@ -318,10 +385,7 @@ namespace MiddlewareTool
             }
         }
 
-
-        //====================== Thay thế file appsettings.json
-        //===========================================================================
-        private void ReplaceAppSetting()//done
+        private void ReplaceAppSetting()
         {
             string serverTemplatePath = AppSettingTemplate.Text;
             string clientTemplatePath = AppSettingClientTemplate.Text;
@@ -330,7 +394,8 @@ namespace MiddlewareTool
 
             Action<string, string> copyFile = (template, destDir) =>
             {
-                if (!File.Exists(template) || !Directory.Exists(destDir)) return;
+                if (string.IsNullOrEmpty(template) || !File.Exists(template) || string.IsNullOrEmpty(destDir) || !Directory.Exists(destDir)) return;
+
                 string[] searchResults = Directory.GetFiles(destDir, TARGET_FILE, SearchOption.AllDirectories);
                 foreach (string item in searchResults)
                 {
@@ -342,6 +407,6 @@ namespace MiddlewareTool
             copyFile(serverTemplatePath, serverDestDir);
             copyFile(clientTemplatePath, clientDestDir);
         }
-        
+        #endregion
     }
 }
