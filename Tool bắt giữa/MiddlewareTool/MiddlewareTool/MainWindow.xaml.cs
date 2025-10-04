@@ -1,5 +1,4 @@
 ﻿using Microsoft.Win32;
-using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
@@ -8,8 +7,6 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -41,7 +38,8 @@ namespace MiddlewareTool
             RequestsGrid.ItemsSource = LoggedRequests;
         }
 
-        #region UI Event Handlers (Browse, etc.) - NO CHANGE
+        //======================= Lấy đường dẫn file Server
+        //================================================ 
         private void BrowseServer_Click(object sender, RoutedEventArgs e)
         {
             var openFileDialog = new OpenFileDialog { Filter = "Executable files (*.exe)|*.exe" };
@@ -51,6 +49,8 @@ namespace MiddlewareTool
             }
         }
 
+        //======================= Lấy đường dẫn file Client
+        //================================================
         private void BrowseClient_Click(object sender, RoutedEventArgs e)
         {
             var openFileDialog = new OpenFileDialog { Filter = "Executable files (*.exe)|*.exe" };
@@ -60,6 +60,8 @@ namespace MiddlewareTool
             }
         }
 
+        //======================= Lấy đường dẫn file appsettings.json Server
+        //================================================
         private void AppsettingTemplate_Click(object sender, RoutedEventArgs e)
         {
             var openFileDialog = new OpenFileDialog { Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*" };
@@ -69,6 +71,8 @@ namespace MiddlewareTool
             }
         }
 
+        //======================= Lấy đường dẫn file appsettings.json Client
+        //================================================
         private void AppsettingClientTemplate_Click(object sender, RoutedEventArgs e)
         {
             var openFileDialog = new OpenFileDialog { Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*" };
@@ -77,9 +81,11 @@ namespace MiddlewareTool
                 AppSettingClientTemplate.Text = openFileDialog.FileName;
             }
         }
-        #endregion
 
-        private async void StartStop_Click(object sender, RoutedEventArgs e)
+        //======================= Bắt đầu hoặc dừng phiên
+        //================================================
+
+        private async void StartStop_Click(object sender, RoutedEventArgs e)//done
         {
             if (_isSessionRunning)
             {
@@ -87,7 +93,8 @@ namespace MiddlewareTool
             }
             else
             {
-                if (string.IsNullOrEmpty(ServerExePath.Text) || string.IsNullOrEmpty(ClientExePath.Text) || string.IsNullOrEmpty(AppSettingTemplate.Text))
+                if (string.IsNullOrEmpty(ServerExePath.Text) || string.IsNullOrEmpty(ClientExePath.Text) 
+                    || string.IsNullOrEmpty(AppSettingTemplate.Text) || string.IsNullOrEmpty(AppSettingClientTemplate.Text))
                 {
                     MessageBox.Show("Please input all fields.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
@@ -96,7 +103,7 @@ namespace MiddlewareTool
             }
         }
 
-        private async Task StartSessionAsync()
+        private async Task StartSessionAsync()//done
         {
             ReplaceAppSetting();
             StartStopButton.Content = "Stop Grading Session";
@@ -132,7 +139,7 @@ namespace MiddlewareTool
             _clientProcess.Start();
         }
 
-        private void StopSession()
+        private void StopSession()//done
         {
             _cts?.Cancel();
             _httpListener?.Stop();
@@ -144,9 +151,13 @@ namespace MiddlewareTool
             _isSessionRunning = false;
             StartStopButton.Content = "Start Grading Session";
         }
+        //=============================== Kết thúc bắt đầu hoặc dừng phiên
+        //===============================================================
 
-        #region HTTP PROXY LOGIC (Original code, slightly refactored)
-        private void StartHttpProxy(CancellationToken token)
+
+        //========================================== Xử lí Http Proxy
+        //===============================================================
+        private void StartHttpProxy(CancellationToken token)//done
         {
             _httpListener = new HttpListener();
             _httpListener.Prefixes.Add($"http://localhost:{PROXY_PORT}/");
@@ -154,7 +165,7 @@ namespace MiddlewareTool
             Task.Run(() => ListenForHttpRequests(token), token);
         }
 
-        private async Task ListenForHttpRequests(CancellationToken token)
+        private async Task ListenForHttpRequests(CancellationToken token)//done
         {
             while (!token.IsCancellationRequested)
             {
@@ -183,6 +194,7 @@ namespace MiddlewareTool
                 using (var client = new HttpClient())
                 {
                     var forwardRequest = new HttpRequestMessage(new HttpMethod(request.HttpMethod), realServerUrl);
+
                     MediaTypeHeaderValue? contentType = null;
                     if (request.ContentType != null) { contentType = MediaTypeHeaderValue.Parse(request.ContentType); }
                     forwardRequest.Content = new StringContent(logEntry.RequestBody, contentType);
@@ -205,9 +217,12 @@ namespace MiddlewareTool
 
             Application.Current.Dispatcher.Invoke(() => LoggedRequests.Add(logEntry));
         }
-        #endregion
+        //============================================= kết thúc xử lí HTTP Proxy
+        //===========================================================================
 
-        #region TCP PROXY LOGIC (NEW)
+
+        //============================================= Xử lí TCP Proxy 
+        //===========================================================================
         private void StartTcpProxy(CancellationToken token)
         {
             _tcpListener = new TcpListener(IPAddress.Loopback, PROXY_PORT);
@@ -270,9 +285,11 @@ namespace MiddlewareTool
                 Application.Current.Dispatcher.Invoke(() => LoggedRequests.Add(logEntry));
             }
         }
-        #endregion
+        //============================================= kết thúc xử lí TCP Proxy
+        //===========================================================================
 
-        #region Other methods (ViewButton, ReplaceAppSetting) - NO CHANGE
+        //====================== Xử lí nút View 
+        //===========================================================================
         private void ViewButton_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button button && button.DataContext is LoggedRequest loggedRequest)
@@ -301,7 +318,10 @@ namespace MiddlewareTool
             }
         }
 
-        private void ReplaceAppSetting()
+
+        //====================== Thay thế file appsettings.json
+        //===========================================================================
+        private void ReplaceAppSetting()//done
         {
             string serverTemplatePath = AppSettingTemplate.Text;
             string clientTemplatePath = AppSettingClientTemplate.Text;
@@ -322,6 +342,6 @@ namespace MiddlewareTool
             copyFile(serverTemplatePath, serverDestDir);
             copyFile(clientTemplatePath, clientDestDir);
         }
-        #endregion
+        
     }
 }

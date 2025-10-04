@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration; // Thêm namespace này
+using Microsoft.Extensions.Configuration; 
 
 public class Book
 {
@@ -27,7 +27,7 @@ class Program
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .Build();
 
-        baseUrl = config["BaseUrl"] ?? "http://127.0.0.1:8080/";
+        baseUrl = config["BaseUrl"] ;
         Console.WriteLine($"Base URL: {baseUrl}");
 
         bool running = true;
