@@ -1,10 +1,11 @@
-﻿using System;
+﻿using ConsoleApp1;
+using Microsoft.Extensions.Configuration; 
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration; 
 
 public class Book
 {
@@ -91,7 +92,7 @@ class Program
                 {
                     foreach (var book in books)
                     {
-                        Console.WriteLine($"ID: {book.BookId} | Title: {book.Title} | Year: {book.PublicationYear}");
+                        Console.WriteLine(Utils.FormatObject(book));
                     }
                 }
                 else
@@ -162,6 +163,16 @@ class Program
             Console.WriteLine("Invalid ID.");
             return;
         }
+
+        var currentBook = await GetBookByIdAsync(id);
+        if (currentBook == null)
+        {
+            Console.WriteLine("Book not found.");
+            return;
+        }
+
+        Console.WriteLine("\nCurrent book info:");
+        Console.WriteLine(Utils.FormatObject(currentBook));
 
         bool updating = true;
         while (updating)
@@ -278,4 +289,27 @@ class Program
             Console.WriteLine($"Exception: {ex.Message}");
         }
     }
+
+    private static async Task<Book?> GetBookByIdAsync(int id)
+    {
+        try
+        {
+            var response = await client.GetAsync($"{baseUrl}books/{id}");
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var book = JsonSerializer.Deserialize<Book>(json, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+                return book;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Exception: {ex.Message}");
+        }
+        return null;
+    }
+
 }

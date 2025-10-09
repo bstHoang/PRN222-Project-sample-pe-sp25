@@ -164,10 +164,34 @@ class Program
                     response.StatusCode = 400;
                 }
             }
+            // =======================
+            // GET /books/{id}
+            // =======================
+            else if (path.StartsWith("/books/") && method == "GET")
+            {
+                if (int.TryParse(path.Replace("/books/", ""), out int id))
+                {
+                    var book = FakeDatabase.Books.FirstOrDefault(b => b.BookId == id);
+                    if (book == null)
+                    {
+                        response.StatusCode = 404;
+                    }
+                    else
+                    {
+                        response.StatusCode = 200;
+                        await WriteJsonResponse(response, book);
+                    }
+                }
+                else
+                {
+                    response.StatusCode = 400;
+                }
+            }
             else
             {
                 response.StatusCode = 404;
             }
+
 
             response.Close();
         }
