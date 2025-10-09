@@ -12,6 +12,7 @@ public class Book
     public string Title { get; set; } = "";
     public int? PublicationYear { get; set; }
     public Genre? GenreId { get; set; }
+    //public List<Genre>? GenreId { get; set; }
 }
 
 public class Genre
@@ -35,15 +36,25 @@ public static class FakeDatabase
     public static List<Book> Books = new List<Book>
     {
         new Book { BookId = 1, Title = "Harry Potter and the Philosopher's Stone", PublicationYear = 1997, GenreId =  Genres[1]},
-        new Book { BookId = 2, Title = "1984", PublicationYear = 1949, GenreId = Genres[1] },
+        new Book { BookId = 2, Title = "1984", PublicationYear = 1949, GenreId =  Genres[1]},
         new Book { BookId = 3, Title = "The Hobbit", PublicationYear = 1937, GenreId = Genres[1] },
         new Book { BookId = 4, Title = "Murder on the Orient Express", PublicationYear = 1934, GenreId = Genres[1]  },
-        new Book { BookId = 5, Title = "The Da Vinci Code", PublicationYear = 2003, GenreId =  Genres[1]},
-        new Book { BookId = 6, Title = "Sapiens: A Brief History of Humankind", PublicationYear = 2011, GenreId =  Genres[1]},
-        new Book { BookId = 7, Title = "The Handmaid's Tale", PublicationYear = 1985, GenreId = Genres[1]  },
-        new Book { BookId = 8, Title = "Foundation", PublicationYear = 1951, GenreId =  Genres[1] },
-        new Book { BookId = 9, Title = "I, Robot", PublicationYear = 1950, GenreId =  Genres[1]   },
+        new Book { BookId = 5, Title = "The Da Vinci Code", PublicationYear = 2003, GenreId = Genres[1] },
+        new Book { BookId = 6, Title = "Sapiens: A Brief History of Humankind", PublicationYear = 2011, GenreId = Genres[1] },
+        new Book { BookId = 7, Title = "The Handmaid's Tale", PublicationYear = 1985, GenreId =  Genres[1] },
+        new Book { BookId = 8, Title = "Foundation", PublicationYear = 1951, GenreId = Genres[1]  },
+        new Book { BookId = 9, Title = "I, Robot", PublicationYear = 1950, GenreId =    Genres[1] },
         new Book { BookId = 10, Title = "Foundation and Empire", PublicationYear = 1952, GenreId = Genres[1] }
+        //new Book { BookId = 1, Title = "Harry Potter and the Philosopher's Stone", PublicationYear = 1997, GenreId = new List<Genre>(){ Genres[1], Genres[2], Genres[3] } },
+        //new Book { BookId = 2, Title = "1984", PublicationYear = 1949, GenreId = new List<Genre>(){ Genres[1], Genres[2], Genres[3] } },
+        //new Book { BookId = 3, Title = "The Hobbit", PublicationYear = 1937, GenreId = new List<Genre>(){ Genres[1], Genres[2], Genres[3] } },
+        //new Book { BookId = 4, Title = "Murder on the Orient Express", PublicationYear = 1934, GenreId = new List<Genre>(){ Genres[1], Genres[2], Genres[3] }  },
+        //new Book { BookId = 5, Title = "The Da Vinci Code", PublicationYear = 2003, GenreId = new List < Genre >() {Genres[1], Genres[2], Genres[3] } },
+        //new Book { BookId = 6, Title = "Sapiens: A Brief History of Humankind", PublicationYear = 2011, GenreId = new List < Genre >() { } },
+        //new Book { BookId = 7, Title = "The Handmaid's Tale", PublicationYear = 1985, GenreId = new List<Genre>(){ Genres[1], Genres[2], Genres[3] }  },
+        //new Book { BookId = 8, Title = "Foundation", PublicationYear = 1951, GenreId = new List < Genre >() { Genres[1], Genres[2], Genres[3] }  },
+        //new Book { BookId = 9, Title = "I, Robot", PublicationYear = 1950, GenreId =    new List < Genre >() { Genres[1], Genres[2], Genres[3] } },
+        //new Book { BookId = 10, Title = "Foundation and Empire", PublicationYear = 1952, GenreId = new List < Genre >() { Genres[1], Genres[2], Genres[3] } }
     };
 
 
