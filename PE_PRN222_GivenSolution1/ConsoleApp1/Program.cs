@@ -12,6 +12,13 @@ public class Book
     public int BookId { get; set; }
     public string Title { get; set; } = "";
     public int? PublicationYear { get; set; }
+    public Genre? GenreId { get; set; }
+}
+
+public class Genre
+{
+    public int GenreId { get; set; }
+    public string GenreName { get; set; }
 }
 
 class Program
@@ -92,7 +99,7 @@ class Program
                 {
                     foreach (var book in books)
                     {
-                        Console.WriteLine(Utils.FormatObject(book));
+                        Console.WriteLine(Utils.Stringify(book));
                     }
                 }
                 else

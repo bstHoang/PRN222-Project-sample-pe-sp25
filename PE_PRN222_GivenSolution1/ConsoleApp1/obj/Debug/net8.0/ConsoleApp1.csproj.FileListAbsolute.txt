@@ -50,3 +50,29 @@ D:\Capstone Project\middlewareTool\PRN222-Project-sample-pe-sp25\PE_PRN222_Given
 D:\Capstone Project\middlewareTool\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\obj\Debug\net8.0\ConsoleApp1.pdb
 D:\Capstone Project\middlewareTool\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\obj\Debug\net8.0\ConsoleApp1.genruntimeconfig.cache
 D:\Capstone Project\middlewareTool\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\obj\Debug\net8.0\ref\ConsoleApp1.dll
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\bin\Debug\net8.0\ConsoleApp1.exe
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\bin\Debug\net8.0\appsettings.json
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\bin\Debug\net8.0\ConsoleApp1.deps.json
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\bin\Debug\net8.0\ConsoleApp1.runtimeconfig.json
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\bin\Debug\net8.0\ConsoleApp1.dll
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\bin\Debug\net8.0\ConsoleApp1.pdb
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\bin\Debug\net8.0\Microsoft.Extensions.Configuration.dll
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\bin\Debug\net8.0\Microsoft.Extensions.Configuration.Abstractions.dll
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\bin\Debug\net8.0\Microsoft.Extensions.Configuration.FileExtensions.dll
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\bin\Debug\net8.0\Microsoft.Extensions.Configuration.Json.dll
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\bin\Debug\net8.0\Microsoft.Extensions.FileProviders.Abstractions.dll
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\bin\Debug\net8.0\Microsoft.Extensions.FileProviders.Physical.dll
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\bin\Debug\net8.0\Microsoft.Extensions.FileSystemGlobbing.dll
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\bin\Debug\net8.0\Microsoft.Extensions.Primitives.dll
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\obj\Debug\net8.0\ConsoleApp1.csproj.AssemblyReference.cache
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\obj\Debug\net8.0\ConsoleApp1.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\obj\Debug\net8.0\ConsoleApp1.AssemblyInfoInputs.cache
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\obj\Debug\net8.0\ConsoleApp1.AssemblyInfo.cs
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\obj\Debug\net8.0\ConsoleApp1.csproj.CoreCompileInputs.cache
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\obj\Debug\net8.0\ConsoleApp1.sourcelink.json
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\obj\Debug\net8.0\ConsoleA.CB28C8CC.Up2Date
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\obj\Debug\net8.0\ConsoleApp1.dll
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\obj\Debug\net8.0\refint\ConsoleApp1.dll
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\obj\Debug\net8.0\ConsoleApp1.pdb
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\obj\Debug\net8.0\ConsoleApp1.genruntimeconfig.cache
+C:\Users\NPC\Documents\FPT\Capstone\Code\Sample\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\obj\Debug\net8.0\ref\ConsoleApp1.dll

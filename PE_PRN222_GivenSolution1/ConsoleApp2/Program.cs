@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Text;
 using System.Text.Json;
-using Microsoft.Extensions.Configuration; 
+using Microsoft.Extensions.Configuration;
 
 // ============================
 // MODEL
@@ -11,31 +11,17 @@ public class Book
     public int BookId { get; set; }
     public string Title { get; set; } = "";
     public int? PublicationYear { get; set; }
-    public int? GenreId { get; set; }
+    public Genre? GenreId { get; set; }
 }
 
 public class Genre
 {
     public int GenreId { get; set; }
-    public string GenreName { get; set; } 
+    public string GenreName { get; set; }
 }
 
 public static class FakeDatabase
 {
-    public static List<Book> Books = new List<Book>
-    {
-        new Book { BookId = 1, Title = "Harry Potter and the Philosopher's Stone", PublicationYear = 1997, GenreId = 1 },
-        new Book { BookId = 2, Title = "1984", PublicationYear = 1949, GenreId = 2 },
-        new Book { BookId = 3, Title = "The Hobbit", PublicationYear = 1937, GenreId = 1 },
-        new Book { BookId = 4, Title = "Murder on the Orient Express", PublicationYear = 1934, GenreId = 3 },
-        new Book { BookId = 5, Title = "The Da Vinci Code", PublicationYear = 2003, GenreId = 4 },
-        new Book { BookId = 6, Title = "Sapiens: A Brief History of Humankind", PublicationYear = 2011, GenreId = 5 },
-        new Book { BookId = 7, Title = "The Handmaid's Tale", PublicationYear = 1985, GenreId = 2 },
-        new Book { BookId = 8, Title = "Foundation", PublicationYear = 1951, GenreId = 6 },
-        new Book { BookId = 9, Title = "I, Robot", PublicationYear = 1950, GenreId = 6 },
-        new Book { BookId = 10, Title = "Foundation and Empire", PublicationYear = 1952, GenreId = 6 }
-    };
-
     public static List<Genre> Genres = new List<Genre>
     {
         new Genre { GenreId = 1, GenreName = "Fantasy" },
@@ -45,6 +31,22 @@ public static class FakeDatabase
         new Genre { GenreId = 5, GenreName = "Non-fiction" },
         new Genre { GenreId = 6, GenreName = "Science Fiction" }
     };
+
+    public static List<Book> Books = new List<Book>
+    {
+        new Book { BookId = 1, Title = "Harry Potter and the Philosopher's Stone", PublicationYear = 1997, GenreId =  Genres[1]},
+        new Book { BookId = 2, Title = "1984", PublicationYear = 1949, GenreId = Genres[1] },
+        new Book { BookId = 3, Title = "The Hobbit", PublicationYear = 1937, GenreId = Genres[1] },
+        new Book { BookId = 4, Title = "Murder on the Orient Express", PublicationYear = 1934, GenreId = Genres[1]  },
+        new Book { BookId = 5, Title = "The Da Vinci Code", PublicationYear = 2003, GenreId =  Genres[1]},
+        new Book { BookId = 6, Title = "Sapiens: A Brief History of Humankind", PublicationYear = 2011, GenreId =  Genres[1]},
+        new Book { BookId = 7, Title = "The Handmaid's Tale", PublicationYear = 1985, GenreId = Genres[1]  },
+        new Book { BookId = 8, Title = "Foundation", PublicationYear = 1951, GenreId =  Genres[1] },
+        new Book { BookId = 9, Title = "I, Robot", PublicationYear = 1950, GenreId =  Genres[1]   },
+        new Book { BookId = 10, Title = "Foundation and Empire", PublicationYear = 1952, GenreId = Genres[1] }
+    };
+
+
 
     public static int GetNextBookId()
     {
