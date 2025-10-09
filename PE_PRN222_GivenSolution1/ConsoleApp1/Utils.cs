@@ -15,7 +15,7 @@ namespace ConsoleApp1
 
             foreach (var prop in properties)
             {
-                result += $"{prop.Name}: {prop.GetValue(item)} | ";
+                result += $"{prop.Name}: {prop.GetValue(item)} ";
             }
 
             return result.Trim();

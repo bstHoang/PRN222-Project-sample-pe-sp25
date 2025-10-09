@@ -7,12 +7,12 @@
       "RelativeMoniker": "D:0:0:{2E341618-8663-4203-80E4-2D5CDD8858ED}|ConsoleApp2\\ConsoleApp2.csproj|solutionrelative:consoleapp2\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{41E0B0CF-6C18-49AE-B0B5-E38E9C8F4ACF}|ConsoleApp1\\ConsoleApp1.csproj|d:\\capstone project\\middlewaretool\\prn222-project-sample-pe-sp25\\pe_prn222_givensolution1\\consoleapp1\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{41E0B0CF-6C18-49AE-B0B5-E38E9C8F4ACF}|ConsoleApp1\\ConsoleApp1.csproj|solutionrelative:consoleapp1\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{41E0B0CF-6C18-49AE-B0B5-E38E9C8F4ACF}|ConsoleApp1\\ConsoleApp1.csproj|d:\\capstone project\\middlewaretool\\prn222-project-sample-pe-sp25\\pe_prn222_givensolution1\\consoleapp1\\utils.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{41E0B0CF-6C18-49AE-B0B5-E38E9C8F4ACF}|ConsoleApp1\\ConsoleApp1.csproj|solutionrelative:consoleapp1\\utils.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{41E0B0CF-6C18-49AE-B0B5-E38E9C8F4ACF}|ConsoleApp1\\ConsoleApp1.csproj|d:\\capstone project\\middlewaretool\\prn222-project-sample-pe-sp25\\pe_prn222_givensolution1\\consoleapp1\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{41E0B0CF-6C18-49AE-B0B5-E38E9C8F4ACF}|ConsoleApp1\\ConsoleApp1.csproj|solutionrelative:consoleapp1\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,13 +26,13 @@
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 1,
               "Title": "Utils.cs",
               "DocumentMoniker": "D:\\Capstone Project\\middlewareTool\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\ConsoleApp1\\Utils.cs",
               "RelativeDocumentMoniker": "ConsoleApp1\\Utils.cs",
               "ToolTip": "D:\\Capstone Project\\middlewareTool\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\ConsoleApp1\\Utils.cs",
               "RelativeToolTip": "ConsoleApp1\\Utils.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAA0AAAAAAAAAA==",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAAwBcAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-10-09T02:25:32.287Z",
               "EditorCaption": ""
@@ -45,20 +45,20 @@
               "RelativeDocumentMoniker": "ConsoleApp2\\Program.cs",
               "ToolTip": "D:\\Capstone Project\\middlewareTool\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\ConsoleApp2\\Program.cs",
               "RelativeToolTip": "ConsoleApp2\\Program.cs",
-              "ViewState": "AgIAAMcAAAAAAAAAAAAYwLwAAAANAAAAAAAAAA==",
+              "ViewState": "AgIAAB8AAAAAAAAAAADwvy8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-09-30T06:32:05.814Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\Capstone Project\\middlewareTool\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\ConsoleApp1\\Program.cs",
               "RelativeDocumentMoniker": "ConsoleApp1\\Program.cs",
               "ToolTip": "D:\\Capstone Project\\middlewareTool\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\ConsoleApp1\\Program.cs",
               "RelativeToolTip": "ConsoleApp1\\Program.cs",
-              "ViewState": "AgIAACQBAAAAAAAAAAAiwCkBAAAgAAAAAAAAAA==",
+              "ViewState": "AgIAAEsAAAAAAAAAAAAswF4AAAA/AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-09-17T13:34:43.007Z",
               "EditorCaption": ""

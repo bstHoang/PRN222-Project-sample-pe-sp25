@@ -14,6 +14,12 @@ public class Book
     public int? GenreId { get; set; }
 }
 
+public class Genre
+{
+    public int GenreId { get; set; }
+    public string GenreName { get; set; } 
+}
+
 public static class FakeDatabase
 {
     public static List<Book> Books = new List<Book>
@@ -28,6 +34,16 @@ public static class FakeDatabase
         new Book { BookId = 8, Title = "Foundation", PublicationYear = 1951, GenreId = 6 },
         new Book { BookId = 9, Title = "I, Robot", PublicationYear = 1950, GenreId = 6 },
         new Book { BookId = 10, Title = "Foundation and Empire", PublicationYear = 1952, GenreId = 6 }
+    };
+
+    public static List<Genre> Genres = new List<Genre>
+    {
+        new Genre { GenreId = 1, GenreName = "Fantasy" },
+        new Genre { GenreId = 2, GenreName = "Dystopian" },
+        new Genre { GenreId = 3, GenreName = "Mystery" },
+        new Genre { GenreId = 4, GenreName = "Thriller" },
+        new Genre { GenreId = 5, GenreName = "Non-fiction" },
+        new Genre { GenreId = 6, GenreName = "Science Fiction" }
     };
 
     public static int GetNextBookId()
