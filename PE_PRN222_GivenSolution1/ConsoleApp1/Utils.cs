@@ -33,6 +33,32 @@ namespace ConsoleApp1
             visited.Add(item);
 
             var type = item.GetType();
+
+            //Handle Dict
+            if (typeof(System.Collections.IDictionary).IsAssignableFrom(type))
+            {
+                var dict = (System.Collections.IDictionary)item;
+                var builderDict = new StringBuilder();
+                foreach (var key in dict.Keys)
+                {
+                    var value = dict[key];
+                    builderDict.Append($"[{Stringify(key, visited)}] = {Stringify(value, visited)} | ");
+                }
+                return builderDict.ToString();
+            }
+
+            //Handle List, Set, ...
+            if (typeof(System.Collections.IEnumerable).IsAssignableFrom(type) && type != typeof(string))
+            {
+                var listBuilder = new StringBuilder();
+                foreach (var element in (System.Collections.IEnumerable)item)
+                {
+                    listBuilder.Append(Stringify(element, visited));
+                }
+                return listBuilder.ToString();
+            }
+
+            //Handle regular object
             var builder = new StringBuilder();
             foreach (var prop in type.GetProperties())
             {
