@@ -1,50 +1,26 @@
 ﻿using System.Net;
-using System.Text.Json;
 using System.Text;
-
-// ============================
-// MODEL
-// ============================
-public class Book
-{
-    public int BookId { get; set; }
-    public string Title { get; set; } = "";
-    public int? PublicationYear { get; set; }
-    public int? GenreId { get; set; }
-}
-
-public static class FakeDatabase
-{
-    // Dữ liệu Books fix cứng dựa trên script SQL
-    public static List<Book> Books = new List<Book>
-    {
-        new Book { BookId = 1, Title = "Harry Potter and the Philosopher's Stone", PublicationYear = 1997, GenreId = 1 },
-        new Book { BookId = 2, Title = "1984", PublicationYear = 1949, GenreId = 2 },
-        new Book { BookId = 3, Title = "The Hobbit", PublicationYear = 1937, GenreId = 1 },
-        new Book { BookId = 4, Title = "Murder on the Orient Express", PublicationYear = 1934, GenreId = 3 },
-        new Book { BookId = 5, Title = "The Da Vinci Code", PublicationYear = 2003, GenreId = 4 },
-        new Book { BookId = 6, Title = "Sapiens: A Brief History of Humankind", PublicationYear = 2011, GenreId = 5 },
-        new Book { BookId = 7, Title = "The Handmaid's Tale", PublicationYear = 1985, GenreId = 2 },
-        new Book { BookId = 8, Title = "Foundation", PublicationYear = 1951, GenreId = 6 },
-        new Book { BookId = 9, Title = "I, Robot", PublicationYear = 1950, GenreId = 6 },
-        new Book { BookId = 10, Title = "Foundation and Empire", PublicationYear = 1952, GenreId = 6 }
-    };
-
-    // Sinh ID mới
-    public static int GetNextBookId()
-    {
-        return Books.Count == 0 ? 1 : Books.Max(b => b.BookId) + 1;
-    }
-}
+using System.Text.Json;
+using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
+using Project11.Models; // namespace chứa Book, Genre, LibraryContext
 
 class Program
 {
     static async Task Main(string[] args)
     {
+        // 1. Đọc cấu hình từ appsettings.json
+        var config = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .Build();
+
+        string serverUrl = config["ServerUrl"];
+
+        // 2. Khởi tạo HttpListener
         var listener = new HttpListener();
-        listener.Prefixes.Add("http://localhost:8080/");
+        listener.Prefixes.Add(serverUrl);
         listener.Start();
-        Console.WriteLine("Server started at http://localhost:8080/");
+        Console.WriteLine($" Server started at {serverUrl}");
 
         while (true)
         {
@@ -55,22 +31,28 @@ class Program
             var path = request.Url.AbsolutePath.ToLower();
             var method = request.HttpMethod;
 
-            Console.WriteLine($" {method} {path}");
+            Console.WriteLine($"{method} {path}");
 
-            // =======================
-            // 1. GET /books - List
-            // =======================
+            using var db = new LibraryContext(); // EF DbContext
+
+            // ===========================
+            // 1. GET /books
+            // ===========================
             if (path == "/books" && method == "GET")
             {
-                var json = JsonSerializer.Serialize(FakeDatabase.Books);
-                var buffer = Encoding.UTF8.GetBytes(json);
-                response.ContentType = "application/json";
-                response.ContentLength64 = buffer.Length;
-                await response.OutputStream.WriteAsync(buffer, 0, buffer.Length);
+                var books = await db.Books.Select(b => new BookDto
+                                                        {
+                                                             BookId = b.BookId,
+                                                             Title = b.Title,
+                                                             GenreName = b.Genre.GenreName
+                                                         }).ToListAsync();
+
+
+                await WriteJsonResponse(response, books);
             }
-            // =======================
-            // 2. POST /books - Create
-            // =======================
+            // ===========================
+            // 2. POST /books
+            // ===========================
             else if (path == "/books" && method == "POST")
             {
                 using var reader = new StreamReader(request.InputStream);
@@ -83,24 +65,25 @@ class Program
 
                 if (newBook != null && !string.IsNullOrWhiteSpace(newBook.Title))
                 {
-                    newBook.BookId = FakeDatabase.GetNextBookId();
-                    FakeDatabase.Books.Add(newBook);
-                    response.StatusCode = 201; // Created
+                    db.Books.Add(newBook);
+                    await db.SaveChangesAsync();
+
+                    response.StatusCode = 201;
                     await WriteJsonResponse(response, newBook);
                 }
                 else
                 {
-                    response.StatusCode = 400; // Bad Request
+                    response.StatusCode = 400;
                 }
             }
-            // =======================
-            // 3. PUT /books/{id} - Update
-            // =======================
+            // ===========================
+            // 3. PUT /books/{id}
+            // ===========================
             else if (path.StartsWith("/books/") && method == "PUT")
             {
                 if (int.TryParse(path.Replace("/books/", ""), out int id))
                 {
-                    var book = FakeDatabase.Books.FirstOrDefault(b => b.BookId == id);
+                    var book = await db.Books.FirstOrDefaultAsync(b => b.BookId == id);
                     if (book == null)
                     {
                         response.StatusCode = 404;
@@ -123,6 +106,11 @@ class Program
                             if (updatedBook.PublicationYear.HasValue)
                                 book.PublicationYear = updatedBook.PublicationYear;
 
+                            if (updatedBook.GenreId.HasValue)
+                                book.GenreId = updatedBook.GenreId;
+
+                            await db.SaveChangesAsync();
+
                             response.StatusCode = 200;
                             await WriteJsonResponse(response, book);
                         }
@@ -137,23 +125,51 @@ class Program
                     response.StatusCode = 400;
                 }
             }
-            // =======================
-            // 4. DELETE /books/{id} - Delete
-            // =======================
+            // ===========================
+            // 4. DELETE /books/{id}
+            // ===========================
             else if (path.StartsWith("/books/") && method == "DELETE")
             {
                 if (int.TryParse(path.Replace("/books/", ""), out int id))
                 {
-                    var book = FakeDatabase.Books.FirstOrDefault(b => b.BookId == id);
+                    var book = await db.Books.FirstOrDefaultAsync(b => b.BookId == id);
                     if (book == null)
                     {
                         response.StatusCode = 404;
                     }
                     else
                     {
-                        FakeDatabase.Books.Remove(book);
+                        db.Books.Remove(book);
+                        await db.SaveChangesAsync();
+
                         response.StatusCode = 200;
                         await WriteJsonResponse(response, new { message = "Deleted successfully" });
+                    }
+                }
+                else
+                {
+                    response.StatusCode = 400;
+                }
+            }
+            // ===========================
+            // 5. GET /books/{id}
+            // ===========================
+            else if (path.StartsWith("/books/") && method == "GET")
+            {
+                if (int.TryParse(path.Replace("/books/", ""), out int id))
+                {
+                    var book = await db.Books
+                        .Include(b => b.Genre)
+                        .FirstOrDefaultAsync(b => b.BookId == id);
+
+                    if (book == null)
+                    {
+                        response.StatusCode = 404;
+                    }
+                    else
+                    {
+                        response.StatusCode = 200;
+                        await WriteJsonResponse(response, book);
                     }
                 }
                 else
@@ -170,10 +186,13 @@ class Program
         }
     }
 
-    // Helper method to write JSON response
     private static async Task WriteJsonResponse(HttpListenerResponse response, object data)
     {
-        var json = JsonSerializer.Serialize(data);
+        var json = JsonSerializer.Serialize(data, new JsonSerializerOptions
+        {
+            WriteIndented = true
+        });
+
         var buffer = Encoding.UTF8.GetBytes(json);
         response.ContentType = "application/json";
         response.ContentLength64 = buffer.Length;
