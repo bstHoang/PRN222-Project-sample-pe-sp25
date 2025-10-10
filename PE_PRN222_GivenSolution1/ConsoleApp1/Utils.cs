@@ -27,31 +27,31 @@ namespace ConsoleApp1
             return Stringify(item!, new HashSet<object>());
         }
 
-        private static string Stringify(object item, HashSet<object> visited)
+        private static string Stringify(object? item, HashSet<object> visited)
         {
             if (item == null || visited.Contains(item)) return string.Empty;
             visited.Add(item);
 
-            var type = item.GetType();
+            Type type = item.GetType();
 
             //Handle Dict
             if (typeof(System.Collections.IDictionary).IsAssignableFrom(type))
             {
                 var dict = (System.Collections.IDictionary)item;
-                var builderDict = new StringBuilder();
-                foreach (var key in dict.Keys)
+                var dictBuilder = new StringBuilder();
+                foreach (object? key in dict.Keys)
                 {
-                    var value = dict[key];
-                    builderDict.Append($"[{Stringify(key, visited)}] = {Stringify(value, visited)} | ");
+                    object? value = dict[key];
+                    dictBuilder.Append($"[{Stringify(key, visited)}] = {Stringify(value, visited)} | ");
                 }
-                return builderDict.ToString();
+                return dictBuilder.ToString();
             }
 
             //Handle List, Set, ...
             if (typeof(System.Collections.IEnumerable).IsAssignableFrom(type) && type != typeof(string))
             {
                 var listBuilder = new StringBuilder();
-                foreach (var element in (System.Collections.IEnumerable)item)
+                foreach (object? element in (System.Collections.IEnumerable)item)
                 {
                     listBuilder.Append(Stringify(element, visited));
                 }

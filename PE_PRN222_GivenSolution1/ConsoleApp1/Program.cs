@@ -12,7 +12,8 @@ public class Book
     public int BookId { get; set; }
     public string Title { get; set; } = "";
     public int? PublicationYear { get; set; }
-    public List<Genre>? GenreId { get; set; }
+    //public List<Genre>? GenreId { get; set; }
+    public Genre? GenreId { get; set; }
 }
 
 public class Genre
