@@ -40,12 +40,19 @@ class Program
             // ===========================
             if (path == "/books" && method == "GET")
             {
-                var books = await db.Books.Select(b => new BookDto
-                                                        {
-                                                             BookId = b.BookId,
-                                                             Title = b.Title,
-                                                             GenreName = b.Genre.GenreName
-                                                         }).ToListAsync();
+                var books = await db.Books
+                                    .Include(b => b.Genre)
+                                    .Select(b => new
+                                        {
+                                            b.BookId,
+                                            b.Title,
+                                            b.PublicationYear,
+                                            Genre = new
+                                                    {
+                                                        b.Genre.GenreId,
+                                                        b.Genre.GenreName
+                                                    }
+                                        }).ToListAsync();
 
 
                 await WriteJsonResponse(response, books);
