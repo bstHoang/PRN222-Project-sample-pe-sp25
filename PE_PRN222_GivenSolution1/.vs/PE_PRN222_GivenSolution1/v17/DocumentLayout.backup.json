@@ -3,8 +3,8 @@
   "WorkspaceRootPath": "D:\\Capstone Project\\middlewareTool\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{41E0B0CF-6C18-49AE-B0B5-E38E9C8F4ACF}|ConsoleApp1\\ConsoleApp1.csproj|d:\\capstone project\\middlewaretool\\prn222-project-sample-pe-sp25\\pe_prn222_givensolution1\\consoleapp1\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{41E0B0CF-6C18-49AE-B0B5-E38E9C8F4ACF}|ConsoleApp1\\ConsoleApp1.csproj|solutionrelative:consoleapp1\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{1B428643-65D4-4B4B-BBCA-70C2120BC7A8}|Trial_PE_I\\Trial_PE_I.csproj|d:\\capstone project\\middlewaretool\\prn222-project-sample-pe-sp25\\pe_prn222_givensolution1\\trial_pe_i\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1B428643-65D4-4B4B-BBCA-70C2120BC7A8}|Trial_PE_I\\Trial_PE_I.csproj|solutionrelative:trial_pe_i\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{3EFBF2E0-8F60-4FAE-B978-E93FEFD5F870}|Project11\\Project11.csproj|d:\\capstone project\\middlewaretool\\prn222-project-sample-pe-sp25\\pe_prn222_givensolution1\\project11\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -24,13 +24,13 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "Program.cs",
-              "DocumentMoniker": "D:\\Capstone Project\\middlewareTool\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\ConsoleApp1\\Program.cs",
-              "RelativeDocumentMoniker": "ConsoleApp1\\Program.cs",
-              "ToolTip": "D:\\Capstone Project\\middlewareTool\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\ConsoleApp1\\Program.cs",
-              "RelativeToolTip": "ConsoleApp1\\Program.cs",
-              "ViewState": "AgIAAAcAAAAAAAAAAAAIwBYAAAAAAAAAAAAAAA==",
+              "DocumentMoniker": "D:\\Capstone Project\\middlewareTool\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\Trial_PE_I\\Program.cs",
+              "RelativeDocumentMoniker": "Trial_PE_I\\Program.cs",
+              "ToolTip": "D:\\Capstone Project\\middlewareTool\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\Trial_PE_I\\Program.cs",
+              "RelativeToolTip": "Trial_PE_I\\Program.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAmwA4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-13T04:37:04.776Z",
+              "WhenOpened": "2025-10-16T03:59:55.132Z",
               "EditorCaption": ""
             },
             {
@@ -41,9 +41,9 @@
               "RelativeDocumentMoniker": "Project11\\Program.cs",
               "ToolTip": "D:\\Capstone Project\\middlewareTool\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\Project11\\Program.cs",
               "RelativeToolTip": "Project11\\Program.cs",
-              "ViewState": "AgIAAA8AAAAAAAAAAAAYwDAAAAA+AAAAAAAAAA==",
+              "ViewState": "AgIAAD0AAAAAAAAAAAAAAE4AAAAyAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-10T04:21:35.064Z",
+              "WhenOpened": "2025-10-16T03:46:35.879Z",
               "EditorCaption": ""
             }
           ]
