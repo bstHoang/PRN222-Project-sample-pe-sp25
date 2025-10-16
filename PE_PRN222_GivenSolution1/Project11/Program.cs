@@ -1,9 +1,10 @@
-﻿using System.Net;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Project11;
+using Project11.Models; // namespace chứa Book, Genre, LibraryContext
+using System.Net;
 using System.Text;
 using System.Text.Json;
-using Microsoft.Extensions.Configuration;
-using Microsoft.EntityFrameworkCore;
-using Project11.Models; // namespace chứa Book, Genre, LibraryContext
 
 class Program
 {
@@ -56,6 +57,30 @@ class Program
 
 
                 await WriteJsonResponse(response, books);
+            }
+            // ===========================
+            // GET /books/{genreId} (Lấy sách theo ID)
+            // ===========================
+            else if (path.StartsWith("/books/") && method == "GET")
+            {
+                // Lấy phần ID từ path: /books/1 -> "1"
+                var idSegment = path.Substring("/books/".Length);
+
+                if (int.TryParse(idSegment, out int genreId))
+                {
+                    // Lọc theo GenreId
+                    var booksDto = await db.Books.Where(b => b.GenreId == genreId)
+                                    .Include(b => b.Genre)
+                                    .Select(b => new
+                                    {
+                                        b.BookId,
+                                        b.Title,
+                                        b.PublicationYear,
+                                        b.Genre.GenreName
+                                    }).ToListAsync();
+
+                    await WriteJsonResponse(response, booksDto);
+                }
             }
             // ===========================
             // 2. POST /books
