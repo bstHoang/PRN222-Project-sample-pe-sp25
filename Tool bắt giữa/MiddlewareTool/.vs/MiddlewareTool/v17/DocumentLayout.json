@@ -7,8 +7,36 @@
       "RelativeMoniker": "D:0:0:{435FD29D-19AF-4129-B7D5-5C36A8942CD0}|MiddlewareTool\\MiddlewareTool.csproj|solutionrelative:middlewaretool\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{435FD29D-19AF-4129-B7D5-5C36A8942CD0}|MiddlewareTool\\MiddlewareTool.csproj|d:\\capstoneproject\\middlewaretool\\prn222-project-sample-pe-sp25\\tool b\u1EAFt gi\u1EEFa\\middlewaretool\\middlewaretool\\keyboardhook.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{435FD29D-19AF-4129-B7D5-5C36A8942CD0}|MiddlewareTool\\MiddlewareTool.csproj|solutionrelative:middlewaretool\\keyboardhook.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{435FD29D-19AF-4129-B7D5-5C36A8942CD0}|MiddlewareTool\\MiddlewareTool.csproj|d:\\capstoneproject\\middlewaretool\\prn222-project-sample-pe-sp25\\tool b\u1EAFt gi\u1EEFa\\middlewaretool\\middlewaretool\\helpers\\keyboardhook.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{435FD29D-19AF-4129-B7D5-5C36A8942CD0}|MiddlewareTool\\MiddlewareTool.csproj|solutionrelative:middlewaretool\\helpers\\keyboardhook.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{435FD29D-19AF-4129-B7D5-5C36A8942CD0}|MiddlewareTool\\MiddlewareTool.csproj|d:\\capstoneproject\\middlewaretool\\prn222-project-sample-pe-sp25\\tool b\u1EAFt gi\u1EEFa\\middlewaretool\\middlewaretool\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{435FD29D-19AF-4129-B7D5-5C36A8942CD0}|MiddlewareTool\\MiddlewareTool.csproj|solutionrelative:middlewaretool\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{435FD29D-19AF-4129-B7D5-5C36A8942CD0}|MiddlewareTool\\MiddlewareTool.csproj|d:\\capstoneproject\\middlewaretool\\prn222-project-sample-pe-sp25\\tool b\u1EAFt gi\u1EEFa\\middlewaretool\\middlewaretool\\services\\appsettingsreplacer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{435FD29D-19AF-4129-B7D5-5C36A8942CD0}|MiddlewareTool\\MiddlewareTool.csproj|solutionrelative:middlewaretool\\services\\appsettingsreplacer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{435FD29D-19AF-4129-B7D5-5C36A8942CD0}|MiddlewareTool\\MiddlewareTool.csproj|d:\\capstoneproject\\middlewaretool\\prn222-project-sample-pe-sp25\\tool b\u1EAFt gi\u1EEFa\\middlewaretool\\middlewaretool\\models\\loggedrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{435FD29D-19AF-4129-B7D5-5C36A8942CD0}|MiddlewareTool\\MiddlewareTool.csproj|solutionrelative:middlewaretool\\models\\loggedrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{435FD29D-19AF-4129-B7D5-5C36A8942CD0}|MiddlewareTool\\MiddlewareTool.csproj|d:\\capstoneproject\\middlewaretool\\prn222-project-sample-pe-sp25\\tool b\u1EAFt gi\u1EEFa\\middlewaretool\\middlewaretool\\services\\consolecaptureservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{435FD29D-19AF-4129-B7D5-5C36A8942CD0}|MiddlewareTool\\MiddlewareTool.csproj|solutionrelative:middlewaretool\\services\\consolecaptureservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{435FD29D-19AF-4129-B7D5-5C36A8942CD0}|MiddlewareTool\\MiddlewareTool.csproj|d:\\capstoneproject\\middlewaretool\\prn222-project-sample-pe-sp25\\tool b\u1EAFt gi\u1EEFa\\middlewaretool\\middlewaretool\\services\\excellogger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{435FD29D-19AF-4129-B7D5-5C36A8942CD0}|MiddlewareTool\\MiddlewareTool.csproj|solutionrelative:middlewaretool\\services\\excellogger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{435FD29D-19AF-4129-B7D5-5C36A8942CD0}|MiddlewareTool\\MiddlewareTool.csproj|d:\\capstoneproject\\middlewaretool\\prn222-project-sample-pe-sp25\\tool b\u1EAFt gi\u1EEFa\\middlewaretool\\middlewaretool\\services\\proxyservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{435FD29D-19AF-4129-B7D5-5C36A8942CD0}|MiddlewareTool\\MiddlewareTool.csproj|solutionrelative:middlewaretool\\services\\proxyservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{435FD29D-19AF-4129-B7D5-5C36A8942CD0}|MiddlewareTool\\MiddlewareTool.csproj|d:\\capstoneproject\\middlewaretool\\prn222-project-sample-pe-sp25\\tool b\u1EAFt gi\u1EEFa\\middlewaretool\\middlewaretool\\loggedrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -22,19 +50,58 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 5,
               "Title": "LoggedRequest.cs",
-              "DocumentMoniker": "D:\\CapstoneProject\\middlewareTool\\PRN222-Project-sample-pe-sp25\\Tool b\u1EAFt gi\u1EEFa\\MiddlewareTool\\MiddlewareTool\\LoggedRequest.cs",
-              "RelativeDocumentMoniker": "MiddlewareTool\\LoggedRequest.cs",
-              "ToolTip": "D:\\CapstoneProject\\middlewareTool\\PRN222-Project-sample-pe-sp25\\Tool b\u1EAFt gi\u1EEFa\\MiddlewareTool\\MiddlewareTool\\LoggedRequest.cs",
-              "RelativeToolTip": "MiddlewareTool\\LoggedRequest.cs",
-              "ViewState": "AgIAAAQAAAAAAAAAAAAUwBUAAAAAAAAAAAAAAA==",
+              "DocumentMoniker": "D:\\CapstoneProject\\middlewareTool\\PRN222-Project-sample-pe-sp25\\Tool b\u1EAFt gi\u1EEFa\\MiddlewareTool\\MiddlewareTool\\Models\\LoggedRequest.cs",
+              "RelativeDocumentMoniker": "MiddlewareTool\\Models\\LoggedRequest.cs",
+              "ToolTip": "D:\\CapstoneProject\\middlewareTool\\PRN222-Project-sample-pe-sp25\\Tool b\u1EAFt gi\u1EEFa\\MiddlewareTool\\MiddlewareTool\\Models\\LoggedRequest.cs",
+              "RelativeToolTip": "MiddlewareTool\\Models\\LoggedRequest.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-29T03:33:15.956Z",
+              "WhenOpened": "2025-10-29T07:48:04.867Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "KeyboardHook.cs",
+              "DocumentMoniker": "D:\\CapstoneProject\\middlewareTool\\PRN222-Project-sample-pe-sp25\\Tool b\u1EAFt gi\u1EEFa\\MiddlewareTool\\MiddlewareTool\\Helpers\\KeyboardHook.cs",
+              "RelativeDocumentMoniker": "MiddlewareTool\\Helpers\\KeyboardHook.cs",
+              "ToolTip": "D:\\CapstoneProject\\middlewareTool\\PRN222-Project-sample-pe-sp25\\Tool b\u1EAFt gi\u1EEFa\\MiddlewareTool\\MiddlewareTool\\Helpers\\KeyboardHook.cs",
+              "RelativeToolTip": "MiddlewareTool\\Helpers\\KeyboardHook.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEAAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-29T07:47:38.142Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "AppSettingsReplacer.cs",
+              "DocumentMoniker": "D:\\CapstoneProject\\middlewareTool\\PRN222-Project-sample-pe-sp25\\Tool b\u1EAFt gi\u1EEFa\\MiddlewareTool\\MiddlewareTool\\Services\\AppSettingsReplacer.cs",
+              "RelativeDocumentMoniker": "MiddlewareTool\\Services\\AppSettingsReplacer.cs",
+              "ToolTip": "D:\\CapstoneProject\\middlewareTool\\PRN222-Project-sample-pe-sp25\\Tool b\u1EAFt gi\u1EEFa\\MiddlewareTool\\MiddlewareTool\\Services\\AppSettingsReplacer.cs",
+              "RelativeToolTip": "MiddlewareTool\\Services\\AppSettingsReplacer.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAA4AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-29T07:47:09.204Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "ConsoleCaptureService.cs",
+              "DocumentMoniker": "D:\\CapstoneProject\\middlewareTool\\PRN222-Project-sample-pe-sp25\\Tool b\u1EAFt gi\u1EEFa\\MiddlewareTool\\MiddlewareTool\\Services\\ConsoleCaptureService.cs",
+              "RelativeDocumentMoniker": "MiddlewareTool\\Services\\ConsoleCaptureService.cs",
+              "ToolTip": "D:\\CapstoneProject\\middlewareTool\\PRN222-Project-sample-pe-sp25\\Tool b\u1EAFt gi\u1EEFa\\MiddlewareTool\\MiddlewareTool\\Services\\ConsoleCaptureService.cs",
+              "RelativeToolTip": "MiddlewareTool\\Services\\ConsoleCaptureService.cs",
+              "ViewState": "AgIAAIIAAAAAAAAAAAAYwJsAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-29T07:46:49.765Z",
               "EditorCaption": ""
             },
             {
@@ -45,14 +112,14 @@
               "RelativeDocumentMoniker": "MiddlewareTool\\MainWindow.xaml.cs",
               "ToolTip": "D:\\CapstoneProject\\middlewareTool\\PRN222-Project-sample-pe-sp25\\Tool b\u1EAFt gi\u1EEFa\\MiddlewareTool\\MiddlewareTool\\MainWindow.xaml.cs",
               "RelativeToolTip": "MiddlewareTool\\MainWindow.xaml.cs",
-              "ViewState": "AgIAAKAAAAAAAAAAAAAIwLQAAABKAAAAAAAAAA==",
+              "ViewState": "AgIAAKAAAAAA9f////8TwI4AAAAlAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-27T07:50:10.055Z",
+              "WhenOpened": "2025-10-29T07:20:45.299Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "MainWindow.xaml",
               "DocumentMoniker": "D:\\CapstoneProject\\middlewareTool\\PRN222-Project-sample-pe-sp25\\Tool b\u1EAFt gi\u1EEFa\\MiddlewareTool\\MiddlewareTool\\MainWindow.xaml",
               "RelativeDocumentMoniker": "MiddlewareTool\\MainWindow.xaml",
@@ -60,6 +127,58 @@
               "RelativeToolTip": "MiddlewareTool\\MainWindow.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
               "WhenOpened": "2025-09-26T02:59:40.074Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "KeyboardHook.cs",
+              "DocumentMoniker": "D:\\CapstoneProject\\middlewareTool\\PRN222-Project-sample-pe-sp25\\Tool b\u1EAFt gi\u1EEFa\\MiddlewareTool\\MiddlewareTool\\KeyboardHook.cs",
+              "RelativeDocumentMoniker": "MiddlewareTool\\KeyboardHook.cs",
+              "ToolTip": "D:\\CapstoneProject\\middlewareTool\\PRN222-Project-sample-pe-sp25\\Tool b\u1EAFt gi\u1EEFa\\MiddlewareTool\\MiddlewareTool\\KeyboardHook.cs",
+              "RelativeToolTip": "MiddlewareTool\\KeyboardHook.cs",
+              "ViewState": "AgIAAAcAAAAAAAAAAAAewBQAAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-29T07:01:44.378Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "ExcelLogger.cs",
+              "DocumentMoniker": "D:\\CapstoneProject\\middlewareTool\\PRN222-Project-sample-pe-sp25\\Tool b\u1EAFt gi\u1EEFa\\MiddlewareTool\\MiddlewareTool\\Services\\ExcelLogger.cs",
+              "RelativeDocumentMoniker": "MiddlewareTool\\Services\\ExcelLogger.cs",
+              "ToolTip": "D:\\CapstoneProject\\middlewareTool\\PRN222-Project-sample-pe-sp25\\Tool b\u1EAFt gi\u1EEFa\\MiddlewareTool\\MiddlewareTool\\Services\\ExcelLogger.cs",
+              "RelativeToolTip": "MiddlewareTool\\Services\\ExcelLogger.cs",
+              "ViewState": "AgIAADEAAAAAAAAAAAAYwEQAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-29T07:46:30.35Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "ProxyService.cs",
+              "DocumentMoniker": "D:\\CapstoneProject\\middlewareTool\\PRN222-Project-sample-pe-sp25\\Tool b\u1EAFt gi\u1EEFa\\MiddlewareTool\\MiddlewareTool\\Services\\ProxyService.cs",
+              "RelativeDocumentMoniker": "MiddlewareTool\\Services\\ProxyService.cs",
+              "ToolTip": "D:\\CapstoneProject\\middlewareTool\\PRN222-Project-sample-pe-sp25\\Tool b\u1EAFt gi\u1EEFa\\MiddlewareTool\\MiddlewareTool\\Services\\ProxyService.cs",
+              "RelativeToolTip": "MiddlewareTool\\Services\\ProxyService.cs",
+              "ViewState": "AgIAAKIAAAAAAAAAAAAIwBQAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-29T07:45:31.425Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "LoggedRequest.cs",
+              "DocumentMoniker": "D:\\CapstoneProject\\middlewareTool\\PRN222-Project-sample-pe-sp25\\Tool b\u1EAFt gi\u1EEFa\\MiddlewareTool\\MiddlewareTool\\LoggedRequest.cs",
+              "RelativeDocumentMoniker": "MiddlewareTool\\LoggedRequest.cs",
+              "ToolTip": "D:\\CapstoneProject\\middlewareTool\\PRN222-Project-sample-pe-sp25\\Tool b\u1EAFt gi\u1EEFa\\MiddlewareTool\\MiddlewareTool\\LoggedRequest.cs",
+              "RelativeToolTip": "MiddlewareTool\\LoggedRequest.cs",
+              "ViewState": "AgIAAAQAAAAAAAAAAAAUwBUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-29T03:33:15.956Z",
               "EditorCaption": ""
             }
           ]
