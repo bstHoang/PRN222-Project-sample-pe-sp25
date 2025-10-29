@@ -1,0 +1,14 @@
+D:\CapstoneProject\middlewareTool\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\[QuestionNumber_NameStudentCode]\appsettings.json
+D:\CapstoneProject\middlewareTool\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\[QuestionNumber_NameStudentCode]\ConsoleApp1.exe
+D:\CapstoneProject\middlewareTool\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\[QuestionNumber_NameStudentCode]\ConsoleApp1.dll
+D:\CapstoneProject\middlewareTool\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\[QuestionNumber_NameStudentCode]\ConsoleApp1.deps.json
+D:\CapstoneProject\middlewareTool\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\[QuestionNumber_NameStudentCode]\ConsoleApp1.runtimeconfig.json
+D:\CapstoneProject\middlewareTool\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\[QuestionNumber_NameStudentCode]\ConsoleApp1.pdb
+D:\CapstoneProject\middlewareTool\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\[QuestionNumber_NameStudentCode]\Microsoft.Extensions.Configuration.dll
+D:\CapstoneProject\middlewareTool\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\[QuestionNumber_NameStudentCode]\Microsoft.Extensions.Configuration.Abstractions.dll
+D:\CapstoneProject\middlewareTool\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\[QuestionNumber_NameStudentCode]\Microsoft.Extensions.Configuration.FileExtensions.dll
+D:\CapstoneProject\middlewareTool\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\[QuestionNumber_NameStudentCode]\Microsoft.Extensions.Configuration.Json.dll
+D:\CapstoneProject\middlewareTool\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\[QuestionNumber_NameStudentCode]\Microsoft.Extensions.FileProviders.Abstractions.dll
+D:\CapstoneProject\middlewareTool\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\[QuestionNumber_NameStudentCode]\Microsoft.Extensions.FileProviders.Physical.dll
+D:\CapstoneProject\middlewareTool\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\[QuestionNumber_NameStudentCode]\Microsoft.Extensions.FileSystemGlobbing.dll
+D:\CapstoneProject\middlewareTool\PRN222-Project-sample-pe-sp25\PE_PRN222_GivenSolution1\ConsoleApp1\[QuestionNumber_NameStudentCode]\Microsoft.Extensions.Primitives.dll

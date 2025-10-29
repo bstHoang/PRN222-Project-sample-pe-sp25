@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Capstone Project\\middlewareTool\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\Project12\\Project12.csproj",
+      "projectUniqueName": "D:\\CapstoneProject\\middlewareTool\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\Project12\\Project12.csproj",
       "projectName": "Project12",
-      "projectPath": "D:\\Capstone Project\\middlewareTool\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\Project12\\Project12.csproj",
+      "projectPath": "D:\\CapstoneProject\\middlewareTool\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\Project12\\Project12.csproj",
       "packagesPath": "C:\\Users\\10t1q\\.nuget\\packages\\",
-      "outputPath": "D:\\Capstone Project\\middlewareTool\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\Project12\\obj\\",
+      "outputPath": "D:\\CapstoneProject\\middlewareTool\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\Project12\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

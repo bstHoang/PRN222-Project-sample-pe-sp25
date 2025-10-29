@@ -414,11 +414,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Capstone Project\\middlewareTool\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\ConsoleApp2\\ConsoleApp2.csproj",
+      "projectUniqueName": "D:\\CapstoneProject\\middlewareTool\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\ConsoleApp2\\ConsoleApp2.csproj",
       "projectName": "ConsoleApp2",
-      "projectPath": "D:\\Capstone Project\\middlewareTool\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\ConsoleApp2\\ConsoleApp2.csproj",
+      "projectPath": "D:\\CapstoneProject\\middlewareTool\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\ConsoleApp2\\ConsoleApp2.csproj",
       "packagesPath": "C:\\Users\\10t1q\\.nuget\\packages\\",
-      "outputPath": "D:\\Capstone Project\\middlewareTool\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\ConsoleApp2\\obj\\",
+      "outputPath": "D:\\CapstoneProject\\middlewareTool\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\ConsoleApp2\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

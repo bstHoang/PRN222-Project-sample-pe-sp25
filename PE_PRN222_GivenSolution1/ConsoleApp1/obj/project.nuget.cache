@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "RyjVg6xuD38=",
+  "dgSpecHash": "p4eyg3G1wRU=",
   "success": true,
-  "projectFilePath": "D:\\Capstone Project\\middlewareTool\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\ConsoleApp1\\ConsoleApp1.csproj",
+  "projectFilePath": "D:\\CapstoneProject\\middlewareTool\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\ConsoleApp1\\ConsoleApp1.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\10t1q\\.nuget\\packages\\microsoft.extensions.configuration\\8.0.0\\microsoft.extensions.configuration.8.0.0.nupkg.sha512",
     "C:\\Users\\10t1q\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\8.0.0\\microsoft.extensions.configuration.abstractions.8.0.0.nupkg.sha512",

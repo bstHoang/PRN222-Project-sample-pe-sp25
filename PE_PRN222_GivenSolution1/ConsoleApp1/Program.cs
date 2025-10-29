@@ -1,5 +1,5 @@
 ﻿using ConsoleApp1;
-using Microsoft.Extensions.Configuration; 
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -42,38 +42,38 @@ class Program
 
         while (running)
         {
-            Console.WriteLine("\n====== Library Client ======");
-            Console.WriteLine("1. List Books");
-            Console.WriteLine("2. Create Book");
-            Console.WriteLine("3. Update Book");
-            Console.WriteLine("4. Delete Book");
-            Console.WriteLine("5. Quit");
-            Console.Write("Choose an option: ");
+                        Console.WriteLine("\n====== Library Client ======");
+                        Console.WriteLine("1. List Books");
+                        Console.WriteLine("2. Create Book");
+                        Console.WriteLine("3. Update Book");
+                        Console.WriteLine("4. Delete Book");
+                        Console.WriteLine("5. Quit");
+                        Console.Write("Choose an option: ");
 
             var choice = Console.ReadLine();
 
-            switch (choice)
-            {
-                case "1":
-                    await ListBooksAsync();
-                    break;
-                case "2":
-                    await CreateBookAsync();
-                    break;
-                case "3":
-                    await UpdateBookMenuAsync();
-                    break;
-                case "4":
-                    await DeleteBookAsync();
-                    break;
-                case "5":
-                    running = false;
-                    Console.WriteLine("Goodbye!");
-                    break;
-                default:
-                    Console.WriteLine("Invalid choice. Try again.");
-                    break;
-            }
+                            switch (choice)
+                            {
+                                case "1":
+                                    await ListBooksAsync();
+                                    break;
+                                case "2":
+                                    await CreateBookAsync();
+                                    break;
+                                case "3":
+                                    await UpdateBookMenuAsync();
+                                    break;
+                                case "4":
+                                    await DeleteBookAsync();
+                                    break;
+                                case "5":
+                                    running = false;
+                                    Console.WriteLine("Goodbye!");
+                                    break;
+                                default:
+                                    Console.WriteLine("Invalid choice. Try again.");
+                                    break;
+                            }
         }
     }
 
@@ -318,5 +318,4 @@ class Program
         }
         return null;
     }
-
 }
