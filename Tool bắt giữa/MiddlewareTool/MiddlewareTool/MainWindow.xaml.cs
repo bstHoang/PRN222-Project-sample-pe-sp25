@@ -151,13 +151,46 @@ namespace MiddlewareTool
             if (pid != (uint)_clientProcess.Id) return; // Not client window
             string currentOutput = _consoleCaptureService.CaptureConsoleOutput(_clientProcess.Id);
             if (string.IsNullOrEmpty(currentOutput)) return;
-            string[] lines = currentOutput.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-            if (lines.Length > 0)
+            string[] lines = currentOutput.Split(new[] { Environment.NewLine }, StringSplitOptions.None); // Keep empty entries for accuracy
+                                                                                                          // Collect possible prompts
+            HashSet<string> possiblePrompts = new HashSet<string>();
+            foreach (string l in lines)
             {
-                string lastLine = lines.Last().Trim();
-                if (!string.IsNullOrEmpty(lastLine) && !_enterLines.Contains(lastLine))
+                string trimmed = l.Trim();
+                int index = trimmed.IndexOf(":");
+                if (index > 0)
                 {
-                    _enterLines.Add(lastLine);
+                    int promptLength = index + 1;
+                    if (trimmed.Length > index + 1 && trimmed[index + 1] == ' ')
+                    {
+                        promptLength++;
+                    }
+                    string potentialPrompt = trimmed.Substring(0, promptLength);
+                    possiblePrompts.Add(potentialPrompt);
+                }
+            }
+            // Find the last prompt index
+            int lastPromptIndex = -1;
+            for (int i = lines.Length - 1; i >= 0; i--)
+            {
+                string trimmed = lines[i].Trim();
+                if (possiblePrompts.Any(p => trimmed.StartsWith(p)))
+                {
+                    lastPromptIndex = i;
+                    break;
+                }
+            }
+            if (lastPromptIndex >= 0)
+            {
+                StringBuilder fullEntry = new StringBuilder();
+                for (int j = lastPromptIndex; j < lines.Length; j++)
+                {
+                    fullEntry.Append(lines[j].TrimEnd()); // Append and trim trailing spaces, no extra space added
+                }
+                string fullTrimmed = fullEntry.ToString().Trim();
+                if (!string.IsNullOrEmpty(fullTrimmed) && !_enterLines.Contains(fullTrimmed))
+                {
+                    _enterLines.Add(fullTrimmed);
                 }
             }
         }
