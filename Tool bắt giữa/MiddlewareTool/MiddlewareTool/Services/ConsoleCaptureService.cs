@@ -145,10 +145,7 @@ namespace MiddlewareTool.Services
                 // Find the longest matching prompt
                 string prompt = possiblePrompts.Where(p => enterLine.StartsWith(p)).OrderByDescending(p => p.Length).FirstOrDefault() ?? enterLine.Substring(0, enterLine.LastIndexOf(':') + 2);
                 string input = enterLine.Substring(prompt.Length).Trim();
-                if (!string.IsNullOrEmpty(input))
-                {
-                    userInputs.Add(input);
-                }
+                userInputs.Add(input);  // Add luôn, kể cả nếu input là "" (rỗng)
             }
             return string.Join(Environment.NewLine, cleanedLines);
         }
