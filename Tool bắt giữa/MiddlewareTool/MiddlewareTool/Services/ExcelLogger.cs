@@ -1,5 +1,6 @@
 ﻿// MiddlewareTool/Services/ExcelLogger.cs
 using ClosedXML.Excel;
+using MiddlewareTool.Models;
 using System;
 using System.IO;
 

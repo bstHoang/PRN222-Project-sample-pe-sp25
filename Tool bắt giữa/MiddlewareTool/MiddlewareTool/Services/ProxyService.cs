@@ -1,4 +1,5 @@
 ﻿// MiddlewareTool/Services/ProxyService.cs
+using MiddlewareTool.Models;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
