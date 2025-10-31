@@ -27,54 +27,48 @@
                 </StackPanel>
             </GroupBox>
 
-            <GroupBox Header="Client / Server Selection" Margin="0,0,0,10">
-                <StackPanel Orientation="Vertical">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Content="Server Executable:" VerticalAlignment="Center" />
-                        <TextBox Grid.Column="1" x:Name="ServerExePath" Margin="5,0" IsReadOnly="True" />
-                        <Button Grid.Column="2" Content="Browse..." Click="BrowseServer_Click" />
-                    </Grid>
-                    <Grid Margin="0,5,0,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Content="Client Executable:" VerticalAlignment="Center" />
-                        <TextBox Grid.Column="1" x:Name="ClientExePath" Margin="5,0" IsReadOnly="True" />
-                        <Button Grid.Column="2" Content="Browse..." Click="BrowseClient_Click" />
-                    </Grid>
-                </StackPanel>
+            <GroupBox Header="Executable Paths" Margin="0,0,0,10">
+                <Grid Margin="0,5,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Label Grid.Row="0" Grid.Column="0" Content="Server Executable Path:" VerticalAlignment="Center" />
+                    <TextBox Grid.Row="0" Grid.Column="1" x:Name="ServerExePath" Margin="5,0" IsReadOnly="True" />
+                    <Button Grid.Row="0" Grid.Column="2" Content="Browse..." Padding="10,2" Click="BrowseServer_Click" />
+
+                    <Label Grid.Row="1" Grid.Column="0" Content="Client Executable Path:" VerticalAlignment="Center" Margin="0,5,0,0" />
+                    <TextBox Grid.Row="1" Grid.Column="1" x:Name="ClientExePath" Margin="5,5,5,0" IsReadOnly="True" />
+                    <Button Grid.Row="1" Grid.Column="2" Content="Browse..." Padding="10,2" Click="BrowseClient_Click" Margin="0,5,0,0" />
+                </Grid>
             </GroupBox>
 
-            <GroupBox Header="AppSettings Override" Margin="0,0,0,10">
-                <StackPanel Orientation="Vertical">
-                    <Grid Margin="0,5,0,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="150" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Content="AppSetting Server:" VerticalAlignment="Center" />
-                        <TextBox Grid.Column="1" x:Name="AppSettingTemplate" Margin="5,0" IsReadOnly="True" />
-                        <Button Grid.Column="2" Content="Browse..." Padding="10,2" Click="AppsettingTemplate_Click" />
-                    </Grid>
-                    <Grid Margin="0,5,0,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="150" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Content="AppSetting Client:" VerticalAlignment="Center" />
-                        <TextBox Grid.Column="1" x:Name="AppSettingClientTemplate" Margin="5,0" IsReadOnly="True" />
-                        <Button Grid.Column="2" Content="Browse..." Padding="10,2" Click="AppsettingClientTemplate_Click" />
-                    </Grid>
-                </StackPanel>
+            <GroupBox Header="AppSetting Templates" Margin="0,0,0,10">
+                <Grid Margin="0,5,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Label Grid.Row="0" Grid.Column="0" Content="Server Template Path:" VerticalAlignment="Center" />
+                    <TextBox Grid.Row="0" Grid.Column="1" x:Name="AppSettingTemplate" Margin="5,0" IsReadOnly="True" />
+                    <Button Grid.Row="0" Grid.Column="2" Content="Browse..." Padding="10,2" Click="BrowseAppSetting_Click" />
+
+                    <Label Grid.Row="1" Grid.Column="0" Content="Client Template Path:" VerticalAlignment="Center" Margin="0,5,0,0" />
+                    <TextBox Grid.Row="1" Grid.Column="1" x:Name="AppSettingClientTemplate" Margin="5,5,5,0" IsReadOnly="True" />
+                    <Button Grid.Row="1" Grid.Column="2" Content="Browse..." Padding="10,2" Click="BrowseAppSettingClient_Click" Margin="0,5,0,0" />
+                </Grid>
             </GroupBox>
 
             <GroupBox Header="Log File Destination" Margin="0,0,0,10">
@@ -84,12 +78,24 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <Label Grid.Column="0" Content="Log File Path:" VerticalAlignment="Center" />
+                    <Label Grid.Column="0" Content="Excel Log File Path:" VerticalAlignment="Center" />
                     <TextBox Grid.Column="1" x:Name="ExcelLogPath" Margin="5,0" IsReadOnly="True" />
                     <Button Grid.Column="2" Content="Select File..." Padding="10,2" Click="SelectLogFile_Click" />
                 </Grid>
             </GroupBox>
 
+            <GroupBox Header="Prompt Configuration " Margin="0,0,0,10">
+                <Grid Margin="0,5,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Content="Prompts File Path:" VerticalAlignment="Center" />
+                    <TextBox Grid.Column="1" x:Name="PromptFilePath" Margin="5,0" IsReadOnly="True" />
+                    <Button Grid.Column="2" Content="Select File..." Padding="10,2" Click="BrowsePrompts_Click" />
+                </Grid>
+            </GroupBox>
         </StackPanel>
 
         <Button Grid.Row="1" x:Name="StartStopButton" Content="Start Grading Session"
@@ -111,5 +117,6 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
+
     </Grid>
 </Window>

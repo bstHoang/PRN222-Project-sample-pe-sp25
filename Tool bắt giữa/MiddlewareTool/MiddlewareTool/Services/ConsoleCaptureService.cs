@@ -55,6 +55,7 @@ namespace MiddlewareTool.Services
 
         public string CaptureConsoleOutput(int processId)
         {
+            if (processId == 0) return string.Empty;
             if (!AttachConsole((uint)processId))
             {
                 return string.Empty; // Failed to attach, return empty
@@ -98,9 +99,14 @@ namespace MiddlewareTool.Services
             }
         }
 
-        public string ProcessClientConsoleOutput(string fullOutput, List<(string Line, DateTime Timestamp)> enterLines, out List<(int Stage, string Input, string Timestamp)> stageInputs)  // Modified: Thay đổi param và out để hỗ trợ stage + timestamp
+        // === THAY ĐỔI CHỮ KÝ (SIGNATURE) CỦA HÀM NÀY ===
+        public string ProcessClientConsoleOutput(
+            string fullOutput,
+            List<(string Line, DateTime Timestamp)> enterLines,
+            List<string> possiblePrompts, // <-- THAM SỐ MỚI TỪ FILE CẤU HÌNH
+            out List<(int Stage, string Input, string Timestamp)> stageInputs)
         {
-            stageInputs = new List<(int Stage, string Input, string Timestamp)>();  // Modified: Struct cho stages
+            stageInputs = new List<(int Stage, string Input, string Timestamp)>();
             if (string.IsNullOrWhiteSpace(fullOutput))
             {
                 return string.Empty;
@@ -112,28 +118,42 @@ namespace MiddlewareTool.Services
             {
                 linesList.RemoveAt(linesList.Count - 1);
             }
-            // Collect possible prompts: lines that look like prompts (end with ': ' or ':')
-            HashSet<string> possiblePrompts = new HashSet<string>();
-            foreach (string l in linesList)
-            {
-                string trimmed = l.Trim();
-                if (trimmed.EndsWith(":") || trimmed.EndsWith(": "))
-                {
-                    possiblePrompts.Add(trimmed);
-                }
-            }
+
+            // === XOÁ BỎ HOÀN TOÀN KHỐI LOGIC "HỌC" TỰ ĐỘNG NÀY ===
+            // // Collect possible prompts: lines that look like prompts (end with ': ' or ':')
+            // HashSet<string> possiblePrompts = new HashSet<string>();
+            // foreach (string l in linesList)
+            // {
+            //    ...
+            // }
+            // === KẾT THÚC PHẦN XOÁ BỎ ===
+
             // Build cleanedLines: for each line, if it matches an enterLine, replace with the prompt part
             List<string> cleanedLines = new List<string>();
             foreach (string l in linesList)
             {
                 string trimmedL = l.Trim();
-                var matchedEnterItem = enterLines.FirstOrDefault(e => e.Line.Trim() == trimmedL);  // Modified: Tìm theo Line
+                var matchedEnterItem = enterLines.FirstOrDefault(e => e.Line.Trim() == trimmedL);
                 string matchedEnter = matchedEnterItem.Line;
+
                 if (!string.IsNullOrEmpty(matchedEnter))
                 {
+                    // === SỬA LOGIC TRÍCH XUẤT NÀY ===
                     // Find the prompt by finding the longest matching prompt from possiblePrompts
-                    string prompt = possiblePrompts.Where(p => matchedEnter.StartsWith(p)).OrderByDescending(p => p.Length).FirstOrDefault() ?? matchedEnter.Substring(0, matchedEnter.LastIndexOf(':') + 2); // +2 for ': '
-                    cleanedLines.Add(l.Replace(trimmedL, prompt)); // Replace with prompt, preserving indentation if any
+                    string prompt = possiblePrompts
+                        .Where(p => matchedEnter.StartsWith(p))
+                        .OrderByDescending(p => p.Length)
+                        .FirstOrDefault(); // <-- XOÁ PHẦN '?? ... LastIndexOf ...'
+
+                    if (prompt != null)
+                    {
+                        cleanedLines.Add(l.Replace(trimmedL, prompt)); // Replace with prompt
+                    }
+                    else
+                    {
+                        cleanedLines.Add(l); // Không tìm thấy prompt, giữ nguyên dòng
+                    }
+                    // === KẾT THÚC SỬA ĐỔI ===
                 }
                 else
                 {
@@ -141,14 +161,32 @@ namespace MiddlewareTool.Services
                 }
             }
             // Extract user inputs with stages
-            for (int i = 0; i < enterLines.Count; i++)  // Modified: Sử dụng for loop để add stage number
+            for (int i = 0; i < enterLines.Count; i++)
             {
                 string enterLine = enterLines[i].Line;
                 DateTime timestamp = enterLines[i].Timestamp;
+
+                // === SỬA LOGIC TRÍCH XUẤT NÀY ===
                 // Find the longest matching prompt
-                string prompt = possiblePrompts.Where(p => enterLine.StartsWith(p)).OrderByDescending(p => p.Length).FirstOrDefault() ?? enterLine.Substring(0, enterLine.LastIndexOf(':') + 2);
-                string input = enterLine.Substring(prompt.Length).Trim();
-                stageInputs.Add((i + 1, input, timestamp.ToString("HH:mm:ss.fff")));  // Modified: Add stage, input, timestamp
+                string prompt = possiblePrompts
+                    .Where(p => enterLine.StartsWith(p))
+                    .OrderByDescending(p => p.Length)
+                    .FirstOrDefault(); // <-- XOÁ PHẦN '?? ... LastIndexOf ...'
+
+                string input;
+                if (prompt != null)
+                {
+                    // Nếu TÌM THẤY prompt -> Tách input
+                    input = enterLine.Substring(prompt.Length).Trim();
+                }
+                else
+                {
+                    // Nếu KHÔNG TÌM THẤY -> Ghi lại cả dòng thô
+                    input = enterLine;
+                }
+                // === KẾT THÚC SỬA ĐỔI ===
+
+                stageInputs.Add((i + 1, input, timestamp.ToString("HH:mm:ss.fff")));
             }
             return string.Join(Environment.NewLine, cleanedLines);
         }
