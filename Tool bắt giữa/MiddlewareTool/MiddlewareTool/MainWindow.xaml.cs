@@ -1,4 +1,5 @@
-﻿using ClosedXML.Excel;
+﻿// MiddlewareTool/MainWindow.xaml.cs
+using ClosedXML.Excel;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -27,7 +28,8 @@ namespace MiddlewareTool
         private CancellationTokenSource? _cts;
         private bool _isSessionRunning = false;
         public ObservableCollection<LoggedRequest> LoggedRequests { get; set; }
-        private List<string> _enterLines = new List<string>();
+        private List<(string Line, DateTime Timestamp)> _enterLines = new List<(string Line, DateTime Timestamp)>();
+        private List<(int Stage, DateTime Timestamp, string ClientOutput, string ServerOutput)> _stageCaptures = new List<(int Stage, DateTime Timestamp, string ClientOutput, string ServerOutput)>();
         private string _clientLogDir = "";
 
         private ProxyService _proxyService;
@@ -140,19 +142,20 @@ namespace MiddlewareTool
             await Task.Delay(500); // Wait for client window to open
             _clientLogDir = Path.GetDirectoryName(_excelLogPath) ?? "";
             _enterLines.Clear();
+            _stageCaptures.Clear();
             KeyboardHook.SetHook(OnEnterPressed);
         }
 
-        private void OnEnterPressed()
+        private async void OnEnterPressed()  // Modified: Change to async void to allow delay
         {
             if (_clientProcess == null || _clientProcess.HasExited) return;
             IntPtr foreground = GetForegroundWindow();
             GetWindowThreadProcessId(foreground, out uint pid);
             if (pid != (uint)_clientProcess.Id) return; // Not client window
-            string currentOutput = _consoleCaptureService.CaptureConsoleOutput(_clientProcess.Id);
-            if (string.IsNullOrEmpty(currentOutput)) return;
-            string[] lines = currentOutput.Split(new[] { Environment.NewLine }, StringSplitOptions.None); // Keep empty entries for accuracy
-                                                                                                          // Collect possible prompts
+            string clientOutput = _consoleCaptureService.CaptureConsoleOutput(_clientProcess.Id);
+            if (string.IsNullOrEmpty(clientOutput)) return;
+            string[] lines = clientOutput.Split(new[] { Environment.NewLine }, StringSplitOptions.None); // Keep empty entries for accuracy
+            // Collect possible prompts
             HashSet<string> possiblePrompts = new HashSet<string>();
             foreach (string l in lines)
             {
@@ -188,14 +191,26 @@ namespace MiddlewareTool
                     fullEntry.Append(lines[j].TrimEnd()); // Append and trim trailing spaces, no extra space added
                 }
                 string fullTrimmed = fullEntry.ToString().Trim();
-                if (!string.IsNullOrEmpty(fullTrimmed) && !_enterLines.Contains(fullTrimmed))
+                if (!string.IsNullOrEmpty(fullTrimmed) && !_enterLines.Any(e => e.Line == fullTrimmed))
                 {
-                    _enterLines.Add(fullTrimmed);
+                    DateTime now = DateTime.Now;
+                    _enterLines.Add((fullTrimmed, now));
+                    // Delay to allow response to be printed
+                    await Task.Delay(500); // 500ms delay to wait for response output
+                    // Capture client and server at this stage
+                    int stage = _enterLines.Count ;  // Start from 0 for first enter
+                    string serverOutput = string.Empty;
+                    string delayedClientOutput = _consoleCaptureService.CaptureConsoleOutput(_clientProcess.Id);
+                    if (_serverProcess != null && !_serverProcess.HasExited)
+                    {
+                        serverOutput = _consoleCaptureService.CaptureConsoleOutput(_serverProcess.Id);
+                    }
+                    _stageCaptures.Add((stage, now, delayedClientOutput, serverOutput));
                 }
             }
         }
 
-        private void StopSession()
+        private async void StopSession()  // Modified: Change to async void
         {
             KeyboardHook.Unhook();
             _cts?.Cancel();
@@ -211,15 +226,29 @@ namespace MiddlewareTool
                 serverConsoleOutput = _consoleCaptureService.CaptureConsoleOutput(_serverProcess.Id);
                 File.WriteAllText(serverLogFile, serverConsoleOutput);
             }
+            List<(int Stage, string Input, string Timestamp)> stageInputs;
             if (_clientProcess != null && !_clientProcess.HasExited)
             {
+                await Task.Delay(500); // Delay for final outputs
                 clientConsoleOutput = _consoleCaptureService.CaptureConsoleOutput(_clientProcess.Id);
-                string processedClientOutput = _consoleCaptureService.ProcessClientConsoleOutput(clientConsoleOutput, _enterLines, out List<string> userInputs);
+                // Add final stage for stop
+                DateTime stopTime = DateTime.Now;
+                int finalStage = _stageCaptures.Count +1;  // Next after last enter stage
+                serverConsoleOutput = _consoleCaptureService.CaptureConsoleOutput(_serverProcess?.Id ?? 0); // Recapture if needed
+                _stageCaptures.Add((finalStage, stopTime, clientConsoleOutput, serverConsoleOutput));
+                string processedClientOutput = _consoleCaptureService.ProcessClientConsoleOutput(clientConsoleOutput, _enterLines, out stageInputs);
                 File.WriteAllText(clientLogFile, processedClientOutput);
-                File.WriteAllText(clientEnterFile, string.Join(Environment.NewLine, _enterLines));
-                if (userInputs.Count > 0)
+                File.WriteAllText(clientEnterFile, string.Join(Environment.NewLine, _enterLines.Select(e => e.Line)));
+                if (stageInputs.Count > 0)
                 {
-                    File.WriteAllText(userInputsFile, string.Join(Environment.NewLine, userInputs));
+                    File.WriteAllText(userInputsFile, string.Join(Environment.NewLine, stageInputs.Select(s => $"Stage {s.Stage}: {s.Input} at {s.Timestamp}")));
+                    _excelLogger.AppendStagesToExcel(stageInputs);
+                }
+                if (_stageCaptures.Count > 0)
+                {
+                    _excelLogger.AppendClientStagesToExcel(_stageCaptures);
+                    // New: Assign stages to logs
+                    _excelLogger.AssignStagesToLogs(_stageCaptures.Select(s => (s.Stage, s.Timestamp)).ToList());
                 }
             }
             try { if (_clientProcess != null && !_clientProcess.HasExited) _clientProcess.Kill(); } catch { }

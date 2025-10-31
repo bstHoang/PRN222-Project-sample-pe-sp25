@@ -98,9 +98,9 @@ namespace MiddlewareTool.Services
             }
         }
 
-        public string ProcessClientConsoleOutput(string fullOutput, List<string> enterLines, out List<string> userInputs)
+        public string ProcessClientConsoleOutput(string fullOutput, List<(string Line, DateTime Timestamp)> enterLines, out List<(int Stage, string Input, string Timestamp)> stageInputs)  // Modified: Thay đổi param và out để hỗ trợ stage + timestamp
         {
-            userInputs = new List<string>();
+            stageInputs = new List<(int Stage, string Input, string Timestamp)>();  // Modified: Struct cho stages
             if (string.IsNullOrWhiteSpace(fullOutput))
             {
                 return string.Empty;
@@ -127,8 +127,9 @@ namespace MiddlewareTool.Services
             foreach (string l in linesList)
             {
                 string trimmedL = l.Trim();
-                string matchedEnter = enterLines.FirstOrDefault(e => e.Trim() == trimmedL);
-                if (matchedEnter != null)
+                var matchedEnterItem = enterLines.FirstOrDefault(e => e.Line.Trim() == trimmedL);  // Modified: Tìm theo Line
+                string matchedEnter = matchedEnterItem.Line;
+                if (!string.IsNullOrEmpty(matchedEnter))
                 {
                     // Find the prompt by finding the longest matching prompt from possiblePrompts
                     string prompt = possiblePrompts.Where(p => matchedEnter.StartsWith(p)).OrderByDescending(p => p.Length).FirstOrDefault() ?? matchedEnter.Substring(0, matchedEnter.LastIndexOf(':') + 2); // +2 for ': '
@@ -139,13 +140,15 @@ namespace MiddlewareTool.Services
                     cleanedLines.Add(l);
                 }
             }
-            // Extract user inputs
-            foreach (string enterLine in enterLines)
+            // Extract user inputs with stages
+            for (int i = 0; i < enterLines.Count; i++)  // Modified: Sử dụng for loop để add stage number
             {
+                string enterLine = enterLines[i].Line;
+                DateTime timestamp = enterLines[i].Timestamp;
                 // Find the longest matching prompt
                 string prompt = possiblePrompts.Where(p => enterLine.StartsWith(p)).OrderByDescending(p => p.Length).FirstOrDefault() ?? enterLine.Substring(0, enterLine.LastIndexOf(':') + 2);
                 string input = enterLine.Substring(prompt.Length).Trim();
-                userInputs.Add(input);  // Add luôn, kể cả nếu input là "" (rỗng)
+                stageInputs.Add((i + 1, input, timestamp.ToString("HH:mm:ss.fff")));  // Modified: Add stage, input, timestamp
             }
             return string.Join(Environment.NewLine, cleanedLines);
         }
