@@ -164,7 +164,8 @@ namespace MiddlewareTool
 
         private async Task StartSessionAsync()
         {
-            _appSettingsReplacer.ReplaceAppSettings(ServerExePath.Text, AppSettingTemplate.Text, ClientExePath.Text, AppSettingClientTemplate.Text);
+            _appSettingsReplacer.ReplaceSetting(ServerExePath.Text, AppSettingTemplate.Text);
+            _appSettingsReplacer.ReplaceSetting(ClientExePath.Text, AppSettingClientTemplate.Text);
             StartStopButton.Content = "Stop Grading Session";
             _isSessionRunning = true;
             LoggedRequests.Clear();
