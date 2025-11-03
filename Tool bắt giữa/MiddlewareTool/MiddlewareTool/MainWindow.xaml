@@ -62,7 +62,7 @@
                     </Grid.ColumnDefinitions>
 
                     <Label Grid.Row="0" Grid.Column="0" Content="Server Template Path:" VerticalAlignment="Center" />
-                    <TextBox Grid.Row="0" Grid.Column="1" x:Name="AppSettingTemplate" Margin="5,0" IsReadOnly="True" />
+                    <TextBox Grid.Row="0" Grid.Column="1" x:Name="AppSettingServerTemplate" Margin="5,0" IsReadOnly="True" />
                     <Button Grid.Row="0" Grid.Column="2" Content="Browse..." Padding="10,2" Click="BrowseAppSetting_Click" />
 
                     <Label Grid.Row="1" Grid.Column="0" Content="Client Template Path:" VerticalAlignment="Center" Margin="0,5,0,0" />

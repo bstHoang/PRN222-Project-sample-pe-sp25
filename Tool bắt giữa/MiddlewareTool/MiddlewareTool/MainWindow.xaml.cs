@@ -87,7 +87,7 @@ namespace MiddlewareTool
             };
             if (openFileDialog.ShowDialog() == true)
             {
-                AppSettingTemplate.Text = openFileDialog.FileName;
+                AppSettingServerTemplate.Text = openFileDialog.FileName;
             }
         }
 
@@ -119,7 +119,6 @@ namespace MiddlewareTool
             }
         }
 
-        // === THÊM HÀM MỚI NÀY ===
         private void BrowsePrompts_Click(object sender, RoutedEventArgs e)
         {
             var openFileDialog = new OpenFileDialog
@@ -148,7 +147,7 @@ namespace MiddlewareTool
                 // === SỬA LẠI HÀM IF NÀY ===
                 if (string.IsNullOrEmpty(ServerExePath.Text) ||
                     string.IsNullOrEmpty(ClientExePath.Text) ||
-                    string.IsNullOrEmpty(AppSettingTemplate.Text) ||
+                    string.IsNullOrEmpty(AppSettingServerTemplate.Text) ||
                     string.IsNullOrEmpty(AppSettingClientTemplate.Text) ||
                     string.IsNullOrEmpty(_excelLogPath) ||
                     string.IsNullOrEmpty(PromptFilePath.Text)) // <-- Thêm kiểm tra
@@ -164,8 +163,9 @@ namespace MiddlewareTool
 
         private async Task StartSessionAsync()
         {
-            _appSettingsReplacer.ReplaceSetting(ServerExePath.Text, AppSettingTemplate.Text);
+            _appSettingsReplacer.ReplaceSetting(ServerExePath.Text, AppSettingServerTemplate.Text);
             _appSettingsReplacer.ReplaceSetting(ClientExePath.Text, AppSettingClientTemplate.Text);
+
             StartStopButton.Content = "Stop Grading Session";
             _isSessionRunning = true;
             LoggedRequests.Clear();

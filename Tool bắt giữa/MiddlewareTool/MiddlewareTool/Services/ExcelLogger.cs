@@ -1,5 +1,4 @@
-﻿// MiddlewareTool/Services/ExcelLogger.cs
-using ClosedXML.Excel;
+﻿using ClosedXML.Excel;
 using MiddlewareTool.Models;
 using System;
 using System.Collections.Generic;
@@ -39,7 +38,7 @@ namespace MiddlewareTool.Services
                         worksheet.Row(1).Style.Font.Bold = true;
                         worksheet.Columns().AdjustToContents();
 
-                        var stagesWorksheet = workbook.Worksheets.Add("Stages");
+                        var stagesWorksheet = workbook.Worksheets.Add("Inputs");
                         stagesWorksheet.Cell(1, 1).Value = "Stage";
                         stagesWorksheet.Cell(1, 2).Value = "Timestamp";
                         stagesWorksheet.Cell(1, 3).Value = "Input";
@@ -97,7 +96,7 @@ namespace MiddlewareTool.Services
                 {
                     using (var workbook = new XLWorkbook(_excelLogPath))
                     {
-                        var worksheet = workbook.Worksheet("Stages");
+                        var worksheet = workbook.Worksheet("Inputs");
                         int startRow = worksheet.LastRowUsed()?.RowNumber() ?? 1;
                         for (int i = 0; i < stages.Count; i++)
                         {
