@@ -32,8 +32,9 @@ namespace MiddlewareTool
         private List<(int Stage, DateTime Timestamp, string ClientOutput, string ServerOutput)> _stageCaptures = new List<(int Stage, DateTime Timestamp, string ClientOutput, string ServerOutput)>();
         private string _clientLogDir = "";
 
-        // === THÊM BIẾN NÀY ===
-        private List<string> _currentPrompts = new List<string>();
+        // Baseline captures for each stage
+        private List<(int Stage, DateTime Timestamp, string Baseline)> _baselineCaptures = new List<(int Stage, DateTime Timestamp, string Baseline)>();
+        private int _currentStage = 0;
 
         private ProxyService _proxyService;
         private ExcelLogger _excelLogger;
@@ -119,19 +120,7 @@ namespace MiddlewareTool
             }
         }
 
-        private void BrowsePrompts_Click(object sender, RoutedEventArgs e)
-        {
-            var openFileDialog = new OpenFileDialog
-            {
-                Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*",
-                Title = "Select Prompts file"
-            };
-            if (openFileDialog.ShowDialog() == true)
-            {
-                PromptFilePath.Text = openFileDialog.FileName;
-            }
-        }
-        // === KẾT THÚC PHẦN THÊM ===
+
 
         #endregion
 
@@ -144,19 +133,15 @@ namespace MiddlewareTool
             }
             else
             {
-                // === SỬA LẠI HÀM IF NÀY ===
                 if (string.IsNullOrEmpty(ServerExePath.Text) ||
                     string.IsNullOrEmpty(ClientExePath.Text) ||
                     string.IsNullOrEmpty(AppSettingServerTemplate.Text) ||
                     string.IsNullOrEmpty(AppSettingClientTemplate.Text) ||
-                    string.IsNullOrEmpty(_excelLogPath) ||
-                    string.IsNullOrEmpty(PromptFilePath.Text)) // <-- Thêm kiểm tra
+                    string.IsNullOrEmpty(_excelLogPath))
                 {
-                    // Sửa lại thông báo lỗi
-                    MessageBox.Show("Please provide all required paths, including the log file AND the prompts file.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Please provide all required paths.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
-                // === KẾT THÚC SỬA ĐỔI ===
                 await StartSessionAsync();
             }
         }
@@ -178,29 +163,6 @@ namespace MiddlewareTool
             string selectedProtocol = (ProtocolSelection.SelectedItem as ComboBoxItem)?.Content.ToString() ?? "HTTP";
             _proxyService.StartProxy(selectedProtocol, _cts.Token);
 
-            // === THÊM LOGIC ĐỌC FILE PROMPTS ===
-            _currentPrompts.Clear(); // Xoá prompts cũ
-            try
-            {
-                _currentPrompts = File.ReadAllLines(PromptFilePath.Text)
-                                     .Where(line => !string.IsNullOrWhiteSpace(line)) // Bỏ qua dòng trống
-                                     .Select(line => line.Trim()) // Xoá khoảng trắng thừa
-                                     .ToList();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Failed to read prompts file: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                StopSession(); // Dừng lại nếu không đọc được file
-                return;
-            }
-            if (_currentPrompts.Count == 0)
-            {
-                MessageBox.Show($"Prompts file is empty. Please add prompts to the file.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                StopSession();
-                return;
-            }
-            // === KẾT THÚC PHẦN THÊM ===
-
             await Task.Delay(1500);
             _clientProcess = new Process { StartInfo = new ProcessStartInfo(ClientExePath.Text) { UseShellExecute = true } };
             _clientProcess.Start();
@@ -208,11 +170,12 @@ namespace MiddlewareTool
             _clientLogDir = Path.GetDirectoryName(_excelLogPath) ?? "";
             _enterLines.Clear();
             _stageCaptures.Clear();
-            KeyboardHook.SetHook(OnEnterPressed);
+            _baselineCaptures.Clear();
+            _currentStage = 0;
+            KeyboardHook.SetHook(OnEnterPressed, OnCapturePressed);
         }
 
-        // === THAY THẾ TOÀN BỘ HÀM OnEnterPressed ===
-        private async void OnEnterPressed()
+        private void OnCapturePressed()
         {
             if (_clientProcess == null || _clientProcess.HasExited) return;
             IntPtr foreground = GetForegroundWindow();
@@ -222,32 +185,78 @@ namespace MiddlewareTool
             string clientOutput = _consoleCaptureService.CaptureConsoleOutput(_clientProcess.Id);
             if (string.IsNullOrEmpty(clientOutput)) return;
 
-            // Logic mới: Chỉ cần lấy dòng cuối cùng không trống
-            string lastLine = clientOutput.Split(new[] { Environment.NewLine }, StringSplitOptions.None)
-                                        .LastOrDefault(line => !string.IsNullOrWhiteSpace(line));
+            _currentStage++;
+            DateTime now = DateTime.Now;
+            _baselineCaptures.Add((_currentStage, now, clientOutput));
 
-            string fullTrimmed = lastLine?.Trim() ?? string.Empty;
+            // Show notification
+            MessageBox.Show($"Stage {_currentStage} baseline captured. Now user can enter input.", "Baseline Captured", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
 
-            if (!string.IsNullOrEmpty(fullTrimmed) && !_enterLines.Any(e => e.Line == fullTrimmed))
+        private async void OnEnterPressed()
+        {
+            if (_clientProcess == null || _clientProcess.HasExited) return;
+            IntPtr foreground = GetForegroundWindow();
+            GetWindowThreadProcessId(foreground, out uint pid);
+            if (pid != (uint)_clientProcess.Id) return; // Not client window
+
+            // Check if we have a baseline for the current stage
+            if (_baselineCaptures.Count == 0 || _currentStage == 0)
+            {
+                return; // No baseline yet, ignore Enter
+            }
+
+            string clientOutput = _consoleCaptureService.CaptureConsoleOutput(_clientProcess.Id);
+            if (string.IsNullOrEmpty(clientOutput)) return;
+
+            // Get the baseline for current stage
+            var baseline = _baselineCaptures.FirstOrDefault(b => b.Stage == _currentStage);
+            if (baseline.Baseline == null) return;
+
+            // Extract input by comparing with baseline
+            string userInput = ExtractInputFromBaseline(baseline.Baseline, clientOutput);
+
+            if (!string.IsNullOrEmpty(userInput))
             {
                 DateTime now = DateTime.Now;
-                _enterLines.Add((fullTrimmed, now));
+                _enterLines.Add((userInput, now));
 
                 // Delay to allow response to be printed
-                await Task.Delay(500); // 500ms delay to wait for response output
+                await Task.Delay(500);
 
                 // Capture client and server at this stage
-                int stage = _enterLines.Count;
                 string serverOutput = string.Empty;
                 string delayedClientOutput = _consoleCaptureService.CaptureConsoleOutput(_clientProcess.Id);
                 if (_serverProcess != null && !_serverProcess.HasExited)
                 {
                     serverOutput = _consoleCaptureService.CaptureConsoleOutput(_serverProcess.Id);
                 }
-                _stageCaptures.Add((stage, now, delayedClientOutput, serverOutput));
+                _stageCaptures.Add((_currentStage, now, delayedClientOutput, serverOutput));
             }
         }
-        // === KẾT THÚC THAY THẾ ===
+
+        private string ExtractInputFromBaseline(string baseline, string currentOutput)
+        {
+            // Split both outputs into lines
+            var baselineLines = baseline.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+            var currentLines = currentOutput.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+
+            // Find the last non-empty line in baseline
+            string lastBaselineLine = baselineLines.LastOrDefault(line => !string.IsNullOrWhiteSpace(line))?.Trim() ?? "";
+
+            // Find matching line in current output and extract what comes after
+            for (int i = 0; i < currentLines.Length; i++)
+            {
+                string trimmedLine = currentLines[i].Trim();
+                if (trimmedLine.StartsWith(lastBaselineLine) && trimmedLine.Length > lastBaselineLine.Length)
+                {
+                    // Found the line with user input
+                    return trimmedLine.Substring(lastBaselineLine.Length).Trim();
+                }
+            }
+
+            return string.Empty;
+        }
 
         private async void StopSession()
         {
@@ -260,6 +269,7 @@ namespace MiddlewareTool
             string userInputsFile = Path.Combine(_clientLogDir, $"{Path.GetFileNameWithoutExtension(_excelLogPath)}_UserInputs.log");
             string serverConsoleOutput = string.Empty;
             string clientConsoleOutput = string.Empty;
+            List<(int Stage, string Input, string Timestamp)> stageInputs;
 
             if (_serverProcess != null && !_serverProcess.HasExited)
             {
@@ -267,29 +277,28 @@ namespace MiddlewareTool
                 File.WriteAllText(serverLogFile, serverConsoleOutput);
             }
 
-            List<(int Stage, string Input, string Timestamp)> stageInputs;
-
             if (_clientProcess != null && !_clientProcess.HasExited)
             {
                 await Task.Delay(500); // Delay for final outputs
                 clientConsoleOutput = _consoleCaptureService.CaptureConsoleOutput(_clientProcess.Id);
 
-                // Add final stage for stop
-                DateTime stopTime = DateTime.Now;
-                int finalStage = _stageCaptures.Count + 1;
-                serverConsoleOutput = _consoleCaptureService.CaptureConsoleOutput(_serverProcess?.Id ?? 0);
-                _stageCaptures.Add((finalStage, stopTime, clientConsoleOutput, serverConsoleOutput));
+                // Add final stage for stop if we have captures
+                if (_stageCaptures.Count > 0)
+                {
+                    DateTime stopTime = DateTime.Now;
+                    int finalStage = _stageCaptures.Count + 1;
+                    serverConsoleOutput = _consoleCaptureService.CaptureConsoleOutput(_serverProcess?.Id ?? 0);
+                    _stageCaptures.Add((finalStage, stopTime, clientConsoleOutput, serverConsoleOutput));
+                }
 
-                // === SỬA LẠI CÁCH GỌI HÀM NÀY ===
-                string processedClientOutput = _consoleCaptureService.ProcessClientConsoleOutput(
-                    clientConsoleOutput,
-                    _enterLines,
-                    _currentPrompts,  // <-- Truyền danh sách prompts đã đọc
-                    out stageInputs
-                );
-                // === KẾT THÚC SỬA ĐỔI ===
+                // Build stage inputs from _enterLines
+                stageInputs = new List<(int Stage, string Input, string Timestamp)>();
+                for (int i = 0; i < _enterLines.Count; i++)
+                {
+                    stageInputs.Add((i + 1, _enterLines[i].Line, _enterLines[i].Timestamp.ToString("HH:mm:ss.fff")));
+                }
 
-                File.WriteAllText(clientLogFile, processedClientOutput);
+                File.WriteAllText(clientLogFile, clientConsoleOutput);
                 File.WriteAllText(clientEnterFile, string.Join(Environment.NewLine, _enterLines.Select(e => e.Line)));
                 if (stageInputs.Count > 0)
                 {
@@ -301,6 +310,10 @@ namespace MiddlewareTool
                     _excelLogger.AppendClientStagesToExcel(_stageCaptures);
                     _excelLogger.AssignStagesToLogs(_stageCaptures.Select(s => (s.Stage, s.Timestamp)).ToList());
                 }
+            }
+            else
+            {
+                stageInputs = new List<(int Stage, string Input, string Timestamp)>();
             }
 
             try { if (_clientProcess != null && !_clientProcess.HasExited) _clientProcess.Kill(); } catch { }

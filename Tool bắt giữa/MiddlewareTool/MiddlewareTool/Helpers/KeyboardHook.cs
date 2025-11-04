@@ -12,10 +12,12 @@ namespace MiddlewareTool.Helpers
         private static LowLevelKeyboardProc _proc = HookCallback;
         private static IntPtr _hookID = IntPtr.Zero;
         private static Action? _onEnterPressed;
+        private static Action? _onCapturePressed;
 
-        public static void SetHook(Action onEnterPressed)
+        public static void SetHook(Action onEnterPressed, Action onCapturePressed)
         {
             _onEnterPressed = onEnterPressed;
+            _onCapturePressed = onCapturePressed;
             _hookID = SetHook(_proc);
         }
 
@@ -23,6 +25,7 @@ namespace MiddlewareTool.Helpers
         {
             UnhookWindowsHookEx(_hookID);
             _onEnterPressed = null;
+            _onCapturePressed = null;
         }
 
         private static IntPtr SetHook(LowLevelKeyboardProc proc)
@@ -44,6 +47,10 @@ namespace MiddlewareTool.Helpers
                 if (vkCode == 0x0D) // VK_RETURN (Enter)
                 {
                     _onEnterPressed?.Invoke();
+                }
+                else if (vkCode == 0x74) // VK_F5 for capturing baseline
+                {
+                    _onCapturePressed?.Invoke();
                 }
             }
             return CallNextHookEx(_hookID, nCode, wParam, lParam);
