@@ -173,6 +173,9 @@ namespace MiddlewareTool
             _baselineCaptures.Clear();
             _currentStage = 0;
             KeyboardHook.SetHook(OnEnterPressed, OnCapturePressed);
+            
+            StatusText.Text = "Status: Session running. Press F5 in client console to capture baseline for Stage 1.";
+            StatusText.Foreground = System.Windows.Media.Brushes.DarkGreen;
         }
 
         private void OnCapturePressed()
@@ -189,8 +192,12 @@ namespace MiddlewareTool
             DateTime now = DateTime.Now;
             _baselineCaptures.Add((_currentStage, now, clientOutput));
 
-            // Show notification
-            MessageBox.Show($"Stage {_currentStage} baseline captured. Now user can enter input.", "Baseline Captured", MessageBoxButton.OK, MessageBoxImage.Information);
+            // Update status text
+            Dispatcher.Invoke(() =>
+            {
+                StatusText.Text = $"Status: Stage {_currentStage} baseline captured. Waiting for user input (Press Enter)...";
+                StatusText.Foreground = System.Windows.Media.Brushes.Green;
+            });
         }
 
         private async void OnEnterPressed()
@@ -221,6 +228,13 @@ namespace MiddlewareTool
                 DateTime now = DateTime.Now;
                 _enterLines.Add((userInput, now));
 
+                // Update status
+                Dispatcher.Invoke(() =>
+                {
+                    StatusText.Text = $"Status: Stage {_currentStage} input captured: '{userInput}'. Press F5 for next stage or Stop to finish.";
+                    StatusText.Foreground = System.Windows.Media.Brushes.Blue;
+                });
+
                 // Delay to allow response to be printed
                 await Task.Delay(500);
 
@@ -233,6 +247,15 @@ namespace MiddlewareTool
                 }
                 _stageCaptures.Add((_currentStage, now, delayedClientOutput, serverOutput));
             }
+            else
+            {
+                // No input extracted, might be an issue
+                Dispatcher.Invoke(() =>
+                {
+                    StatusText.Text = $"Status: Warning - Could not extract input for Stage {_currentStage}. Try pressing F5 again.";
+                    StatusText.Foreground = System.Windows.Media.Brushes.Orange;
+                });
+            }
         }
 
         private string ExtractInputFromBaseline(string baseline, string currentOutput)
@@ -241,17 +264,42 @@ namespace MiddlewareTool
             var baselineLines = baseline.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
             var currentLines = currentOutput.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 
-            // Find the last non-empty line in baseline
+            // Find the last non-empty line in baseline - this should be the prompt
             string lastBaselineLine = baselineLines.LastOrDefault(line => !string.IsNullOrWhiteSpace(line))?.Trim() ?? "";
+            
+            if (string.IsNullOrEmpty(lastBaselineLine))
+            {
+                return string.Empty;
+            }
 
             // Find matching line in current output and extract what comes after
             for (int i = 0; i < currentLines.Length; i++)
             {
                 string trimmedLine = currentLines[i].Trim();
-                if (trimmedLine.StartsWith(lastBaselineLine) && trimmedLine.Length > lastBaselineLine.Length)
+                
+                // Check if this line starts with the baseline prompt
+                if (trimmedLine.StartsWith(lastBaselineLine))
                 {
-                    // Found the line with user input
-                    return trimmedLine.Substring(lastBaselineLine.Length).Trim();
+                    if (trimmedLine.Length > lastBaselineLine.Length)
+                    {
+                        // Found the line with user input appended to prompt
+                        return trimmedLine.Substring(lastBaselineLine.Length).Trim();
+                    }
+                }
+            }
+
+            // Fallback: if no match found, try to find new content
+            // Compare line counts - if current has more lines, the difference might be the input
+            if (currentLines.Length > baselineLines.Length)
+            {
+                // Get the new line(s) that appeared
+                var newLines = currentLines.Skip(baselineLines.Length)
+                    .Where(line => !string.IsNullOrWhiteSpace(line))
+                    .Select(line => line.Trim());
+                
+                if (newLines.Any())
+                {
+                    return string.Join(" ", newLines);
                 }
             }
 
@@ -320,6 +368,9 @@ namespace MiddlewareTool
             try { if (_serverProcess != null && !_serverProcess.HasExited) _serverProcess.Kill(); } catch { }
             _isSessionRunning = false;
             StartStopButton.Content = "Start Grading Session";
+            
+            StatusText.Text = $"Status: Session stopped. {_enterLines.Count} inputs captured across {_currentStage} stages.";
+            StatusText.Foreground = System.Windows.Media.Brushes.Gray;
 
             MessageBox.Show($"Session stopped. Logs saved to {_excelLogPath} and related log files in {_clientLogDir}", "Session Stopped", MessageBoxButton.OK, MessageBoxImage.Information);
         }
