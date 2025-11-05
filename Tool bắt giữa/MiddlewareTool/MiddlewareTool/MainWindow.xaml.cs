@@ -246,16 +246,17 @@ namespace MiddlewareTool
                 userInput = ExtractInputFromPreviousStage(previousStage.ClientOutput, clientOutput);
             }
 
-            // Track the input for the current stage (will be associated when F1 is pressed)
+            // Track the input for the NEXT stage (will be created when F1 is pressed next)
             if (!string.IsNullOrEmpty(userInput) && _currentStage > 0)
             {
                 DateTime now = DateTime.Now;
-                _enterLines.Add((_currentStage, userInput, now));
+                int nextStage = _currentStage + 1;
+                _enterLines.Add((nextStage, userInput, now));
                 
                 // Optional: Show feedback that input was tracked
                 Dispatcher.Invoke(() =>
                 {
-                    StatusText.Text = $"Status: Input '{userInput}' tracked. Press F1 to capture stage.";
+                    StatusText.Text = $"Status: Input '{userInput}' tracked for next stage. Press F1 to capture stage {nextStage}.";
                     StatusText.Foreground = System.Windows.Media.Brushes.Blue;
                 });
             }
