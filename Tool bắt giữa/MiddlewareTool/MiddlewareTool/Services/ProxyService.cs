@@ -24,9 +24,6 @@ namespace MiddlewareTool.Services
         private HttpListener? _httpListener;
         private TcpListener? _tcpListener;
 
-        // Event to signal when server response is received
-        public event EventHandler? ServerResponseReceived;
-
         public ProxyService(int proxyPort, int realServerPort, ObservableCollection<LoggedRequest> loggedRequests, ExcelLogger excelLogger)
         {
             _proxyPort = proxyPort;
@@ -111,9 +108,6 @@ namespace MiddlewareTool.Services
                     response.ContentType = responseMessage.Content.Headers.ContentType?.ToString();
                     await response.OutputStream.WriteAsync(responseContent, 0, responseContent.Length);
                     response.Close();
-                    
-                    // Fire event to signal server response received
-                    ServerResponseReceived?.Invoke(this, EventArgs.Empty);
                 }
             }
             catch (Exception ex)
@@ -191,12 +185,6 @@ namespace MiddlewareTool.Services
                 };
                 _excelLogger.AppendToExcelLog(logEntry);
                 Application.Current.Dispatcher.Invoke(() => _loggedRequests.Add(logEntry));
-                
-                // Fire event when server sends data back to client
-                if (direction == "Server -> Client")
-                {
-                    ServerResponseReceived?.Invoke(this, EventArgs.Empty);
-                }
             }
         }
     }

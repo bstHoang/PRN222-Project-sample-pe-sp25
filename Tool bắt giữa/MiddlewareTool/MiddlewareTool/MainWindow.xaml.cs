@@ -41,10 +41,6 @@ namespace MiddlewareTool
         private ConsoleCaptureService _consoleCaptureService;
         private AppSettingsReplacer _appSettingsReplacer;
 
-        // Flag and data for pending server capture
-        private bool _pendingServerCapture = false;
-        private (int Stage, DateTime Timestamp, string ClientOutput, string UserInput) _pendingCaptureData;
-
         public MainWindow()
         {
             InitializeComponent();
@@ -166,9 +162,6 @@ namespace MiddlewareTool
             _cts = new CancellationTokenSource();
             string selectedProtocol = (ProtocolSelection.SelectedItem as ComboBoxItem)?.Content.ToString() ?? "HTTP";
             
-            // Subscribe to server response event
-            _proxyService.ServerResponseReceived += OnServerResponseReceived;
-            
             _proxyService.StartProxy(selectedProtocol, _cts.Token);
 
             await Task.Delay(1500);
@@ -182,7 +175,7 @@ namespace MiddlewareTool
             _currentStage = 0;
             KeyboardHook.SetHook(OnEnterPressed, OnCapturePressed);
             
-            StatusText.Text = "Status: Session running. Press F1 or Enter in client console to capture Stage 1.";
+            StatusText.Text = "Status: Session running. Press F1 in client console to capture stages.";
             StatusText.Foreground = System.Windows.Media.Brushes.DarkGreen;
         }
 
@@ -212,13 +205,15 @@ namespace MiddlewareTool
             // Update status text
             Dispatcher.Invoke(() =>
             {
-                StatusText.Text = $"Status: Stage {_currentStage} captured (F1). Press F1 or Enter for next stage.";
+                StatusText.Text = $"Status: Stage {_currentStage} captured (F1). Press F1 for next stage.";
                 StatusText.Foreground = System.Windows.Media.Brushes.Green;
             });
         }
 
-        private async void OnEnterPressed()
+        private void OnEnterPressed()
         {
+            // Enter key is just for user input tracking, not for creating stages
+            // Only F1 creates stages now
             if (_clientProcess == null || _clientProcess.HasExited) return;
             IntPtr foreground = GetForegroundWindow();
             GetWindowThreadProcessId(foreground, out uint pid);
@@ -235,110 +230,19 @@ namespace MiddlewareTool
                 userInput = ExtractInputFromPreviousStage(previousStage.ClientOutput, clientOutput);
             }
 
-            // Each Enter press creates a new stage
-            _currentStage++;
-            DateTime now = DateTime.Now;
-
-            // If we extracted input, add it to _enterLines
-            if (!string.IsNullOrEmpty(userInput))
+            // Track the input for the current stage (will be associated when F1 is pressed)
+            if (!string.IsNullOrEmpty(userInput) && _currentStage > 0)
             {
+                DateTime now = DateTime.Now;
                 _enterLines.Add((_currentStage, userInput, now));
-            }
-
-            // Set flag to indicate we're waiting for server response
-            // Store the data that we'll need when the server response arrives
-            _pendingServerCapture = true;
-            _pendingCaptureData = (_currentStage, now, clientOutput, userInput);
-
-            // Update status to show we're waiting for server
-            Dispatcher.Invoke(() =>
-            {
-                if (!string.IsNullOrEmpty(userInput))
-                {
-                    StatusText.Text = $"Status: Stage {_currentStage} - waiting for server response (input: '{userInput}')...";
-                }
-                else
-                {
-                    StatusText.Text = $"Status: Stage {_currentStage} - waiting for server response...";
-                }
-                StatusText.Foreground = System.Windows.Media.Brushes.Orange;
-            });
-
-            // Wait for event OR timeout (whichever comes first)
-            // Event-driven: If server responds quickly, event will capture immediately
-            // Timeout fallback: If no event fires within 300ms, capture anyway to ensure every Enter creates a stage
-            await Task.Delay(300);
-
-            // Check if the stage was already captured by the event
-            if (_pendingServerCapture && _pendingCaptureData.Stage == _currentStage)
-            {
-                // Event didn't fire or took too long, capture now
-                _pendingServerCapture = false;
                 
-                string serverOutput = string.Empty;
-                if (_serverProcess != null && !_serverProcess.HasExited)
-                {
-                    serverOutput = _consoleCaptureService.CaptureConsoleOutput(_serverProcess.Id);
-                }
-                
-                _stageCaptures.Add((_pendingCaptureData.Stage, _pendingCaptureData.Timestamp, 
-                                    _pendingCaptureData.ClientOutput, serverOutput));
-
-                // Update status on UI thread
+                // Optional: Show feedback that input was tracked
                 Dispatcher.Invoke(() =>
                 {
-                    if (!string.IsNullOrEmpty(userInput))
-                    {
-                        StatusText.Text = $"Status: Stage {_currentStage} captured (Enter) with input '{userInput}'. Press F1 or Enter for next stage.";
-                    }
-                    else
-                    {
-                        StatusText.Text = $"Status: Stage {_currentStage} captured (Enter). Press F1 or Enter for next stage.";
-                    }
+                    StatusText.Text = $"Status: Input '{userInput}' tracked. Press F1 to capture stage.";
                     StatusText.Foreground = System.Windows.Media.Brushes.Blue;
                 });
             }
-        }
-
-        private async void OnServerResponseReceived(object? sender, EventArgs e)
-        {
-            // Check if we're waiting for a server capture
-            if (!_pendingServerCapture) return;
-
-            // Wait a short moment to allow any additional requests/responses to complete
-            // This handles cases where one user action triggers multiple HTTP requests
-            await Task.Delay(100);
-
-            // Check again if still pending (OnEnterPressed might have timed out)
-            if (!_pendingServerCapture) return;
-
-            // Reset the flag to prevent duplicate captures
-            _pendingServerCapture = false;
-
-            // Capture server output now that responses have arrived and been logged
-            string serverOutput = string.Empty;
-            if (_serverProcess != null && !_serverProcess.HasExited)
-            {
-                serverOutput = _consoleCaptureService.CaptureConsoleOutput(_serverProcess.Id);
-            }
-
-            // Add the complete stage capture
-            _stageCaptures.Add((_pendingCaptureData.Stage, _pendingCaptureData.Timestamp, 
-                                _pendingCaptureData.ClientOutput, serverOutput));
-
-            // Update status on UI thread
-            Dispatcher.Invoke(() =>
-            {
-                if (!string.IsNullOrEmpty(_pendingCaptureData.UserInput))
-                {
-                    StatusText.Text = $"Status: Stage {_pendingCaptureData.Stage} captured (Enter) with input '{_pendingCaptureData.UserInput}'. Press F1 or Enter for next stage.";
-                }
-                else
-                {
-                    StatusText.Text = $"Status: Stage {_pendingCaptureData.Stage} captured (Enter). Press F1 or Enter for next stage.";
-                }
-                StatusText.Foreground = System.Windows.Media.Brushes.Blue;
-            });
         }
 
         private string ExtractInputFromPreviousStage(string previousOutput, string currentOutput)
@@ -457,10 +361,6 @@ namespace MiddlewareTool
         {
             KeyboardHook.Unhook();
             _cts?.Cancel();
-            
-            // Unsubscribe from server response event
-            _proxyService.ServerResponseReceived -= OnServerResponseReceived;
-            
             _proxyService.StopProxy();
             string clientLogFile = Path.Combine(_clientLogDir, $"{Path.GetFileNameWithoutExtension(_excelLogPath)}_Client.log");
             string serverLogFile = Path.Combine(_clientLogDir, $"{Path.GetFileNameWithoutExtension(_excelLogPath)}_Server.log");
