@@ -175,7 +175,7 @@ namespace MiddlewareTool
             _currentStage = 0;
             KeyboardHook.SetHook(OnEnterPressed, OnCapturePressed);
             
-            StatusText.Text = "Status: Session running. Press F1 in client console to capture stages.";
+            StatusText.Text = "Status: Session running. Press F12 in client console to capture stages.";
             StatusText.Foreground = System.Windows.Media.Brushes.DarkGreen;
         }
 
@@ -198,14 +198,14 @@ namespace MiddlewareTool
                     // Same output as last capture, skip this duplicate
                     Dispatcher.Invoke(() =>
                     {
-                        StatusText.Text = $"Status: Duplicate output detected, skipped. Press F1 after console updates.";
+                        StatusText.Text = $"Status: Duplicate output detected, skipped. Press F12 after console updates.";
                         StatusText.Foreground = System.Windows.Media.Brushes.Orange;
                     });
                     return;
                 }
             }
 
-            // Each F1 press creates a new stage
+            // Each F12 press creates a new stage
             _currentStage++;
             DateTime now = DateTime.Now;
             
@@ -221,7 +221,7 @@ namespace MiddlewareTool
             // Update status text
             Dispatcher.Invoke(() =>
             {
-                StatusText.Text = $"Status: Stage {_currentStage} captured (F1). Press F1 for next stage.";
+                StatusText.Text = $"Status: Stage {_currentStage} captured (F12). Press F12 for next stage.";
                 StatusText.Foreground = System.Windows.Media.Brushes.Green;
             });
         }
@@ -229,7 +229,7 @@ namespace MiddlewareTool
         private void OnEnterPressed()
         {
             // Enter key is just for user input tracking, not for creating stages
-            // Only F1 creates stages now
+            // Only F12 creates stages now
             if (_clientProcess == null || _clientProcess.HasExited) return;
             IntPtr foreground = GetForegroundWindow();
             GetWindowThreadProcessId(foreground, out uint pid);
@@ -246,7 +246,7 @@ namespace MiddlewareTool
                 userInput = ExtractInputFromPreviousStage(previousStage.ClientOutput, clientOutput);
             }
 
-            // Track the input for the NEXT stage (will be created when F1 is pressed next)
+            // Track the input for the NEXT stage (will be created when F12 is pressed next)
             if (!string.IsNullOrEmpty(userInput) && _currentStage > 0)
             {
                 DateTime now = DateTime.Now;
@@ -256,7 +256,7 @@ namespace MiddlewareTool
                 // Optional: Show feedback that input was tracked
                 Dispatcher.Invoke(() =>
                 {
-                    StatusText.Text = $"Status: Input '{userInput}' tracked for next stage. Press F1 to capture stage {nextStage}.";
+                    StatusText.Text = $"Status: Input '{userInput}' tracked for next stage. Press F12 to capture stage {nextStage}.";
                     StatusText.Foreground = System.Windows.Media.Brushes.Blue;
                 });
             }

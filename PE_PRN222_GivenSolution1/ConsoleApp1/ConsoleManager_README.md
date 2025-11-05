@@ -1,13 +1,13 @@
-# ConsoleManager - Managed Console Output with F1 Key Handling
+# ConsoleManager - Managed Console Output with F12 Key Handling
 
 ## Overview
-`ConsoleManager` is a utility class that provides managed console output and automatically handles F1 key detection to clear the console input buffer. This prevents stale input from appearing when the middleware tool captures console output.
+`ConsoleManager` is a utility class that provides managed console output and automatically handles F12 key detection to clear the console input buffer. This prevents stale input from appearing when the middleware tool captures console output.
 
 ## Features
 
-### 1. Automatic F1 Key Detection
-- Monitors for F1 key presses in the background
-- Automatically clears the console input buffer when F1 is detected
+### 1. Automatic F12 Key Detection
+- Monitors for F12 key presses in the background
+- Automatically clears the console input buffer when F12 is detected
 - Prevents old user input from reappearing at the prompt
 
 ### 2. Managed Console Output
@@ -27,7 +27,7 @@ Call `ConsoleManager.Initialize()` at the start of your `Main()` method:
 ```csharp
 static async Task Main(string[] args)
 {
-    // Initialize ConsoleManager to handle F1 key and clear input buffer
+    // Initialize ConsoleManager to handle F12 key and clear input buffer
     ConsoleManager.Initialize();
     
     // ... rest of your code
@@ -56,13 +56,13 @@ You can manually clear the input buffer if needed:
 ConsoleManager.ClearInputBuffer();
 ```
 
-### Checking F1 Press Status (Optional)
-Check if F1 was pressed since the last check:
+### Checking F12 Press Status (Optional)
+Check if F12 was pressed since the last check:
 
 ```csharp
-if (ConsoleManager.WasF1Pressed())
+if (ConsoleManager.WasF12Pressed())
 {
-    // F1 was pressed - do something
+    // F12 was pressed - do something
 }
 ```
 
@@ -71,12 +71,12 @@ if (ConsoleManager.WasF1Pressed())
 ### Background Monitoring
 When `Initialize()` is called, ConsoleManager starts a background thread that:
 1. Continuously monitors for keyboard input
-2. Detects when F1 key is pressed
+2. Detects when F12 key is pressed
 3. Immediately clears the console input buffer
 4. Sets an internal flag that can be checked
 
 ### Input Buffer Clearing
-When F1 is pressed:
+When F12 is pressed:
 1. On Windows: Uses `kernel32.dll` `FlushConsoleInputBuffer()` API
 2. On other platforms: Reads and discards all available keys with `Console.ReadKey(true)`
 
@@ -86,7 +86,7 @@ This prevents the middleware tool's `AttachConsole()` call from causing stale in
 
 ### For Students
 - **No manual cleanup**: Don't need to press Backspace to delete old input
-- **Better UX**: Console behaves as expected when F1 is pressed
+- **Better UX**: Console behaves as expected when F12 is pressed
 - **Transparent**: Works automatically without changing workflow
 
 ### For Developers
@@ -150,7 +150,7 @@ static async Task Main(string[] args)
 ### Performance
 - Minimal overhead: 50ms sleep between key checks
 - Non-blocking: Doesn't interfere with main thread
-- Efficient: Only activates when F1 is detected
+- Efficient: Only activates when F12 is detected
 
 ### Compatibility
 - .NET 6.0+
@@ -159,10 +159,10 @@ static async Task Main(string[] args)
 
 ## Troubleshooting
 
-### F1 Key Not Detected
+### F12 Key Not Detected
 - Ensure `ConsoleManager.Initialize()` is called at startup
 - Check if console window has focus
-- Verify F1 isn't mapped to another function in your terminal
+- Verify F12 isn't mapped to another function in your terminal
 
 ### Input Still Appearing
 - Verify all `Console.Write/WriteLine` are replaced with `ConsoleManager`
@@ -172,5 +172,5 @@ static async Task Main(string[] args)
 ## Future Enhancements
 - Add output logging to file
 - Track output history for debugging
-- Support custom key combinations (not just F1)
+- Support custom key combinations (not just F12)
 - Add output filtering or formatting capabilities

@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace ConsoleApp1
 {
     /// <summary>
-    /// ConsoleManager provides managed console output and handles F1 key detection
+    /// ConsoleManager provides managed console output and handles F12 key detection
     /// to clear input buffer and prevent stale input from appearing.
     /// </summary>
     public static class ConsoleManager
@@ -21,12 +21,12 @@ namespace ConsoleApp1
         private static bool _f1Pressed = false;
 
         /// <summary>
-        /// Initialize the console manager with F1 key monitoring
+        /// Initialize the console manager with F12 key monitoring
         /// </summary>
         public static void Initialize()
         {
-            // Start background thread to monitor for F1 key
-            var monitorThread = new System.Threading.Thread(MonitorF1Key)
+            // Start background thread to monitor for F12 key
+            var monitorThread = new System.Threading.Thread(MonitorF12Key)
             {
                 IsBackground = true
             };
@@ -34,23 +34,23 @@ namespace ConsoleApp1
         }
 
         /// <summary>
-        /// Monitor for F1 key press to clear input buffer
+        /// Monitor for F12 key press to clear input buffer
         /// </summary>
-        private static void MonitorF1Key()
+        private static void MonitorF12Key()
         {
             while (true)
             {
                 if (Console.KeyAvailable)
                 {
                     var key = Console.ReadKey(true);
-                    if (key.Key == ConsoleKey.F1)
+                    if (key.Key == ConsoleKey.F12)
                     {
                         _f1Pressed = true;
                         ClearInputBuffer();
                     }
                     else
                     {
-                        // Put the key back (not possible in C#, so we skip non-F1 keys here)
+                        // Put the key back (not possible in C#, so we skip non-F12 keys here)
                         // The main thread will read it normally
                     }
                 }
@@ -115,10 +115,10 @@ namespace ConsoleApp1
         }
 
         /// <summary>
-        /// Check if F1 was pressed and reset the flag
+        /// Check if F12 was pressed and reset the flag
         /// </summary>
-        /// <returns>True if F1 was pressed since last check</returns>
-        public static bool WasF1Pressed()
+        /// <returns>True if F12 was pressed since last check</returns>
+        public static bool WasF12Pressed()
         {
             bool result = _f1Pressed;
             _f1Pressed = false;
