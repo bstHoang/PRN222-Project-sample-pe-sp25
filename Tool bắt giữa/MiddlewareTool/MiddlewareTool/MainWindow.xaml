@@ -93,7 +93,7 @@
                         1. Start the grading session
                     </TextBlock>
                     <TextBlock TextWrapping="Wrap" Margin="0,0,0,3">
-                        2. Press F5 to capture console baseline BEFORE user enters input (creates new stage)
+                        2. Press F1 to capture console baseline BEFORE user enters input (creates new stage)
                     </TextBlock>
                     <TextBlock TextWrapping="Wrap" Margin="0,0,0,3">
                         3. User enters input in console and presses Enter

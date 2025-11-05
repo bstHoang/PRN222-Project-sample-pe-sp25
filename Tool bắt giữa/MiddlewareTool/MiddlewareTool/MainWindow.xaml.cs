@@ -174,7 +174,7 @@ namespace MiddlewareTool
             _currentStage = 0;
             KeyboardHook.SetHook(OnEnterPressed, OnCapturePressed);
             
-            StatusText.Text = "Status: Session running. Press F5 or Enter in client console to capture Stage 1.";
+            StatusText.Text = "Status: Session running. Press F1 or Enter in client console to capture Stage 1.";
             StatusText.Foreground = System.Windows.Media.Brushes.DarkGreen;
         }
 
@@ -188,7 +188,7 @@ namespace MiddlewareTool
             string clientOutput = _consoleCaptureService.CaptureConsoleOutput(_clientProcess.Id);
             if (string.IsNullOrEmpty(clientOutput)) return;
 
-            // Each F5 press creates a new stage
+            // Each F1 press creates a new stage
             _currentStage++;
             DateTime now = DateTime.Now;
             
@@ -204,7 +204,7 @@ namespace MiddlewareTool
             // Update status text
             Dispatcher.Invoke(() =>
             {
-                StatusText.Text = $"Status: Stage {_currentStage} captured (F5). Press F5 or Enter for next stage.";
+                StatusText.Text = $"Status: Stage {_currentStage} captured (F1). Press F1 or Enter for next stage.";
                 StatusText.Foreground = System.Windows.Media.Brushes.Green;
             });
         }
@@ -251,11 +251,11 @@ namespace MiddlewareTool
             {
                 if (!string.IsNullOrEmpty(userInput))
                 {
-                    StatusText.Text = $"Status: Stage {_currentStage} captured (Enter) with input '{userInput}'. Press F5 or Enter for next stage.";
+                    StatusText.Text = $"Status: Stage {_currentStage} captured (Enter) with input '{userInput}'. Press F1 or Enter for next stage.";
                 }
                 else
                 {
-                    StatusText.Text = $"Status: Stage {_currentStage} captured (Enter). Press F5 or Enter for next stage.";
+                    StatusText.Text = $"Status: Stage {_currentStage} captured (Enter). Press F1 or Enter for next stage.";
                 }
                 StatusText.Foreground = System.Windows.Media.Brushes.Blue;
             });
