@@ -164,3 +164,37 @@ For existing users:
 - F5 must be pressed in the client console window (not tool window)
 - Only captures visible console content (limited by console buffer)
 - Status dialog during capture commented out to avoid blocking (can be enabled)
+
+## Latest Update: Event-Driven Server Capture (2024)
+
+### Previous Issue
+The tool used a 300ms delay (`await Task.Delay(300)`) after pressing Enter to wait for server processing before capturing server console. This was a "guess" that could fail if:
+- Server takes longer than 300ms → missed logs
+- Server responds faster → wasted time
+
+### Solution: Event-Driven Mechanism
+Implemented a new event-driven mechanism using ProxyService as the signal provider:
+
+**Files Modified:**
+1. **Services/ProxyService.cs**
+   - Added `ServerResponseReceived` event
+   - Fires event after receiving response from server (HTTP & TCP)
+   
+2. **MainWindow.xaml.cs**
+   - Added `_pendingServerCapture` flag and `_pendingCaptureData` fields
+   - Modified `OnEnterPressed()` to set flag instead of using delay
+   - Added `OnServerResponseReceived()` event handler
+   - Subscribes/unsubscribes to event in StartSession/StopSession
+
+**Workflow:**
+1. User presses Enter → Captures client console, sets flag
+2. Client sends request → ProxyService forwards to server
+3. Server responds → ProxyService fires `ServerResponseReceived` event
+4. Event handler → Captures server console immediately
+
+**Benefits:**
+- ✅ Accurate: Captures exactly when server responds
+- ✅ Fast: No unnecessary waiting
+- ✅ Reliable: No assumptions about processing time
+
+See [EVENT_DRIVEN_CAPTURE.md](EVENT_DRIVEN_CAPTURE.md) for detailed documentation.

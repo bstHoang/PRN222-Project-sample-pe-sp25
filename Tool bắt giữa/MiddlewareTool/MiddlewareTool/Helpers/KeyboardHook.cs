@@ -48,7 +48,7 @@ namespace MiddlewareTool.Helpers
                 {
                     _onEnterPressed?.Invoke();
                 }
-                else if (vkCode == 0x70) // VK_F1 for capturing baseline
+                else if (vkCode == 0x7B) // VK_F12 for capturing baseline
                 {
                     _onCapturePressed?.Invoke();
                 }

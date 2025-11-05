@@ -161,6 +161,7 @@ namespace MiddlewareTool
 
             _cts = new CancellationTokenSource();
             string selectedProtocol = (ProtocolSelection.SelectedItem as ComboBoxItem)?.Content.ToString() ?? "HTTP";
+            
             _proxyService.StartProxy(selectedProtocol, _cts.Token);
 
             await Task.Delay(1500);
@@ -174,7 +175,7 @@ namespace MiddlewareTool
             _currentStage = 0;
             KeyboardHook.SetHook(OnEnterPressed, OnCapturePressed);
             
-            StatusText.Text = "Status: Session running. Press F1 or Enter in client console to capture Stage 1.";
+            StatusText.Text = "Status: Session running. Press F12 in client console to capture stages.";
             StatusText.Foreground = System.Windows.Media.Brushes.DarkGreen;
         }
 
@@ -188,7 +189,23 @@ namespace MiddlewareTool
             string clientOutput = _consoleCaptureService.CaptureConsoleOutput(_clientProcess.Id);
             if (string.IsNullOrEmpty(clientOutput)) return;
 
-            // Each F1 press creates a new stage
+            // Check if this is a duplicate of the last stage (prevent duplicate captures)
+            if (_stageCaptures.Count > 0)
+            {
+                var lastStage = _stageCaptures.Last();
+                if (lastStage.ClientOutput == clientOutput)
+                {
+                    // Same output as last capture, skip this duplicate
+                    Dispatcher.Invoke(() =>
+                    {
+                        StatusText.Text = $"Status: Duplicate output detected, skipped. Press F12 after console updates.";
+                        StatusText.Foreground = System.Windows.Media.Brushes.Orange;
+                    });
+                    return;
+                }
+            }
+
+            // Each F12 press creates a new stage
             _currentStage++;
             DateTime now = DateTime.Now;
             
@@ -204,13 +221,15 @@ namespace MiddlewareTool
             // Update status text
             Dispatcher.Invoke(() =>
             {
-                StatusText.Text = $"Status: Stage {_currentStage} captured (F1). Press F1 or Enter for next stage.";
+                StatusText.Text = $"Status: Stage {_currentStage} captured (F12). Press F12 for next stage.";
                 StatusText.Foreground = System.Windows.Media.Brushes.Green;
             });
         }
 
-        private async void OnEnterPressed()
+        private void OnEnterPressed()
         {
+            // Enter key is just for user input tracking, not for creating stages
+            // Only F12 creates stages now
             if (_clientProcess == null || _clientProcess.HasExited) return;
             IntPtr foreground = GetForegroundWindow();
             GetWindowThreadProcessId(foreground, out uint pid);
@@ -227,42 +246,20 @@ namespace MiddlewareTool
                 userInput = ExtractInputFromPreviousStage(previousStage.ClientOutput, clientOutput);
             }
 
-            // Each Enter press creates a new stage
-            _currentStage++;
-            DateTime now = DateTime.Now;
-
-            // If we extracted input, add it to _enterLines
-            if (!string.IsNullOrEmpty(userInput))
+            // Track the input for the NEXT stage (will be created when F12 is pressed next)
+            if (!string.IsNullOrEmpty(userInput) && _currentStage > 0)
             {
-                _enterLines.Add((_currentStage, userInput, now));
-            }
-
-            // Wait for server to process the request before capturing server console
-            // This ensures the server capture includes the request that was just sent
-            await Task.Delay(300); // 300ms delay to allow server to receive and process the request
-
-            // Capture server output after delay
-            string serverOutput = string.Empty;
-            if (_serverProcess != null && !_serverProcess.HasExited)
-            {
-                serverOutput = _consoleCaptureService.CaptureConsoleOutput(_serverProcess.Id);
-            }
-            
-            _stageCaptures.Add((_currentStage, now, clientOutput, serverOutput));
-
-            // Update status
-            Dispatcher.Invoke(() =>
-            {
-                if (!string.IsNullOrEmpty(userInput))
+                DateTime now = DateTime.Now;
+                int nextStage = _currentStage + 1;
+                _enterLines.Add((nextStage, userInput, now));
+                
+                // Optional: Show feedback that input was tracked
+                Dispatcher.Invoke(() =>
                 {
-                    StatusText.Text = $"Status: Stage {_currentStage} captured (Enter) with input '{userInput}'. Press F1 or Enter for next stage.";
-                }
-                else
-                {
-                    StatusText.Text = $"Status: Stage {_currentStage} captured (Enter). Press F1 or Enter for next stage.";
-                }
-                StatusText.Foreground = System.Windows.Media.Brushes.Blue;
-            });
+                    StatusText.Text = $"Status: Input '{userInput}' tracked for next stage. Press F12 to capture stage {nextStage}.";
+                    StatusText.Foreground = System.Windows.Media.Brushes.Blue;
+                });
+            }
         }
 
         private string ExtractInputFromPreviousStage(string previousOutput, string currentOutput)
@@ -398,14 +395,7 @@ namespace MiddlewareTool
 
             if (_clientProcess != null && !_clientProcess.HasExited)
             {
-                await Task.Delay(500); // Delay for final outputs
                 clientConsoleOutput = _consoleCaptureService.CaptureConsoleOutput(_clientProcess.Id);
-
-                // Add final stage for stop to capture complete console at end
-                _currentStage++;
-                DateTime stopTime = DateTime.Now;
-                serverConsoleOutput = _consoleCaptureService.CaptureConsoleOutput(_serverProcess?.Id ?? 0);
-                _stageCaptures.Add((_currentStage, stopTime, clientConsoleOutput, serverConsoleOutput));
 
                 // Build stage inputs from _enterLines
                 stageInputs = new List<(int Stage, string Input, string Timestamp)>();

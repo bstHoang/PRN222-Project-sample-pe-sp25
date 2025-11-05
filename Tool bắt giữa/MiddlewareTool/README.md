@@ -2,12 +2,18 @@
 
 A WPF-based tool for capturing and logging console interactions during grading sessions. This tool acts as a proxy between client and server applications, capturing HTTP/TCP traffic and console outputs for educational assessment purposes.
 
-## 🎯 Latest Update: New Baseline Capture Mechanism
+## 🎯 Latest Update: Event-Driven Server Capture
 
-**Version:** 2.0 (F5 Baseline Capture)
+**Version:** 2.1 (Event-Driven Capture)
 **Date:** 2025
 
-### What's New?
+### What's New in 2.1?
+- ⚡ **Event-driven server capture** - No more 300ms delay guessing!
+- 🎯 **Precise timing** - Captures server console exactly when response arrives
+- 🚀 **Faster captures** - No unnecessary waiting
+- 📡 **ProxyService signals** - Uses existing network monitoring as timing source
+
+### What's New in 2.0?
 - ✅ **No more prompt files needed!** The tool now uses real-time baseline captures
 - 🔑 **F5 hotkey** to capture console baseline before user input
 - 📊 **Real-time status indicator** showing current stage and operations
@@ -29,7 +35,8 @@ A WPF-based tool for capturing and logging console interactions during grading s
 - **[WORKFLOW_DIAGRAM.md](WORKFLOW_DIAGRAM.md)** - Visual workflow and data flow diagrams
 
 ### For Detailed Information
-- **[NEW_CAPTURE_MECHANISM.md](NEW_CAPTURE_MECHANISM.md)** - Complete guide to the new mechanism (English)
+- **[EVENT_DRIVEN_CAPTURE.md](EVENT_DRIVEN_CAPTURE.md)** - Event-driven server capture mechanism (NEW!)
+- **[NEW_CAPTURE_MECHANISM.md](NEW_CAPTURE_MECHANISM.md)** - Complete guide to the baseline capture mechanism
 - **[HUONG_DAN_SU_DUNG.md](HUONG_DAN_SU_DUNG.md)** - Comprehensive user guide (Vietnamese)
 - **[CHANGES_SUMMARY.md](CHANGES_SUMMARY.md)** - Technical changes and implementation details
 
@@ -169,15 +176,23 @@ MiddlewareTool/
 
 ### Key Methods
 - `OnCapturePressed()`: Handles F5 press, captures baseline
-- `OnEnterPressed()`: Handles Enter press, extracts input
+- `OnEnterPressed()`: Handles Enter press, extracts input, sets flag for server capture
+- `OnServerResponseReceived()`: Event handler that captures server console when response arrives
 - `ExtractInputFromBaseline()`: Compares baseline with current output
 - `CaptureConsoleOutput()`: Captures console screen buffer
 
 ### Data Flow
 ```
 F5 Press → CaptureConsoleOutput() → Save to _baselineCaptures
+
 Enter Press → CaptureConsoleOutput() → ExtractInputFromBaseline()
-  → Save to _enterLines and _stageCaptures
+  → Set _pendingServerCapture flag → Wait for event...
+
+Client Request → ProxyService → Server → Response → ProxyService
+  → Fire ServerResponseReceived event
+
+Event Handler → CaptureConsoleOutput(server) → Save to _stageCaptures
+
 Stop Session → ExcelLogger saves all data
 ```
 
