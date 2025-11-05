@@ -28,7 +28,7 @@ namespace MiddlewareTool
         private CancellationTokenSource? _cts;
         private bool _isSessionRunning = false;
         public ObservableCollection<LoggedRequest> LoggedRequests { get; set; }
-        private List<(string Line, DateTime Timestamp)> _enterLines = new List<(string Line, DateTime Timestamp)>();
+        private List<(int Stage, string Line, DateTime Timestamp)> _enterLines = new List<(int Stage, string Line, DateTime Timestamp)>();
         private List<(int Stage, DateTime Timestamp, string ClientOutput, string ServerOutput)> _stageCaptures = new List<(int Stage, DateTime Timestamp, string ClientOutput, string ServerOutput)>();
         private string _clientLogDir = "";
 
@@ -226,7 +226,7 @@ namespace MiddlewareTool
             if (!string.IsNullOrEmpty(userInput))
             {
                 DateTime now = DateTime.Now;
-                _enterLines.Add((userInput, now));
+                _enterLines.Add((_currentStage, userInput, now));
 
                 // Update status
                 Dispatcher.Invoke(() =>
@@ -272,8 +272,9 @@ namespace MiddlewareTool
                 return string.Empty;
             }
 
-            // Find matching line in current output and extract what comes after
-            for (int i = 0; i < currentLines.Length; i++)
+            // Search from the END of current output to find the LAST matching line
+            // This handles cases where the same prompt appears multiple times in the console
+            for (int i = currentLines.Length - 1; i >= 0; i--)
             {
                 string trimmedLine = currentLines[i].Trim();
                 
@@ -285,20 +286,53 @@ namespace MiddlewareTool
                         // Found the line with user input appended to prompt
                         return trimmedLine.Substring(lastBaselineLine.Length).Trim();
                     }
+                    // If we found a matching line but no input yet, this might be the prompt line
+                    // Check if there's content after this line (for multi-line input scenarios)
+                    break;
                 }
             }
 
-            // Fallback: if no match found, try to find new content
-            // Compare line counts - if current has more lines, the difference might be the input
-            if (currentLines.Length > baselineLines.Length)
+            // Fallback: Compare the two outputs and find what's new
+            // Find where baseline ends and new content begins
+            int matchingLines = 0;
+            for (int i = 0; i < Math.Min(baselineLines.Length, currentLines.Length); i++)
             {
-                // Get the new line(s) that appeared
-                var newLines = currentLines.Skip(baselineLines.Length)
+                if (baselineLines[i] == currentLines[i])
+                {
+                    matchingLines = i + 1;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            // Get new content after the matching part
+            if (matchingLines < currentLines.Length)
+            {
+                var newLines = currentLines.Skip(matchingLines)
                     .Where(line => !string.IsNullOrWhiteSpace(line))
-                    .Select(line => line.Trim());
+                    .Select(line => line.Trim())
+                    .ToList();
                 
                 if (newLines.Any())
                 {
+                    // Look for input on the same line as prompt or on new lines
+                    string firstNewLine = newLines.First();
+                    if (firstNewLine.Contains(lastBaselineLine))
+                    {
+                        // Input is on the same line as prompt
+                        int promptIndex = firstNewLine.IndexOf(lastBaselineLine);
+                        if (promptIndex >= 0)
+                        {
+                            string afterPrompt = firstNewLine.Substring(promptIndex + lastBaselineLine.Length).Trim();
+                            if (!string.IsNullOrEmpty(afterPrompt))
+                            {
+                                return afterPrompt;
+                            }
+                        }
+                    }
+                    // Return all new content
                     return string.Join(" ", newLines);
                 }
             }
@@ -343,11 +377,11 @@ namespace MiddlewareTool
                 stageInputs = new List<(int Stage, string Input, string Timestamp)>();
                 for (int i = 0; i < _enterLines.Count; i++)
                 {
-                    stageInputs.Add((i + 1, _enterLines[i].Line, _enterLines[i].Timestamp.ToString("HH:mm:ss.fff")));
+                    stageInputs.Add((_enterLines[i].Stage, _enterLines[i].Line, _enterLines[i].Timestamp.ToString("HH:mm:ss.fff")));
                 }
 
                 File.WriteAllText(clientLogFile, clientConsoleOutput);
-                File.WriteAllText(clientEnterFile, string.Join(Environment.NewLine, _enterLines.Select(e => e.Line)));
+                File.WriteAllText(clientEnterFile, string.Join(Environment.NewLine, _enterLines.Select(e => $"Stage {e.Stage}: {e.Line}")));
                 if (stageInputs.Count > 0)
                 {
                     File.WriteAllText(userInputsFile, string.Join(Environment.NewLine, stageInputs.Select(s => $"Stage {s.Stage}: {s.Input} at {s.Timestamp}")));
