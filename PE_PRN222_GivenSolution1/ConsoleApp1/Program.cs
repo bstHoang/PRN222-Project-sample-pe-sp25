@@ -46,14 +46,19 @@ class Program
         while (running)
         {
                         ConsoleManager.WriteLine("\n====== Library Client ======");
-                        ConsoleManager.WriteLine("1. List Books");
+                        ConsoleManager.WriteLine("1. List                 Books");
                         ConsoleManager.WriteLine("2. Create Book");
                         ConsoleManager.WriteLine("3. Update Book");
                         ConsoleManager.WriteLine("4. Delete Book");
                         ConsoleManager.WriteLine("5. Quit");
                         ConsoleManager.Write("Choose an option: ");
 
-            var choice = Console.ReadLine();
+            var choice = Console.ReadLine()?.Trim();
+            if (ConsoleManager.WasF12Pressed())
+            {
+                // Handle if F12 was pressed to clear buffer, but continue normally
+                continue;
+            }
 
                             switch (choice)
                             {

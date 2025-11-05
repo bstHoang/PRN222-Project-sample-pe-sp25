@@ -12,14 +12,10 @@ namespace ConsoleApp1
         // Import Windows API functions for console input buffer management
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern IntPtr GetStdHandle(int nStdHandle);
-
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool FlushConsoleInputBuffer(IntPtr hConsoleInput);
-
         private const int STD_INPUT_HANDLE = -10;
-
-        private static bool _f1Pressed = false;
-
+        private static bool _f12Pressed = false;  // Fixed typo from _f1Pressed to _f12Pressed
         /// <summary>
         /// Initialize the console manager with F12 key monitoring
         /// </summary>
@@ -32,7 +28,6 @@ namespace ConsoleApp1
             };
             monitorThread.Start();
         }
-
         /// <summary>
         /// Monitor for F12 key press to clear input buffer
         /// </summary>
@@ -45,7 +40,7 @@ namespace ConsoleApp1
                     var key = Console.ReadKey(true);
                     if (key.Key == ConsoleKey.F12)
                     {
-                        _f1Pressed = true;
+                        _f12Pressed = true;
                         ClearInputBuffer();
                     }
                     else
@@ -57,7 +52,6 @@ namespace ConsoleApp1
                 System.Threading.Thread.Sleep(50);
             }
         }
-
         /// <summary>
         /// Clear the console input buffer to remove any pending input
         /// </summary>
@@ -87,25 +81,24 @@ namespace ConsoleApp1
                 // Silently fail if buffer clearing doesn't work
             }
         }
-
         /// <summary>
-        /// Managed Console.Write that tracks output
+        /// Managed Console.Write that normalizes spaces and adds a space at the end
         /// </summary>
         /// <param name="text">Text to write to console</param>
         public static void Write(string text)
         {
-            Console.Write(text);
+            string normalized = NormalizeText(text);
+            Console.Write(normalized);
         }
-
         /// <summary>
-        /// Managed Console.WriteLine that tracks output
+        /// Managed Console.WriteLine that normalizes spaces and adds a space at the end before newline
         /// </summary>
         /// <param name="text">Text to write to console</param>
         public static void WriteLine(string text)
         {
-            Console.WriteLine(text);
+            string normalized = NormalizeText(text);
+            Console.WriteLine(normalized.TrimEnd());  // Trim trailing space before newline if desired, or keep it
         }
-
         /// <summary>
         /// Managed Console.WriteLine (no parameters) that tracks output
         /// </summary>
@@ -113,15 +106,29 @@ namespace ConsoleApp1
         {
             Console.WriteLine();
         }
+        /// <summary>
+        /// Normalize the text by splitting on spaces (removing extras) and joining with space, adding space at end
+        /// </summary>
+        /// <param name="text">Input text</param>
+        /// <returns>Normalized text with space after each element and at the end</returns>
+        private static string NormalizeText(string text)
+        {
+            if (string.IsNullOrEmpty(text)) return string.Empty;
 
+            // Split by spaces, remove empty entries (handles extra spaces)
+            string[] parts = text.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+            // Join with space (adds space after each part, including a trailing space)
+            return string.Join(" ", parts) + " ";
+        }
         /// <summary>
         /// Check if F12 was pressed and reset the flag
         /// </summary>
         /// <returns>True if F12 was pressed since last check</returns>
         public static bool WasF12Pressed()
         {
-            bool result = _f1Pressed;
-            _f1Pressed = false;
+            bool result = _f12Pressed;
+            _f12Pressed = false;
             return result;
         }
     }

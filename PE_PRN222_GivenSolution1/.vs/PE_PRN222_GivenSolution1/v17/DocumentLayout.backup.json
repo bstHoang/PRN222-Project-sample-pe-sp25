@@ -7,6 +7,10 @@
       "RelativeMoniker": "D:0:0:{41E0B0CF-6C18-49AE-B0B5-E38E9C8F4ACF}|ConsoleApp1\\ConsoleApp1.csproj|solutionrelative:consoleapp1\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{41E0B0CF-6C18-49AE-B0B5-E38E9C8F4ACF}|ConsoleApp1\\ConsoleApp1.csproj|d:\\capstoneproject\\middlewaretool\\prn222-project-sample-pe-sp25\\pe_prn222_givensolution1\\consoleapp1\\consolemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{41E0B0CF-6C18-49AE-B0B5-E38E9C8F4ACF}|ConsoleApp1\\ConsoleApp1.csproj|solutionrelative:consoleapp1\\consolemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{1B428643-65D4-4B4B-BBCA-70C2120BC7A8}|Trial_PE_I\\Trial_PE_I.csproj|d:\\capstoneproject\\middlewaretool\\prn222-project-sample-pe-sp25\\pe_prn222_givensolution1\\trial_pe_i\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1B428643-65D4-4B4B-BBCA-70C2120BC7A8}|Trial_PE_I\\Trial_PE_I.csproj|solutionrelative:trial_pe_i\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -22,8 +26,21 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ConsoleManager.cs",
+              "DocumentMoniker": "D:\\CapstoneProject\\middlewareTool\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\ConsoleApp1\\ConsoleManager.cs",
+              "RelativeDocumentMoniker": "ConsoleApp1\\ConsoleManager.cs",
+              "ToolTip": "D:\\CapstoneProject\\middlewareTool\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\ConsoleApp1\\ConsoleManager.cs",
+              "RelativeToolTip": "ConsoleApp1\\ConsoleManager.cs",
+              "ViewState": "AgIAAGcAAAAAAAAAAAAqwIYAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-05T09:38:20.794Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
@@ -32,14 +49,14 @@
               "RelativeDocumentMoniker": "ConsoleApp1\\Program.cs",
               "ToolTip": "D:\\CapstoneProject\\middlewareTool\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\ConsoleApp1\\Program.cs",
               "RelativeToolTip": "ConsoleApp1\\Program.cs",
-              "ViewState": "AgIAADkAAAAAAAAAAAAIwBoAAAAnAAAAAAAAAA==",
+              "ViewState": "AgIAACQAAAAAAAAAAAAIwDAAAABJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-10-27T06:55:31.706Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\CapstoneProject\\middlewareTool\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\Trial_PE_I\\Program.cs",
               "RelativeDocumentMoniker": "Trial_PE_I\\Program.cs",
@@ -51,7 +68,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\CapstoneProject\\middlewareTool\\PRN222-Project-sample-pe-sp25\\PE_PRN222_GivenSolution1\\Project11\\Program.cs",
               "RelativeDocumentMoniker": "Project11\\Program.cs",
