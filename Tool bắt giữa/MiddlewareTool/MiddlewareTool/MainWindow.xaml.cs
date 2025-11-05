@@ -237,7 +237,11 @@ namespace MiddlewareTool
                 _enterLines.Add((_currentStage, userInput, now));
             }
 
-            // Capture client and server output for this stage
+            // Wait for server to process the request before capturing server console
+            // This ensures the server capture includes the request that was just sent
+            await Task.Delay(300); // 300ms delay to allow server to receive and process the request
+
+            // Capture server output after delay
             string serverOutput = string.Empty;
             if (_serverProcess != null && !_serverProcess.HasExited)
             {
