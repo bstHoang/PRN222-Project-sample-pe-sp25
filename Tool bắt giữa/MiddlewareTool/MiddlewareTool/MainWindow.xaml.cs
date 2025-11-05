@@ -179,19 +179,31 @@ namespace MiddlewareTool
             StatusText.Foreground = System.Windows.Media.Brushes.DarkGreen;
         }
 
-        private async void OnCapturePressed()
+        private void OnCapturePressed()
         {
             if (_clientProcess == null || _clientProcess.HasExited) return;
             IntPtr foreground = GetForegroundWindow();
             GetWindowThreadProcessId(foreground, out uint pid);
             if (pid != (uint)_clientProcess.Id) return; // Not client window
 
-            // Wait a brief moment to ensure console has been updated with latest output
-            // This prevents capturing stale/old output
-            await Task.Delay(150);
-
             string clientOutput = _consoleCaptureService.CaptureConsoleOutput(_clientProcess.Id);
             if (string.IsNullOrEmpty(clientOutput)) return;
+
+            // Check if this is a duplicate of the last stage (prevent duplicate captures)
+            if (_stageCaptures.Count > 0)
+            {
+                var lastStage = _stageCaptures.Last();
+                if (lastStage.ClientOutput == clientOutput)
+                {
+                    // Same output as last capture, skip this duplicate
+                    Dispatcher.Invoke(() =>
+                    {
+                        StatusText.Text = $"Status: Duplicate output detected, skipped. Press F1 after console updates.";
+                        StatusText.Foreground = System.Windows.Media.Brushes.Orange;
+                    });
+                    return;
+                }
+            }
 
             // Each F1 press creates a new stage
             _currentStage++;
