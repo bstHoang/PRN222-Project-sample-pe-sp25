@@ -28,6 +28,9 @@ class Program
 
     static async Task Main(string[] args)
     {
+        // Initialize ConsoleManager to handle F1 key and clear input buffer
+        ConsoleManager.Initialize();
+
         // ======================================
         // 1. Load cấu hình từ appsettings.json
         // ======================================
@@ -36,19 +39,19 @@ class Program
             .Build();
 
         baseUrl = config["BaseUrl"] ;
-        Console.WriteLine($"Base URL: {baseUrl}");
+        ConsoleManager.WriteLine($"Base URL: {baseUrl}");
 
         bool running = true;
 
         while (running)
         {
-                        Console.WriteLine("\n====== Library Client ======");
-                        Console.WriteLine("1. List Books");
-                        Console.WriteLine("2. Create Book");
-                        Console.WriteLine("3. Update Book");
-                        Console.WriteLine("4. Delete Book");
-                        Console.WriteLine("5. Quit");
-                        Console.Write("Choose an option: ");
+                        ConsoleManager.WriteLine("\n====== Library Client ======");
+                        ConsoleManager.WriteLine("1. List Books");
+                        ConsoleManager.WriteLine("2. Create Book");
+                        ConsoleManager.WriteLine("3. Update Book");
+                        ConsoleManager.WriteLine("4. Delete Book");
+                        ConsoleManager.WriteLine("5. Quit");
+                        ConsoleManager.Write("Choose an option: ");
 
             var choice = Console.ReadLine();
 
@@ -68,10 +71,10 @@ class Program
                                     break;
                                 case "5":
                                     running = false;
-                                    Console.WriteLine("Goodbye!");
+                                    ConsoleManager.WriteLine("Goodbye!");
                                     break;
                                 default:
-                                    Console.WriteLine("Invalid choice. Try again.");
+                                    ConsoleManager.WriteLine("Invalid choice. Try again.");
                                     break;
                             }
         }
@@ -94,27 +97,27 @@ class Program
                     PropertyNameCaseInsensitive = true
                 });
 
-                Console.WriteLine("\n====== Book List ======");
+                ConsoleManager.WriteLine("\n====== Book List ======");
                 if (books != null && books.Count > 0)
                 {
                     foreach (var book in books)
                     {
-                        Console.WriteLine(Utils.Stringify(book));
+                        ConsoleManager.WriteLine(Utils.Stringify(book));
                     }
                 }
                 else
                 {
-                    Console.WriteLine("No books found.");
+                    ConsoleManager.WriteLine("No books found.");
                 }
             }
             else
             {
-                Console.WriteLine($"Error: {response.StatusCode}");
+                ConsoleManager.WriteLine($"Error: {response.StatusCode}");
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Exception: {ex.Message}");
+            ConsoleManager.WriteLine($"Exception: {ex.Message}");
         }
     }
 
@@ -123,10 +126,10 @@ class Program
     // ===========================
     private static async Task CreateBookAsync()
     {
-        Console.Write("Enter title: ");
+        ConsoleManager.Write("Enter title: ");
         string title = Console.ReadLine() ?? "";
 
-        Console.Write("Enter publication year: ");
+        ConsoleManager.Write("Enter publication year: ");
         int.TryParse(Console.ReadLine(), out int year);
 
         var newBook = new Book
@@ -144,16 +147,16 @@ class Program
 
             if (response.IsSuccessStatusCode)
             {
-                Console.WriteLine("Book created successfully!");
+                ConsoleManager.WriteLine("Book created successfully!");
             }
             else
             {
-                Console.WriteLine($"Failed to create book. Status: {response.StatusCode}");
+                ConsoleManager.WriteLine($"Failed to create book. Status: {response.StatusCode}");
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Exception: {ex.Message}");
+            ConsoleManager.WriteLine($"Exception: {ex.Message}");
         }
     }
 
@@ -164,31 +167,31 @@ class Program
     {
         await ListBooksAsync();
 
-        Console.Write("\nEnter the ID of the book to update: ");
+        ConsoleManager.Write("\nEnter the ID of the book to update: ");
         if (!int.TryParse(Console.ReadLine(), out int id))
         {
-            Console.WriteLine("Invalid ID.");
+            ConsoleManager.WriteLine("Invalid ID.");
             return;
         }
 
         var currentBook = await GetBookByIdAsync(id);
         if (currentBook == null)
         {
-            Console.WriteLine("Book not found.");
+            ConsoleManager.WriteLine("Book not found.");
             return;
         }
 
-        Console.WriteLine("\nCurrent book info:");
-        Console.WriteLine(Utils.FormatObject(currentBook));
+        ConsoleManager.WriteLine("\nCurrent book info:");
+        ConsoleManager.WriteLine(Utils.FormatObject(currentBook));
 
         bool updating = true;
         while (updating)
         {
-            Console.WriteLine("\n--- Update Menu ---");
-            Console.WriteLine("1. Update Title");
-            Console.WriteLine("2. Update Publication Year");
-            Console.WriteLine("3. Quit");
-            Console.Write("Choose an option: ");
+            ConsoleManager.WriteLine("\n--- Update Menu ---");
+            ConsoleManager.WriteLine("1. Update Title");
+            ConsoleManager.WriteLine("2. Update Publication Year");
+            ConsoleManager.WriteLine("3. Quit");
+            ConsoleManager.Write("Choose an option: ");
             var choice = Console.ReadLine();
 
             switch (choice)
@@ -201,10 +204,10 @@ class Program
                     break;
                 case "3":
                     updating = false;
-                    Console.WriteLine("Returning to main menu...");
+                    ConsoleManager.WriteLine("Returning to main menu...");
                     break;
                 default:
-                    Console.WriteLine("Invalid choice. Try again.");
+                    ConsoleManager.WriteLine("Invalid choice. Try again.");
                     break;
             }
         }
@@ -217,19 +220,19 @@ class Program
 
         if (field == "title")
         {
-            Console.Write("Enter new title: ");
+            ConsoleManager.Write("Enter new title: ");
             updatedBook.Title = Console.ReadLine() ?? "";
         }
         else if (field == "year")
         {
-            Console.Write("Enter new publication year: ");
+            ConsoleManager.Write("Enter new publication year: ");
             if (int.TryParse(Console.ReadLine(), out int newYear))
             {
                 updatedBook.PublicationYear = newYear;
             }
             else
             {
-                Console.WriteLine("Invalid year.");
+                ConsoleManager.WriteLine("Invalid year.");
                 return;
             }
         }
@@ -243,20 +246,20 @@ class Program
 
             if (response.IsSuccessStatusCode)
             {
-                Console.WriteLine("Book updated successfully!");
+                ConsoleManager.WriteLine("Book updated successfully!");
             }
             else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
-                Console.WriteLine("Book not found.");
+                ConsoleManager.WriteLine("Book not found.");
             }
             else
             {
-                Console.WriteLine($"Failed to update book. Status: {response.StatusCode}");
+                ConsoleManager.WriteLine($"Failed to update book. Status: {response.StatusCode}");
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Exception: {ex.Message}");
+            ConsoleManager.WriteLine($"Exception: {ex.Message}");
         }
     }
 
@@ -267,10 +270,10 @@ class Program
     {
         await ListBooksAsync();
 
-        Console.Write("\nEnter the ID of the book to delete: ");
+        ConsoleManager.Write("\nEnter the ID of the book to delete: ");
         if (!int.TryParse(Console.ReadLine(), out int id))
         {
-            Console.WriteLine("Invalid ID.");
+            ConsoleManager.WriteLine("Invalid ID.");
             return;
         }
 
@@ -280,20 +283,20 @@ class Program
 
             if (response.IsSuccessStatusCode)
             {
-                Console.WriteLine("Book deleted successfully!");
+                ConsoleManager.WriteLine("Book deleted successfully!");
             }
             else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
-                Console.WriteLine("Book not found.");
+                ConsoleManager.WriteLine("Book not found.");
             }
             else
             {
-                Console.WriteLine($"Failed to delete book. Status: {response.StatusCode}");
+                ConsoleManager.WriteLine($"Failed to delete book. Status: {response.StatusCode}");
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Exception: {ex.Message}");
+            ConsoleManager.WriteLine($"Exception: {ex.Message}");
         }
     }
 
@@ -314,7 +317,7 @@ class Program
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Exception: {ex.Message}");
+            ConsoleManager.WriteLine($"Exception: {ex.Message}");
         }
         return null;
     }
