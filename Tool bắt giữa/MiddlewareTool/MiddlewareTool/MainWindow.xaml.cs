@@ -41,6 +41,10 @@ namespace MiddlewareTool
         private ConsoleCaptureService _consoleCaptureService;
         private AppSettingsReplacer _appSettingsReplacer;
 
+        // Flag and data for pending server capture
+        private bool _pendingServerCapture = false;
+        private (int Stage, DateTime Timestamp, string ClientOutput, string UserInput) _pendingCaptureData;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -161,6 +165,10 @@ namespace MiddlewareTool
 
             _cts = new CancellationTokenSource();
             string selectedProtocol = (ProtocolSelection.SelectedItem as ComboBoxItem)?.Content.ToString() ?? "HTTP";
+            
+            // Subscribe to server response event
+            _proxyService.ServerResponseReceived += OnServerResponseReceived;
+            
             _proxyService.StartProxy(selectedProtocol, _cts.Token);
 
             await Task.Delay(1500);
@@ -209,7 +217,7 @@ namespace MiddlewareTool
             });
         }
 
-        private async void OnEnterPressed()
+        private void OnEnterPressed()
         {
             if (_clientProcess == null || _clientProcess.HasExited) return;
             IntPtr foreground = GetForegroundWindow();
@@ -237,29 +245,55 @@ namespace MiddlewareTool
                 _enterLines.Add((_currentStage, userInput, now));
             }
 
-            // Wait for server to process the request before capturing server console
-            // This ensures the server capture includes the request that was just sent
-            await Task.Delay(300); // 300ms delay to allow server to receive and process the request
+            // Set flag to indicate we're waiting for server response
+            // Store the data that we'll need when the server response arrives
+            _pendingServerCapture = true;
+            _pendingCaptureData = (_currentStage, now, clientOutput, userInput);
 
-            // Capture server output after delay
+            // Update status to show we're waiting for server
+            Dispatcher.Invoke(() =>
+            {
+                if (!string.IsNullOrEmpty(userInput))
+                {
+                    StatusText.Text = $"Status: Stage {_currentStage} - waiting for server response (input: '{userInput}')...";
+                }
+                else
+                {
+                    StatusText.Text = $"Status: Stage {_currentStage} - waiting for server response...";
+                }
+                StatusText.Foreground = System.Windows.Media.Brushes.Orange;
+            });
+        }
+
+        private void OnServerResponseReceived(object? sender, EventArgs e)
+        {
+            // Check if we're waiting for a server capture
+            if (!_pendingServerCapture) return;
+
+            // Reset the flag
+            _pendingServerCapture = false;
+
+            // Capture server output now that we know the response has arrived
             string serverOutput = string.Empty;
             if (_serverProcess != null && !_serverProcess.HasExited)
             {
                 serverOutput = _consoleCaptureService.CaptureConsoleOutput(_serverProcess.Id);
             }
-            
-            _stageCaptures.Add((_currentStage, now, clientOutput, serverOutput));
 
-            // Update status
+            // Add the complete stage capture
+            _stageCaptures.Add((_pendingCaptureData.Stage, _pendingCaptureData.Timestamp, 
+                                _pendingCaptureData.ClientOutput, serverOutput));
+
+            // Update status on UI thread
             Dispatcher.Invoke(() =>
             {
-                if (!string.IsNullOrEmpty(userInput))
+                if (!string.IsNullOrEmpty(_pendingCaptureData.UserInput))
                 {
-                    StatusText.Text = $"Status: Stage {_currentStage} captured (Enter) with input '{userInput}'. Press F1 or Enter for next stage.";
+                    StatusText.Text = $"Status: Stage {_pendingCaptureData.Stage} captured (Enter) with input '{_pendingCaptureData.UserInput}'. Press F1 or Enter for next stage.";
                 }
                 else
                 {
-                    StatusText.Text = $"Status: Stage {_currentStage} captured (Enter). Press F1 or Enter for next stage.";
+                    StatusText.Text = $"Status: Stage {_pendingCaptureData.Stage} captured (Enter). Press F1 or Enter for next stage.";
                 }
                 StatusText.Foreground = System.Windows.Media.Brushes.Blue;
             });
@@ -381,6 +415,10 @@ namespace MiddlewareTool
         {
             KeyboardHook.Unhook();
             _cts?.Cancel();
+            
+            // Unsubscribe from server response event
+            _proxyService.ServerResponseReceived -= OnServerResponseReceived;
+            
             _proxyService.StopProxy();
             string clientLogFile = Path.Combine(_clientLogDir, $"{Path.GetFileNameWithoutExtension(_excelLogPath)}_Client.log");
             string serverLogFile = Path.Combine(_clientLogDir, $"{Path.GetFileNameWithoutExtension(_excelLogPath)}_Server.log");
