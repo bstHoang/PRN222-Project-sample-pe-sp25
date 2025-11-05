@@ -265,15 +265,19 @@ namespace MiddlewareTool
             });
         }
 
-        private void OnServerResponseReceived(object? sender, EventArgs e)
+        private async void OnServerResponseReceived(object? sender, EventArgs e)
         {
             // Check if we're waiting for a server capture
             if (!_pendingServerCapture) return;
 
-            // Reset the flag
+            // Reset the flag immediately to prevent duplicate captures from the same Enter press
             _pendingServerCapture = false;
 
-            // Capture server output now that we know the response has arrived
+            // Wait a short moment to allow any additional requests/responses to complete
+            // This handles cases where one user action triggers multiple HTTP requests
+            await Task.Delay(100);
+
+            // Capture server output now that responses have arrived and been logged
             string serverOutput = string.Empty;
             if (_serverProcess != null && !_serverProcess.HasExited)
             {
