@@ -179,12 +179,16 @@ namespace MiddlewareTool
             StatusText.Foreground = System.Windows.Media.Brushes.DarkGreen;
         }
 
-        private void OnCapturePressed()
+        private async void OnCapturePressed()
         {
             if (_clientProcess == null || _clientProcess.HasExited) return;
             IntPtr foreground = GetForegroundWindow();
             GetWindowThreadProcessId(foreground, out uint pid);
             if (pid != (uint)_clientProcess.Id) return; // Not client window
+
+            // Wait a brief moment to ensure console has been updated with latest output
+            // This prevents capturing stale/old output
+            await Task.Delay(150);
 
             string clientOutput = _consoleCaptureService.CaptureConsoleOutput(_clientProcess.Id);
             if (string.IsNullOrEmpty(clientOutput)) return;
@@ -378,14 +382,7 @@ namespace MiddlewareTool
 
             if (_clientProcess != null && !_clientProcess.HasExited)
             {
-                await Task.Delay(500); // Delay for final outputs
                 clientConsoleOutput = _consoleCaptureService.CaptureConsoleOutput(_clientProcess.Id);
-
-                // Add final stage for stop to capture complete console at end
-                _currentStage++;
-                DateTime stopTime = DateTime.Now;
-                serverConsoleOutput = _consoleCaptureService.CaptureConsoleOutput(_serverProcess?.Id ?? 0);
-                _stageCaptures.Add((_currentStage, stopTime, clientConsoleOutput, serverConsoleOutput));
 
                 // Build stage inputs from _enterLines
                 stageInputs = new List<(int Stage, string Input, string Timestamp)>();
