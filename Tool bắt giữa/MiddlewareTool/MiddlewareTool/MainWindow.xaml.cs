@@ -219,9 +219,23 @@ namespace MiddlewareTool
             string clientOutput = _consoleCaptureService.CaptureConsoleOutput(_clientProcess.Id);
             if (string.IsNullOrEmpty(clientOutput)) return;
 
+            // Try to extract input by comparing with previous stage
+            string userInput = string.Empty;
+            if (_stageCaptures.Count > 0)
+            {
+                var previousStage = _stageCaptures.Last();
+                userInput = ExtractInputFromPreviousStage(previousStage.ClientOutput, clientOutput);
+            }
+
             // Each Enter press creates a new stage
             _currentStage++;
             DateTime now = DateTime.Now;
+
+            // If we extracted input, add it to _enterLines
+            if (!string.IsNullOrEmpty(userInput))
+            {
+                _enterLines.Add((_currentStage, userInput, now));
+            }
 
             // Capture client and server output for this stage
             string serverOutput = string.Empty;
@@ -235,9 +249,46 @@ namespace MiddlewareTool
             // Update status
             Dispatcher.Invoke(() =>
             {
-                StatusText.Text = $"Status: Stage {_currentStage} captured (Enter). Press F5 or Enter for next stage.";
+                if (!string.IsNullOrEmpty(userInput))
+                {
+                    StatusText.Text = $"Status: Stage {_currentStage} captured (Enter) with input '{userInput}'. Press F5 or Enter for next stage.";
+                }
+                else
+                {
+                    StatusText.Text = $"Status: Stage {_currentStage} captured (Enter). Press F5 or Enter for next stage.";
+                }
                 StatusText.Foreground = System.Windows.Media.Brushes.Blue;
             });
+        }
+
+        private string ExtractInputFromPreviousStage(string previousOutput, string currentOutput)
+        {
+            // Split both outputs into lines
+            var previousLines = previousOutput.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+            var currentLines = currentOutput.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+
+            // Find the last non-empty line in previous output - this should be the prompt
+            string lastPreviousLine = previousLines.LastOrDefault(line => !string.IsNullOrWhiteSpace(line))?.Trim() ?? "";
+            
+            if (string.IsNullOrEmpty(lastPreviousLine))
+            {
+                return string.Empty;
+            }
+
+            // Search from the END of current output to find the LAST matching line with input
+            for (int i = currentLines.Length - 1; i >= 0; i--)
+            {
+                string trimmedLine = currentLines[i].Trim();
+                
+                // Check if this line starts with the previous prompt
+                if (trimmedLine.StartsWith(lastPreviousLine) && trimmedLine.Length > lastPreviousLine.Length)
+                {
+                    // Found the line with user input appended to prompt
+                    return trimmedLine.Substring(lastPreviousLine.Length).Trim();
+                }
+            }
+
+            return string.Empty;
         }
 
         private string ExtractInputFromBaseline(string baseline, string currentOutput)
