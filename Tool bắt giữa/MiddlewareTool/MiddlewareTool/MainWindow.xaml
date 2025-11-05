@@ -84,28 +84,7 @@
                 </Grid>
             </GroupBox>
 
-            <GroupBox Header="Capture Instructions" Margin="0,0,0,10">
-                <StackPanel Margin="5">
-                    <TextBlock TextWrapping="Wrap" FontWeight="Bold" Margin="0,0,0,5">
-                        How to use the new capture mechanism:
-                    </TextBlock>
-                    <TextBlock TextWrapping="Wrap" Margin="0,0,0,3">
-                        1. Start the grading session
-                    </TextBlock>
-                    <TextBlock TextWrapping="Wrap" Margin="0,0,0,3">
-                        2. Press F1 to capture console baseline BEFORE user enters input (creates new stage)
-                    </TextBlock>
-                    <TextBlock TextWrapping="Wrap" Margin="0,0,0,3">
-                        3. User enters input in console and presses Enter
-                    </TextBlock>
-                    <TextBlock TextWrapping="Wrap" Margin="0,0,0,3">
-                        4. The tool will extract input by comparing with the baseline
-                    </TextBlock>
-                    <TextBlock TextWrapping="Wrap" Margin="0,0,0,3">
-                        5. Repeat steps 2-3 for each stage
-                    </TextBlock>
-                </StackPanel>
-            </GroupBox>
+           
         </StackPanel>
 
         <StackPanel Grid.Row="1" Orientation="Vertical">
