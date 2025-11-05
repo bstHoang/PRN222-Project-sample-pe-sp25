@@ -217,7 +217,7 @@ namespace MiddlewareTool
             });
         }
 
-        private void OnEnterPressed()
+        private async void OnEnterPressed()
         {
             if (_clientProcess == null || _clientProcess.HasExited) return;
             IntPtr foreground = GetForegroundWindow();
@@ -263,6 +263,41 @@ namespace MiddlewareTool
                 }
                 StatusText.Foreground = System.Windows.Media.Brushes.Orange;
             });
+
+            // Wait for event OR timeout (whichever comes first)
+            // Event-driven: If server responds quickly, event will capture immediately
+            // Timeout fallback: If no event fires within 300ms, capture anyway to ensure every Enter creates a stage
+            await Task.Delay(300);
+
+            // Check if the stage was already captured by the event
+            if (_pendingServerCapture && _pendingCaptureData.Stage == _currentStage)
+            {
+                // Event didn't fire or took too long, capture now
+                _pendingServerCapture = false;
+                
+                string serverOutput = string.Empty;
+                if (_serverProcess != null && !_serverProcess.HasExited)
+                {
+                    serverOutput = _consoleCaptureService.CaptureConsoleOutput(_serverProcess.Id);
+                }
+                
+                _stageCaptures.Add((_pendingCaptureData.Stage, _pendingCaptureData.Timestamp, 
+                                    _pendingCaptureData.ClientOutput, serverOutput));
+
+                // Update status on UI thread
+                Dispatcher.Invoke(() =>
+                {
+                    if (!string.IsNullOrEmpty(userInput))
+                    {
+                        StatusText.Text = $"Status: Stage {_currentStage} captured (Enter) with input '{userInput}'. Press F1 or Enter for next stage.";
+                    }
+                    else
+                    {
+                        StatusText.Text = $"Status: Stage {_currentStage} captured (Enter). Press F1 or Enter for next stage.";
+                    }
+                    StatusText.Foreground = System.Windows.Media.Brushes.Blue;
+                });
+            }
         }
 
         private async void OnServerResponseReceived(object? sender, EventArgs e)
@@ -270,12 +305,15 @@ namespace MiddlewareTool
             // Check if we're waiting for a server capture
             if (!_pendingServerCapture) return;
 
-            // Reset the flag immediately to prevent duplicate captures from the same Enter press
-            _pendingServerCapture = false;
-
             // Wait a short moment to allow any additional requests/responses to complete
             // This handles cases where one user action triggers multiple HTTP requests
             await Task.Delay(100);
+
+            // Check again if still pending (OnEnterPressed might have timed out)
+            if (!_pendingServerCapture) return;
+
+            // Reset the flag to prevent duplicate captures
+            _pendingServerCapture = false;
 
             // Capture server output now that responses have arrived and been logged
             string serverOutput = string.Empty;
