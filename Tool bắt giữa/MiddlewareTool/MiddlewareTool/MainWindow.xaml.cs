@@ -174,7 +174,7 @@ namespace MiddlewareTool
             _currentStage = 0;
             KeyboardHook.SetHook(OnEnterPressed, OnCapturePressed);
             
-            StatusText.Text = "Status: Session running. Press F5 in client console to capture baseline for Stage 1.";
+            StatusText.Text = "Status: Session running. Press F5 or Enter in client console to capture Stage 1.";
             StatusText.Foreground = System.Windows.Media.Brushes.DarkGreen;
         }
 
@@ -188,26 +188,23 @@ namespace MiddlewareTool
             string clientOutput = _consoleCaptureService.CaptureConsoleOutput(_clientProcess.Id);
             if (string.IsNullOrEmpty(clientOutput)) return;
 
-            // Don't increment stage yet - stage increments only after successful input capture
-            // For now, use _currentStage + 1 as the "pending" stage
-            int pendingStage = _currentStage + 1;
+            // Each F5 press creates a new stage
+            _currentStage++;
             DateTime now = DateTime.Now;
             
-            // Replace any existing baseline for the pending stage (in case F5 pressed multiple times)
-            var existingIndex = _baselineCaptures.FindIndex(b => b.Stage == pendingStage);
-            if (existingIndex >= 0)
+            // Capture client and server output for this stage
+            string serverOutput = string.Empty;
+            if (_serverProcess != null && !_serverProcess.HasExited)
             {
-                _baselineCaptures[existingIndex] = (pendingStage, now, clientOutput);
+                serverOutput = _consoleCaptureService.CaptureConsoleOutput(_serverProcess.Id);
             }
-            else
-            {
-                _baselineCaptures.Add((pendingStage, now, clientOutput));
-            }
+            
+            _stageCaptures.Add((_currentStage, now, clientOutput, serverOutput));
 
             // Update status text
             Dispatcher.Invoke(() =>
             {
-                StatusText.Text = $"Status: Stage {pendingStage} baseline captured. Waiting for user input (Press Enter)...";
+                StatusText.Text = $"Status: Stage {_currentStage} captured (F5). Press F5 or Enter for next stage.";
                 StatusText.Foreground = System.Windows.Media.Brushes.Green;
             });
         }
@@ -219,58 +216,28 @@ namespace MiddlewareTool
             GetWindowThreadProcessId(foreground, out uint pid);
             if (pid != (uint)_clientProcess.Id) return; // Not client window
 
-            // Check if we have a baseline for the pending stage
-            if (_baselineCaptures.Count == 0)
-            {
-                return; // No baseline yet, ignore Enter
-            }
-
             string clientOutput = _consoleCaptureService.CaptureConsoleOutput(_clientProcess.Id);
             if (string.IsNullOrEmpty(clientOutput)) return;
 
-            // Get the baseline for the pending stage (currentStage + 1)
-            int pendingStage = _currentStage + 1;
-            var baseline = _baselineCaptures.FirstOrDefault(b => b.Stage == pendingStage);
-            if (baseline.Baseline == null) return;
+            // Each Enter press creates a new stage
+            _currentStage++;
+            DateTime now = DateTime.Now;
 
-            // Extract input by comparing with baseline
-            string userInput = ExtractInputFromBaseline(baseline.Baseline, clientOutput);
-
-            if (!string.IsNullOrEmpty(userInput))
+            // Capture client and server output for this stage
+            string serverOutput = string.Empty;
+            if (_serverProcess != null && !_serverProcess.HasExited)
             {
-                // Successfully extracted input - NOW increment the stage
-                _currentStage = pendingStage;
-                DateTime now = DateTime.Now;
-                _enterLines.Add((_currentStage, userInput, now));
-
-                // Update status
-                Dispatcher.Invoke(() =>
-                {
-                    StatusText.Text = $"Status: Stage {_currentStage} completed with input '{userInput}'. Press F5 for next stage or Stop to finish.";
-                    StatusText.Foreground = System.Windows.Media.Brushes.Blue;
-                });
-
-                // Delay to allow response to be printed
-                await Task.Delay(500);
-
-                // Capture client and server at this stage
-                string serverOutput = string.Empty;
-                string delayedClientOutput = _consoleCaptureService.CaptureConsoleOutput(_clientProcess.Id);
-                if (_serverProcess != null && !_serverProcess.HasExited)
-                {
-                    serverOutput = _consoleCaptureService.CaptureConsoleOutput(_serverProcess.Id);
-                }
-                _stageCaptures.Add((_currentStage, now, delayedClientOutput, serverOutput));
+                serverOutput = _consoleCaptureService.CaptureConsoleOutput(_serverProcess.Id);
             }
-            else
+            
+            _stageCaptures.Add((_currentStage, now, clientOutput, serverOutput));
+
+            // Update status
+            Dispatcher.Invoke(() =>
             {
-                // No input extracted, might be an issue
-                Dispatcher.Invoke(() =>
-                {
-                    StatusText.Text = $"Status: Warning - Could not extract input for Stage {pendingStage}. Press F5 again to recapture baseline.";
-                    StatusText.Foreground = System.Windows.Media.Brushes.Orange;
-                });
-            }
+                StatusText.Text = $"Status: Stage {_currentStage} captured (Enter). Press F5 or Enter for next stage.";
+                StatusText.Foreground = System.Windows.Media.Brushes.Blue;
+            });
         }
 
         private string ExtractInputFromBaseline(string baseline, string currentOutput)
@@ -379,14 +346,11 @@ namespace MiddlewareTool
                 await Task.Delay(500); // Delay for final outputs
                 clientConsoleOutput = _consoleCaptureService.CaptureConsoleOutput(_clientProcess.Id);
 
-                // Add final stage for stop if we have captures
-                if (_stageCaptures.Count > 0)
-                {
-                    DateTime stopTime = DateTime.Now;
-                    int finalStage = _stageCaptures.Count + 1;
-                    serverConsoleOutput = _consoleCaptureService.CaptureConsoleOutput(_serverProcess?.Id ?? 0);
-                    _stageCaptures.Add((finalStage, stopTime, clientConsoleOutput, serverConsoleOutput));
-                }
+                // Add final stage for stop to capture complete console at end
+                _currentStage++;
+                DateTime stopTime = DateTime.Now;
+                serverConsoleOutput = _consoleCaptureService.CaptureConsoleOutput(_serverProcess?.Id ?? 0);
+                _stageCaptures.Add((_currentStage, stopTime, clientConsoleOutput, serverConsoleOutput));
 
                 // Build stage inputs from _enterLines
                 stageInputs = new List<(int Stage, string Input, string Timestamp)>();
@@ -418,7 +382,7 @@ namespace MiddlewareTool
             _isSessionRunning = false;
             StartStopButton.Content = "Start Grading Session";
             
-            StatusText.Text = $"Status: Session stopped. {_enterLines.Count} inputs captured across {_currentStage} stages.";
+            StatusText.Text = $"Status: Session stopped. {_currentStage} stages captured.";
             StatusText.Foreground = System.Windows.Media.Brushes.Gray;
 
             MessageBox.Show($"Session stopped. Logs saved to {_excelLogPath} and related log files in {_clientLogDir}", "Session Stopped", MessageBoxButton.OK, MessageBoxImage.Information);
