@@ -188,14 +188,26 @@ namespace MiddlewareTool
             string clientOutput = _consoleCaptureService.CaptureConsoleOutput(_clientProcess.Id);
             if (string.IsNullOrEmpty(clientOutput)) return;
 
-            _currentStage++;
+            // Don't increment stage yet - stage increments only after successful input capture
+            // For now, use _currentStage + 1 as the "pending" stage
+            int pendingStage = _currentStage + 1;
             DateTime now = DateTime.Now;
-            _baselineCaptures.Add((_currentStage, now, clientOutput));
+            
+            // Replace any existing baseline for the pending stage (in case F5 pressed multiple times)
+            var existingIndex = _baselineCaptures.FindIndex(b => b.Stage == pendingStage);
+            if (existingIndex >= 0)
+            {
+                _baselineCaptures[existingIndex] = (pendingStage, now, clientOutput);
+            }
+            else
+            {
+                _baselineCaptures.Add((pendingStage, now, clientOutput));
+            }
 
             // Update status text
             Dispatcher.Invoke(() =>
             {
-                StatusText.Text = $"Status: Stage {_currentStage} baseline captured. Waiting for user input (Press Enter)...";
+                StatusText.Text = $"Status: Stage {pendingStage} baseline captured. Waiting for user input (Press Enter)...";
                 StatusText.Foreground = System.Windows.Media.Brushes.Green;
             });
         }
@@ -207,8 +219,8 @@ namespace MiddlewareTool
             GetWindowThreadProcessId(foreground, out uint pid);
             if (pid != (uint)_clientProcess.Id) return; // Not client window
 
-            // Check if we have a baseline for the current stage
-            if (_baselineCaptures.Count == 0 || _currentStage == 0)
+            // Check if we have a baseline for the pending stage
+            if (_baselineCaptures.Count == 0)
             {
                 return; // No baseline yet, ignore Enter
             }
@@ -216,8 +228,9 @@ namespace MiddlewareTool
             string clientOutput = _consoleCaptureService.CaptureConsoleOutput(_clientProcess.Id);
             if (string.IsNullOrEmpty(clientOutput)) return;
 
-            // Get the baseline for current stage
-            var baseline = _baselineCaptures.FirstOrDefault(b => b.Stage == _currentStage);
+            // Get the baseline for the pending stage (currentStage + 1)
+            int pendingStage = _currentStage + 1;
+            var baseline = _baselineCaptures.FirstOrDefault(b => b.Stage == pendingStage);
             if (baseline.Baseline == null) return;
 
             // Extract input by comparing with baseline
@@ -225,13 +238,15 @@ namespace MiddlewareTool
 
             if (!string.IsNullOrEmpty(userInput))
             {
+                // Successfully extracted input - NOW increment the stage
+                _currentStage = pendingStage;
                 DateTime now = DateTime.Now;
                 _enterLines.Add((_currentStage, userInput, now));
 
                 // Update status
                 Dispatcher.Invoke(() =>
                 {
-                    StatusText.Text = $"Status: Stage {_currentStage} input captured: '{userInput}'. Press F5 for next stage or Stop to finish.";
+                    StatusText.Text = $"Status: Stage {_currentStage} completed with input '{userInput}'. Press F5 for next stage or Stop to finish.";
                     StatusText.Foreground = System.Windows.Media.Brushes.Blue;
                 });
 
@@ -252,7 +267,7 @@ namespace MiddlewareTool
                 // No input extracted, might be an issue
                 Dispatcher.Invoke(() =>
                 {
-                    StatusText.Text = $"Status: Warning - Could not extract input for Stage {_currentStage}. Try pressing F5 again.";
+                    StatusText.Text = $"Status: Warning - Could not extract input for Stage {pendingStage}. Press F5 again to recapture baseline.";
                     StatusText.Foreground = System.Windows.Media.Brushes.Orange;
                 });
             }
