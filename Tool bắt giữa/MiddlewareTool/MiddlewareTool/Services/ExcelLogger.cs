@@ -168,19 +168,20 @@ namespace MiddlewareTool.Services
                             string tsStr = worksheet.Cell(row, 1).GetString();
                             if (DateTime.TryParseExact(tsStr, "HH:mm:ss.fff", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime logTs))
                             {
-                                // Find the largest stage where stage.Timestamp <= logTs
-                                var candidate = stages.Where(s => s.Timestamp <= logTs).OrderByDescending(s => s.Timestamp).FirstOrDefault();
-                                int stage = candidate.Stage;
-
-                                // Check if there's a next stage within tolerance (to handle cases where log.ts slightly before stage.ts)
-                                int currentIndex = stages.IndexOf(candidate);
-                                if (currentIndex + 1 < stages.Count)
+                                // Find the NEXT stage after this log timestamp
+                                // The log should be associated with the stage that was created as a result of this request
+                                var nextStage = stages.Where(s => s.Timestamp > logTs).OrderBy(s => s.Timestamp).FirstOrDefault();
+                                
+                                int stage;
+                                if (nextStage.Stage > 0)
                                 {
-                                    var nextStage = stages[currentIndex + 1];
-                                    if (nextStage.Timestamp - logTs < tolerance && nextStage.Timestamp > logTs)
-                                    {
-                                        stage = nextStage.Stage;
-                                    }
+                                    // Found a stage after this log
+                                    stage = nextStage.Stage;
+                                }
+                                else
+                                {
+                                    // No stage after this log, assign to the last stage
+                                    stage = stages.Last().Stage;
                                 }
 
                                 worksheet.Cell(row, 7).Value = stage;
