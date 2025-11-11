@@ -21,7 +21,13 @@ This meant that even when MiddlewareTool processed the key, it still passed the 
 
 Additionally, the ConsoleManager's `MonitorF12Key()` thread had a bug where it would consume ALL keypresses (not just F12) by calling `Console.ReadKey(true)`, which removes the key from the input buffer. This caused keys to be lost.
 
-## The Solution
+## The Solution (Updated)
+
+### Important Update - Version 2
+
+**The initial fix suppressed BOTH F12 and Enter, which broke Console.ReadLine()!** When Enter was suppressed, the console application couldn't complete ReadLine() calls, causing it to hang or behave incorrectly.
+
+**The updated fix only suppresses F12, allowing Enter to pass through normally.**
 
 ### Changes to KeyboardHook.cs
 
@@ -34,10 +40,11 @@ Additionally, the ConsoleManager's `MonitorF12Key()` thread had a bug where it w
    - The hook now checks if the foreground window belongs to the client process
    - This check happens BEFORE deciding whether to process or pass through the key
 
-3. **Suppress keys when processed by MiddlewareTool**:
-   - When F12 or Enter is pressed in the client window, the hook processes it AND suppresses it
+3. **Suppress F12 only, pass through Enter**:
+   - When **F12** is pressed in the client window, the hook processes it AND suppresses it
+   - When **Enter** is pressed in the client window, the hook processes it BUT passes it through
    - Suppression is done by returning `(IntPtr)1` instead of calling `CallNextHookEx`
-   - This prevents the key from reaching the ConsoleManager, avoiding double-processing
+   - This prevents F12 from reaching the ConsoleManager (avoiding double-processing) while allowing Enter to work normally
 
 4. **Pass through keys for other windows**:
    - If the foreground window is NOT the client, the key is passed through normally
@@ -59,23 +66,42 @@ Additionally, the ConsoleManager's `MonitorF12Key()` thread had a bug where it w
 
 ## How It Works Now
 
-### Key Press Flow
+### F12 Key Press Flow
 
 ```
-1. User presses F12/Enter in client console
+1. User presses F12 in client console
    ↓
 2. Global keyboard hook intercepts (HookCallback in KeyboardHook.cs)
    ↓
 3. Check foreground window:
    - Is it the client process? → YES
    ↓
-4. Process the key for MiddlewareTool:
-   - Invoke _onCapturePressed (for F12) or _onEnterPressed (for Enter)
+4. Process F12 for MiddlewareTool:
+   - Invoke _onCapturePressed
    - Return (IntPtr)1 to SUPPRESS the key
    ↓
-5. Key does NOT reach ConsoleManager
-   - No double-processing
-   - No interference
+5. F12 does NOT reach ConsoleManager
+   - No double-processing ✅
+   - No interference ✅
+```
+
+### Enter Key Press Flow
+
+```
+1. User presses Enter in client console
+   ↓
+2. Global keyboard hook intercepts
+   ↓
+3. Check foreground window:
+   - Is it the client process? → YES
+   ↓
+4. Process Enter for MiddlewareTool:
+   - Invoke _onEnterPressed (tracks input)
+   - Call CallNextHookEx to PASS THROUGH the key
+   ↓
+5. Enter REACHES Console.ReadLine()
+   - ReadLine completes normally ✅
+   - Application functions correctly ✅
 ```
 
 ### Key Press in Other Windows
@@ -95,57 +121,70 @@ Additionally, the ConsoleManager's `MonitorF12Key()` thread had a bug where it w
 
 ## Benefits
 
-1. **Eliminates Key Interference**: F12 and Enter are now exclusively processed by either MiddlewareTool OR the client, never both
-2. **Prevents Double-Processing**: The ConsoleManager's background thread no longer sees F12 when MiddlewareTool processes it
-3. **Maintains Normal Behavior**: Keys still work normally in other applications
-4. **Cleaner Code**: Foreground window check is done once in the hook, not duplicated in callbacks
+1. **Eliminates F12 Interference**: F12 is exclusively processed by MiddlewareTool when in client window
+2. **Maintains Enter Functionality**: Enter passes through so Console.ReadLine() works normally
+3. **Prevents Double-Processing**: ConsoleManager no longer sees F12
+4. **No Hanging**: Console application doesn't hang waiting for Enter
+5. **Cleaner Code**: Foreground window check is done once in the hook
 
 ## Testing
 
 To verify the fix works:
 
 1. **Test F12 in client console** (launched via MiddlewareTool):
-   - F12 should capture stages for MiddlewareTool
-   - F12 should NOT interfere with client's normal operation
-   - Client should not see the F12 keypress
+   - F12 should capture stages for MiddlewareTool ✅
+   - F12 should NOT be seen by ConsoleManager ✅
+   - No double-processing or interference ✅
 
 2. **Test Enter in client console** (launched via MiddlewareTool):
-   - Enter should track user input for MiddlewareTool
-   - Enter should NOT be passed to the client (to avoid double-processing)
-   - Client should not receive duplicate Enter events
+   - Enter should track user input for MiddlewareTool ✅
+   - Enter should reach Console.ReadLine() ✅
+   - Application should respond to input normally ✅
+   - No hanging or freezing ✅
 
 3. **Test F12 in other applications**:
-   - F12 should work normally in other windows
-   - Only when client console is in foreground should MiddlewareTool process it
+   - F12 should work normally in other windows ✅
+   - Only when client console is in foreground should MiddlewareTool process it ✅
 
 4. **Test manual launch**:
-   - When client is launched manually (not via MiddlewareTool), F12 should work normally
-   - No global hook is active, so ConsoleManager processes F12 as designed
+   - When client is launched manually (not via MiddlewareTool), F12 should work normally ✅
+   - No global hook is active, so ConsoleManager processes F12 as designed ✅
 
-## Known Limitation
+## Critical Difference: Enter vs F12
 
-**Enter Key Suppression**: The fix suppresses Enter keys when pressed in the client console. This means the Enter key won't reach the Console.ReadLine() call in the client. However, this is the intended behavior because:
+| Key | Behavior in Client Window | Reason |
+|-----|---------------------------|--------|
+| **F12** | Suppressed (blocked) | Prevents double-processing with ConsoleManager |
+| **Enter** | Passed through | Required for Console.ReadLine() to work |
 
-1. MiddlewareTool needs to capture the exact moment when Enter is pressed to extract user input
-2. If Enter were passed through, the client would process it AND MiddlewareTool would capture it, leading to double-processing
-3. The user experience is that they press Enter, MiddlewareTool captures the input, and the client continues normally
+**Why not suppress Enter?**
+- Console applications use `Console.ReadLine()` which BLOCKS waiting for Enter
+- If Enter is suppressed, ReadLine never completes → application hangs
+- MiddlewareTool only needs to OBSERVE Enter (track input), not block it
 
-If Enter needs to reach the client for ReadLine() to work, additional modifications would be needed to:
-- Let MiddlewareTool capture the input first
-- Then programmatically send Enter to the client console after capture
-- This is more complex and may not be necessary depending on the actual client behavior
+**Why suppress F12?**
+- ConsoleManager's background thread monitors for F12
+- If F12 reaches it, double-processing occurs
+- MiddlewareTool is the primary handler for F12 during grading sessions
 
-## Alternative Approach (Not Implemented)
+## Known Issues Addressed
 
-An alternative would be to **modify the ConsoleManager** in the client to:
-1. Not use a background thread for key monitoring
-2. Check for F12 only at specific points (before ReadLine calls)
-3. Or disable F12 monitoring entirely when launched via MiddlewareTool
+**Issue 1: Console hangs when suppressing Enter**
+- ✅ FIXED: Enter now passes through
 
-However, this would require changing the client code, which may not be desirable if the client is part of student submissions or external code that shouldn't be modified.
+**Issue 2: F12 causes double-processing**
+- ✅ FIXED: F12 is suppressed for client window
+
+**Issue 3: ConsoleManager consumes non-F12 keys**
+- ⚠️ LIMITATION: This is a bug in ConsoleManager itself, but by suppressing F12 in the hook, we prevent F12-related issues
+- The key-consuming bug still exists for other keys but is outside the scope of this fix
 
 ## Conclusion
 
-This fix resolves the key interference issue by ensuring that when MiddlewareTool's global hook processes a key for the client window, that key is suppressed and doesn't reach the client application. This prevents the ConsoleManager from also processing the key and causing conflicts.
+This fix resolves the key interference issue by:
+1. **Suppressing F12** when pressed in the client window (prevents ConsoleManager interference)
+2. **Passing through Enter** so Console.ReadLine() works normally (prevents hanging)
+3. **Observing both keys** in MiddlewareTool callbacks (for tracking purposes)
 
-The fix is minimal, focused, and doesn't change the overall architecture of the MiddlewareTool - it just makes the keyboard hook smarter about when to suppress keys vs. when to pass them through.
+The fix is minimal, focused, and doesn't change the overall architecture of the MiddlewareTool - it just makes the keyboard hook smarter about which keys to suppress vs. which to pass through.
+

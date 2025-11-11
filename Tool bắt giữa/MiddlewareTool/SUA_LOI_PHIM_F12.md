@@ -21,7 +21,13 @@ Global keyboard hook trong `KeyboardHook.cs`:
 
 Ngoài ra, thread `MonitorF12Key()` của ConsoleManager có lỗi khi nó tiêu thụ TẤT CẢ các phím (không chỉ F12) bằng cách gọi `Console.ReadKey(true)`, điều này loại bỏ phím khỏi input buffer. Điều này làm mất các phím.
 
-## Giải Pháp
+## Giải Pháp (Đã Cập Nhật)
+
+### Cập Nhật Quan Trọng - Phiên Bản 2
+
+**Fix ban đầu đã chặn CẢ F12 VÀ Enter, điều này làm hỏng Console.ReadLine()!** Khi Enter bị chặn, ứng dụng console không thể hoàn thành các lời gọi ReadLine(), khiến nó bị treo hoặc hoạt động không đúng.
+
+**Fix cập nhật chỉ chặn F12, cho phép Enter chuyển qua bình thường.**
 
 ### Thay Đổi trong KeyboardHook.cs
 
@@ -34,10 +40,11 @@ Ngoài ra, thread `MonitorF12Key()` của ConsoleManager có lỗi khi nó tiêu
    - Hook giờ đây kiểm tra xem cửa sổ foreground có thuộc về client process không
    - Việc kiểm tra này xảy ra TRƯỚC KHI quyết định có xử lý hay chuyển phím đi
 
-3. **Chặn phím khi được xử lý bởi MiddlewareTool**:
-   - Khi F12 hoặc Enter được nhấn trong cửa sổ client, hook xử lý nó VÀ chặn nó
+3. **Chỉ chặn F12, cho phép Enter chuyển qua**:
+   - Khi **F12** được nhấn trong cửa sổ client, hook xử lý nó VÀ chặn nó
+   - Khi **Enter** được nhấn trong cửa sổ client, hook xử lý nó NHƯNG cho phép nó chuyển qua
    - Việc chặn được thực hiện bằng cách trả về `(IntPtr)1` thay vì gọi `CallNextHookEx`
-   - Điều này ngăn phím đến ConsoleManager, tránh xử lý kép
+   - Điều này ngăn F12 đến ConsoleManager (tránh xử lý kép) trong khi cho phép Enter hoạt động bình thường
 
 4. **Chuyển phím qua cho các cửa sổ khác**:
    - Nếu cửa sổ foreground KHÔNG phải là client, phím được chuyển qua bình thường
@@ -59,23 +66,42 @@ Ngoài ra, thread `MonitorF12Key()` của ConsoleManager có lỗi khi nó tiêu
 
 ## Cách Hoạt Động Bây Giờ
 
-### Luồng Xử Lý Phím
+### Luồng Xử Lý Phím F12
 
 ```
-1. Người dùng nhấn F12/Enter trong console client
+1. Người dùng nhấn F12 trong console client
    ↓
 2. Global keyboard hook chặn (HookCallback trong KeyboardHook.cs)
    ↓
 3. Kiểm tra foreground window:
    - Có phải client process không? → CÓ
    ↓
-4. Xử lý phím cho MiddlewareTool:
-   - Gọi _onCapturePressed (cho F12) hoặc _onEnterPressed (cho Enter)
+4. Xử lý F12 cho MiddlewareTool:
+   - Gọi _onCapturePressed
    - Trả về (IntPtr)1 để CHẶN phím
    ↓
-5. Phím KHÔNG đến ConsoleManager
-   - Không có xử lý kép
-   - Không có can thiệp
+5. F12 KHÔNG đến ConsoleManager
+   - Không có xử lý kép ✅
+   - Không có can thiệp ✅
+```
+
+### Luồng Xử Lý Phím Enter
+
+```
+1. Người dùng nhấn Enter trong console client
+   ↓
+2. Global keyboard hook chặn
+   ↓
+3. Kiểm tra foreground window:
+   - Có phải client process không? → CÓ
+   ↓
+4. Xử lý Enter cho MiddlewareTool:
+   - Gọi _onEnterPressed (track input)
+   - Gọi CallNextHookEx để CHUYỂN QUA phím
+   ↓
+5. Enter ĐẾN Console.ReadLine()
+   - ReadLine hoàn thành bình thường ✅
+   - Ứng dụng hoạt động đúng ✅
 ```
 
 ### Nhấn Phím Trong Các Cửa Sổ Khác
@@ -95,71 +121,80 @@ Ngoài ra, thread `MonitorF12Key()` của ConsoleManager có lỗi khi nó tiêu
 
 ## Lợi Ích
 
-1. **Loại Bỏ Can Thiệp Phím**: F12 và Enter giờ được xử lý độc quyền bởi MiddlewareTool HOẶC client, không bao giờ cả hai
-2. **Ngăn Xử Lý Kép**: Background thread của ConsoleManager không còn nhìn thấy F12 khi MiddlewareTool xử lý nó
-3. **Duy Trì Hành Vi Bình Thường**: Phím vẫn hoạt động bình thường trong các ứng dụng khác
-4. **Code Sạch Hơn**: Kiểm tra foreground window được thực hiện một lần trong hook, không bị trùng lặp trong callbacks
+1. **Loại Bỏ Can Thiệp F12**: F12 được xử lý độc quyền bởi MiddlewareTool khi ở cửa sổ client
+2. **Duy Trì Chức Năng Enter**: Enter chuyển qua để Console.ReadLine() hoạt động bình thường
+3. **Ngăn Xử Lý Kép**: ConsoleManager không còn nhìn thấy F12
+4. **Không Bị Treo**: Ứng dụng console không bị treo chờ Enter
+5. **Code Sạch Hơn**: Kiểm tra foreground window được thực hiện một lần trong hook
 
 ## Kiểm Tra
 
 Để xác minh fix hoạt động:
 
 1. **Test F12 trong console client** (khởi chạy qua MiddlewareTool):
-   - F12 nên capture các stage cho MiddlewareTool
-   - F12 không nên can thiệp vào hoạt động bình thường của client
-   - Client không nên thấy phím F12
+   - F12 nên capture các stage cho MiddlewareTool ✅
+   - F12 không nên được nhìn thấy bởi ConsoleManager ✅
+   - Không có xử lý kép hoặc can thiệp ✅
 
 2. **Test Enter trong console client** (khởi chạy qua MiddlewareTool):
-   - Enter nên track user input cho MiddlewareTool
-   - Enter không nên được chuyển tới client (để tránh xử lý kép)
-   - Client không nên nhận các sự kiện Enter trùng lặp
+   - Enter nên track user input cho MiddlewareTool ✅
+   - Enter nên đến Console.ReadLine() ✅
+   - Ứng dụng nên phản hồi input bình thường ✅
+   - Không bị treo hoặc đóng băng ✅
 
 3. **Test F12 trong các ứng dụng khác**:
-   - F12 nên hoạt động bình thường trong các cửa sổ khác
-   - Chỉ khi console client ở foreground thì MiddlewareTool mới xử lý nó
+   - F12 nên hoạt động bình thường trong các cửa sổ khác ✅
+   - Chỉ khi console client ở foreground thì MiddlewareTool mới xử lý nó ✅
 
 4. **Test khởi chạy thủ công**:
-   - Khi client được khởi chạy thủ công (không qua MiddlewareTool), F12 nên hoạt động bình thường
-   - Không có global hook hoạt động, nên ConsoleManager xử lý F12 như thiết kế
+   - Khi client được khởi chạy thủ công (không qua MiddlewareTool), F12 nên hoạt động bình thường ✅
+   - Không có global hook hoạt động, nên ConsoleManager xử lý F12 như thiết kế ✅
 
-## Hạn Chế Đã Biết
+## Sự Khác Biệt Quan Trọng: Enter vs F12
 
-**Chặn Phím Enter**: Fix này chặn các phím Enter khi nhấn trong console client. Điều này có nghĩa là phím Enter sẽ không đến lời gọi Console.ReadLine() trong client. Tuy nhiên, đây là hành vi dự định vì:
+| Phím | Hành Vi Trong Cửa Sổ Client | Lý Do |
+|-----|----------------------------|-------|
+| **F12** | Bị chặn (blocked) | Ngăn xử lý kép với ConsoleManager |
+| **Enter** | Chuyển qua | Cần thiết để Console.ReadLine() hoạt động |
 
-1. MiddlewareTool cần capture chính xác thời điểm Enter được nhấn để trích xuất user input
-2. Nếu Enter được chuyển qua, client sẽ xử lý nó VÀ MiddlewareTool sẽ capture nó, dẫn đến xử lý kép
-3. Trải nghiệm người dùng là họ nhấn Enter, MiddlewareTool capture input, và client tiếp tục bình thường
+**Tại sao không chặn Enter?**
+- Các ứng dụng console sử dụng `Console.ReadLine()` mà CHẶN chờ Enter
+- Nếu Enter bị chặn, ReadLine không bao giờ hoàn thành → ứng dụng bị treo
+- MiddlewareTool chỉ cần QUAN SÁT Enter (track input), không chặn nó
 
-Nếu Enter cần đến client để ReadLine() hoạt động, các sửa đổi bổ sung sẽ cần thiết để:
-- Để MiddlewareTool capture input trước
-- Sau đó lập trình gửi Enter tới console client sau khi capture
-- Điều này phức tạp hơn và có thể không cần thiết tùy thuộc vào hành vi thực tế của client
+**Tại sao chặn F12?**
+- Background thread của ConsoleManager giám sát F12
+- Nếu F12 đến nó, xử lý kép xảy ra
+- MiddlewareTool là handler chính cho F12 trong các session grading
 
-## Phương Pháp Thay Thế (Chưa Thực Hiện)
+## Các Vấn Đề Đã Giải Quyết
 
-Một phương pháp thay thế là **sửa đổi ConsoleManager** trong client để:
-1. Không sử dụng background thread để giám sát phím
-2. Chỉ kiểm tra F12 tại các điểm cụ thể (trước các lời gọi ReadLine)
-3. Hoặc vô hiệu hóa hoàn toàn giám sát F12 khi khởi chạy qua MiddlewareTool
+**Vấn đề 1: Console bị treo khi chặn Enter**
+- ✅ ĐÃ SỬA: Enter giờ chuyển qua
 
-Tuy nhiên, điều này sẽ yêu cầu thay đổi code client, điều này có thể không mong muốn nếu client là một phần của bài nộp của sinh viên hoặc code bên ngoài không nên được sửa đổi.
+**Vấn đề 2: F12 gây xử lý kép**
+- ✅ ĐÃ SỬA: F12 bị chặn cho cửa sổ client
+
+**Vấn đề 3: ConsoleManager tiêu thụ các phím không phải F12**
+- ⚠️ HẠN CHẾ: Đây là lỗi trong chính ConsoleManager, nhưng bằng cách chặn F12 trong hook, chúng tôi ngăn các vấn đề liên quan đến F12
+- Lỗi tiêu thụ phím vẫn tồn tại cho các phím khác nhưng nằm ngoài phạm vi fix này
 
 ## Kết Luận
 
-Fix này giải quyết vấn đề can thiệp phím bằng cách đảm bảo rằng khi global hook của MiddlewareTool xử lý một phím cho cửa sổ client, phím đó được chặn và không đến ứng dụng client. Điều này ngăn ConsoleManager cũng xử lý phím và gây ra xung đột.
+Fix này giải quyết vấn đề can thiệp phím bằng cách:
+1. **Chặn F12** khi nhấn trong cửa sổ client (ngăn can thiệp ConsoleManager)
+2. **Cho phép Enter chuyển qua** để Console.ReadLine() hoạt động bình thường (ngăn treo)
+3. **Quan sát cả hai phím** trong các callback của MiddlewareTool (để track)
 
-Fix này là tối thiểu, tập trung, và không thay đổi kiến trúc tổng thể của MiddlewareTool - nó chỉ làm cho keyboard hook thông minh hơn về thời điểm chặn phím so với thời điểm chuyển chúng qua.
+Fix này là tối thiểu, tập trung, và không thay đổi kiến trúc tổng thể của MiddlewareTool - nó chỉ làm cho keyboard hook thông minh hơn về phím nào cần chặn so với phím nào cần chuyển qua.
 
 ## Giải Thích Chi Tiết Về Vấn Đề Người Dùng Gặp Phải
 
-Khi người dùng thiết lập một phím để thoát console client và nhấn phím đó:
+**Vấn đề ban đầu:** Console client bị đóng khi nhấn phím quit thông qua MiddlewareTool.
 
-**Trước khi fix:**
-- Khi khởi chạy qua MiddlewareTool: Global hook chặn phím → chuyển qua cho client → ConsoleManager cũng xử lý → gây ra can thiệp hoặc hành vi không mong muốn
-- Khi khởi chạy thủ công: Không có global hook → phím hoạt động bình thường
+**Nguyên nhân thực sự:** Fix ban đầu chặn phím Enter, khiến `Console.ReadLine()` không thể hoàn thành. Điều này làm cho ứng dụng bị treo hoặc hoạt động không đúng, dẫn đến console bị đóng hoặc crash.
 
-**Sau khi fix:**
-- Khi khởi chạy qua MiddlewareTool: Global hook chặn phím (nếu là F12/Enter) → KHÔNG chuyển qua → không can thiệp
-- Khi khởi chạy thủ công: Không có global hook → phím hoạt động bình thường
-
-Điều này có nghĩa là nếu người dùng sử dụng F12 hoặc Enter làm phím thoát, giờ đây chúng sẽ được xử lý chính xác bởi MiddlewareTool và không gây ra can thiệp với logic thoát của client.
+**Giải pháp:** Chỉ chặn F12, cho phép Enter chuyển qua. Bây giờ:
+- Người dùng nhấn Enter → ReadLine hoàn thành bình thường
+- Ứng dụng xử lý input đúng cách
+- Không bị treo, không bị đóng bất thường
