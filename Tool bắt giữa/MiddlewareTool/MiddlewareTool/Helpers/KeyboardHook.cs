@@ -13,11 +13,13 @@ namespace MiddlewareTool.Helpers
         private static IntPtr _hookID = IntPtr.Zero;
         private static Action? _onEnterPressed;
         private static Action? _onCapturePressed;
+        private static int _clientProcessId = 0;
 
-        public static void SetHook(Action onEnterPressed, Action onCapturePressed)
+        public static void SetHook(Action onEnterPressed, Action onCapturePressed, int clientProcessId)
         {
             _onEnterPressed = onEnterPressed;
             _onCapturePressed = onCapturePressed;
+            _clientProcessId = clientProcessId;
             _hookID = SetHook(_proc);
         }
 
@@ -26,6 +28,7 @@ namespace MiddlewareTool.Helpers
             UnhookWindowsHookEx(_hookID);
             _onEnterPressed = null;
             _onCapturePressed = null;
+            _clientProcessId = 0;
         }
 
         private static IntPtr SetHook(LowLevelKeyboardProc proc)
@@ -44,15 +47,45 @@ namespace MiddlewareTool.Helpers
             if (nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN)
             {
                 int vkCode = Marshal.ReadInt32(lParam);
-                if (vkCode == 0x0D) // VK_RETURN (Enter)
+                
+                // Check if the key is Enter or F12
+                bool isEnter = vkCode == 0x0D; // VK_RETURN
+                bool isF12 = vkCode == 0x7B;   // VK_F12
+                
+                if (isEnter || isF12)
                 {
-                    _onEnterPressed?.Invoke();
-                }
-                else if (vkCode == 0x7B) // VK_F12 for capturing baseline
-                {
-                    _onCapturePressed?.Invoke();
+                    // Check if the foreground window belongs to the client process
+                    bool isClientWindow = false;
+                    if (_clientProcessId > 0)
+                    {
+                        IntPtr foreground = GetForegroundWindow();
+                        if (foreground != IntPtr.Zero)
+                        {
+                            GetWindowThreadProcessId(foreground, out uint pid);
+                            isClientWindow = (pid == (uint)_clientProcessId);
+                        }
+                    }
+                    
+                    // If this is the client window, process the key for MiddlewareTool
+                    if (isClientWindow)
+                    {
+                        if (isEnter)
+                        {
+                            _onEnterPressed?.Invoke();
+                            // Don't suppress Enter - let it pass through so Console.ReadLine() works
+                        }
+                        else if (isF12)
+                        {
+                            _onCapturePressed?.Invoke();
+                            // Suppress F12 so it doesn't reach ConsoleManager's monitoring thread
+                            // This prevents interference with ConsoleManager's F12 handling
+                            return (IntPtr)1;
+                        }
+                    }
                 }
             }
+            
+            // Pass the key through to the next hook or target application
             return CallNextHookEx(_hookID, nCode, wParam, lParam);
         }
 
@@ -68,5 +101,11 @@ namespace MiddlewareTool.Helpers
 
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern IntPtr GetModuleHandle(string lpModuleName);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetForegroundWindow();
+
+        [DllImport("user32.dll")]
+        private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
     }
 }
