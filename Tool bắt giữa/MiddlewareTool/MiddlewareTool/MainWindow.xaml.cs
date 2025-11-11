@@ -173,7 +173,7 @@ namespace MiddlewareTool
             _stageCaptures.Clear();
             _baselineCaptures.Clear();
             _currentStage = 0;
-            KeyboardHook.SetHook(OnEnterPressed, OnCapturePressed);
+            KeyboardHook.SetHook(OnEnterPressed, OnCapturePressed, _clientProcess.Id);
             
             StatusText.Text = "Status: Session running. Press F12 in client console to capture stages.";
             StatusText.Foreground = System.Windows.Media.Brushes.DarkGreen;
@@ -181,10 +181,8 @@ namespace MiddlewareTool
 
         private void OnCapturePressed()
         {
+            // The KeyboardHook already verified this is the client window
             if (_clientProcess == null || _clientProcess.HasExited) return;
-            IntPtr foreground = GetForegroundWindow();
-            GetWindowThreadProcessId(foreground, out uint pid);
-            if (pid != (uint)_clientProcess.Id) return; // Not client window
 
             string clientOutput = _consoleCaptureService.CaptureConsoleOutput(_clientProcess.Id);
             if (string.IsNullOrEmpty(clientOutput)) return;
@@ -230,10 +228,8 @@ namespace MiddlewareTool
         {
             // Enter key is just for user input tracking, not for creating stages
             // Only F12 creates stages now
+            // The KeyboardHook already verified this is the client window
             if (_clientProcess == null || _clientProcess.HasExited) return;
-            IntPtr foreground = GetForegroundWindow();
-            GetWindowThreadProcessId(foreground, out uint pid);
-            if (pid != (uint)_clientProcess.Id) return; // Not client window
 
             string clientOutput = _consoleCaptureService.CaptureConsoleOutput(_clientProcess.Id);
             if (string.IsNullOrEmpty(clientOutput)) return;
@@ -461,12 +457,6 @@ namespace MiddlewareTool
         }
         #endregion
 
-        #region Additional WinAPI for Hook Filter
-        [DllImport("user32.dll")]
-        private static extern IntPtr GetForegroundWindow();
-
-        [DllImport("user32.dll")]
-        private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
         #endregion
     }
 }
