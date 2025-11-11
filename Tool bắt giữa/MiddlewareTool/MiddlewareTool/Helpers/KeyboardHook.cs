@@ -72,15 +72,15 @@ namespace MiddlewareTool.Helpers
                         if (isEnter)
                         {
                             _onEnterPressed?.Invoke();
+                            // Don't suppress Enter - let it pass through so Console.ReadLine() works
                         }
                         else if (isF12)
                         {
                             _onCapturePressed?.Invoke();
+                            // Suppress F12 so it doesn't reach ConsoleManager's monitoring thread
+                            // This prevents interference with ConsoleManager's F12 handling
+                            return (IntPtr)1;
                         }
-                        
-                        // Suppress the key so it doesn't reach the client application
-                        // This prevents interference with ConsoleManager's F12 handling
-                        return (IntPtr)1;
                     }
                 }
             }
